@@ -46,9 +46,9 @@ namespace Memoyed.Cards.Domain
             }
         }
 
-        public class InvalidRepeatDelayException : DomainException
+        public class InvalidRevisionDelayException : DomainException
         {
-            public InvalidRepeatDelayException() : base("The given days value should be" +
+            public InvalidRevisionDelayException() : base("The given days value should be" +
                                                                          " greater than 0 and lesser than 31")
             {
             }
@@ -61,9 +61,9 @@ namespace Memoyed.Cards.Domain
             }
         }
 
-        public class DecreasingRepeatDelayException : DomainException
+        public class DecreasingRevisionDelayException : DomainException
         {
-            public DecreasingRepeatDelayException() : base("The repeat delays of the boxes should increase" +
+            public DecreasingRevisionDelayException() : base("The repeat delays of the boxes should increase" +
                                                            " while the levels increase")
             {
             }

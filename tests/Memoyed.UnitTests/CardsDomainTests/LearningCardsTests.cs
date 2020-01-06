@@ -1,6 +1,5 @@
 using System;
 using Memoyed.Cards.Domain;
-using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.LearningCards;
 using Xunit;
 
@@ -48,22 +47,9 @@ namespace Memoyed.UnitTests.CardsDomainTests
         [InlineData("   ")]
         public void LearningCardWordConstructor_PassNull_ThrowsEmptyWordDomainException(string emptyString)
         {
-            // Arrange
-            LearningCardWord word;
-            var throws = false;
-
-            // Act
-            try
-            {
-                word = new LearningCardWord(emptyString);
-            }
-            catch (DomainException.EmptyWordException)
-            {
-                throws = true;
-            }
-
-            // Assert
-            Assert.True(throws);
+            // Arrange && Act && Assert
+            Assert.Throws<DomainException.EmptyWordException>(
+                () => new LearningCardWord(emptyString));
         }
 
         [Theory]
@@ -71,11 +57,8 @@ namespace Memoyed.UnitTests.CardsDomainTests
         [InlineData("test")]
         public void LearningCardWordConstructor_PassNonEmptyString_CreatesSuccessfully(string testString)
         {
-            // Arrange
-            LearningCardWord word;
-
             // Act
-            word = new LearningCardWord(testString);
+            var word = new LearningCardWord(testString);
 
             // Assert
             Assert.Equal(testString, word.Value);
@@ -85,11 +68,10 @@ namespace Memoyed.UnitTests.CardsDomainTests
         public void LearningCardWordConstructor_PassNonTrimmedString_CreatesWithTrimmed()
         {
             // Arrange
-            var nonTrimmed = "     test     ";
-            LearningCardWord word;
+            const string nonTrimmed = "     test     ";
 
             // Act
-            word = new LearningCardWord(nonTrimmed);
+            var word = new LearningCardWord(nonTrimmed);
 
             // Assert
             Assert.Equal(nonTrimmed.Trim(), word.Value);
@@ -102,11 +84,8 @@ namespace Memoyed.UnitTests.CardsDomainTests
         [InlineData("TestString")]
         public void LearningCardCommentConstructor_PassAnyTrimmedString_CreatesSuccessfully(string testString)
         {
-            // Arrange
-            LearningCardComment word;
-
             // Act
-            word = new LearningCardComment(testString);
+            var word = new LearningCardComment(testString);
 
             // Assert
             Assert.Equal(testString, word.Value);
@@ -116,11 +95,10 @@ namespace Memoyed.UnitTests.CardsDomainTests
         public void LearningCardCommentConstructor_PassNonTrimmedString_CreatesWithTrimmed()
         {
             // Arrange
-            LearningCardComment comment;
-            var testString = "   test   ";
+            const string testString = "   test   ";
 
             // Act
-            comment = new LearningCardComment(testString);
+            var comment = new LearningCardComment(testString);
 
             // Assert
             Assert.Equal(testString.Trim(), comment.Value);
@@ -134,10 +112,9 @@ namespace Memoyed.UnitTests.CardsDomainTests
             var nativeLanguageWord = new LearningCardWord("Привет");
             var targetLanguageWord = new LearningCardWord("Hei");
             var comment = new LearningCardComment("testComment");
-            LearningCard card;
             
             // Act
-            card = new LearningCard(id, nativeLanguageWord, 
+            var card = new LearningCard(id, nativeLanguageWord, 
                 targetLanguageWord, comment);
             
             // Assert

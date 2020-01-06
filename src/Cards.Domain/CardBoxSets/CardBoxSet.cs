@@ -15,10 +15,25 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             TargetLanguage = targetLanguage;
         }
 
+        /// <summary>
+        /// Id of the card box set
+        /// </summary>
         public CardBoxSetId Id { get; }
+        
+        /// <summary>
+        /// Language that user knows
+        /// </summary>
         public CardBoxSetLanguage NativeLanguage { get; }
+        
+        /// <summary>
+        /// Language that user is learning
+        /// </summary>
         public CardBoxSetLanguage TargetLanguage { get; }
         private readonly List<CardBox> _cardBoxes = new List<CardBox>();
+        
+        /// <summary>
+        /// Card boxes contained in the set, positioned in an increasing level order
+        /// </summary>
         public IEnumerable<CardBox> CardBoxes => _cardBoxes.AsEnumerable();
 
         public void AddCardBox(CardBox cardBox)
@@ -27,24 +42,40 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             {
                 throw new DomainException.CardBoxSetIdMismatchException();
             }
-
-            if (_cardBoxes.Any(c => c.Id == cardBox.Id))
+            
+            if (_cardBoxes.Count == 0)
             {
-                throw new DomainException.CardBoxAlreadyInSetException();
+                _cardBoxes.Add(cardBox);
             }
-
-            if (_cardBoxes.Any(c => c.Level == cardBox.Level))
+            else
             {
-                throw new DomainException.CardBoxLevelAlreadyExistException();
-            }
+                if (_cardBoxes.Any(c => c.Id == cardBox.Id))
+                {
+                    throw new DomainException.CardBoxAlreadyInSetException();
+                }
 
-            if (_cardBoxes.Any(c => c.Level < cardBox.Level
-                                    && c.RepeatDelay > cardBox.RepeatDelay))
-            {
-                throw new DomainException.DecreasingRepeatDelayException();
-            }
+                if (_cardBoxes.Any(c => c.Level == cardBox.Level))
+                {
+                    throw new DomainException.CardBoxLevelAlreadyExistException();
+                }
 
-            _cardBoxes.Add(cardBox);
+                if (_cardBoxes.Any(c => c.Level < cardBox.Level
+                                        && c.RevisionDelay > cardBox.RevisionDelay))
+                {
+                    throw new DomainException.DecreasingRevisionDelayException();
+                }
+
+                var minimalHigherLevelBox = _cardBoxes.FirstOrDefault(b => b.Level > cardBox.Level);
+                if (minimalHigherLevelBox == null)
+                {
+                    _cardBoxes.Add(cardBox);
+                }
+                else
+                {
+                    var index = _cardBoxes.IndexOf(minimalHigherLevelBox);
+                    _cardBoxes.Insert(index, cardBox);
+                }
+            }
         }
 
         public void RemoveCardBox(CardBox cardBox)

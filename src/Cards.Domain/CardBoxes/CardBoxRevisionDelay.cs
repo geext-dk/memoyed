@@ -2,13 +2,13 @@ using Memoyed.DomainFramework;
 
 namespace Memoyed.Cards.Domain.CardBoxes
 {
-    public class CardBoxRepeatDelay : OrderedDomainValue<int>
+    public class CardBoxRevisionDelay : OrderedDomainValue<int>
     {
-        public CardBoxRepeatDelay(int value)
+        public CardBoxRevisionDelay(int value)
         {
             if (value < 1 || value > 30)
             {
-                throw new DomainException.InvalidRepeatDelayException();
+                throw new DomainException.InvalidRevisionDelayException();
             }
 
             Value = value;
