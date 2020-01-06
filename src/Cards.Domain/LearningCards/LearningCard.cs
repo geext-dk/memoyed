@@ -1,3 +1,6 @@
+using System;
+using Memoyed.Cards.Domain.CardBoxes;
+
 namespace Memoyed.Cards.Domain.LearningCards
 {
     public class LearningCard
@@ -25,11 +28,22 @@ namespace Memoyed.Cards.Domain.LearningCards
         {
             Comment = comment;
         }
+
+        internal void ChangeCardBoxId(CardBoxId cardBoxId)
+        {
+            CardBoxChangedDate = DateTime.UtcNow;
+            CardBoxId = cardBoxId;
+        }
         
         /// <summary>
         /// Id of the learning card
         /// </summary>
         public LearningCardId Id { get; }
+        
+        /// <summary>
+        /// Id of the box that contains the card
+        /// </summary>
+        public CardBoxId? CardBoxId { get; private set; }
         
         /// <summary>
         /// Word of the card written on the language native to the user
@@ -45,5 +59,10 @@ namespace Memoyed.Cards.Domain.LearningCards
         /// A comment to the word
         /// </summary>
         public LearningCardComment Comment { get; private set; }
+        
+        /// <summary>
+        /// The time the card was last time moved to another card box in UTC
+        /// </summary>
+        public DateTime? CardBoxChangedDate { get; private set; }
     }
 }

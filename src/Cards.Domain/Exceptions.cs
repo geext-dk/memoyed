@@ -97,5 +97,12 @@ namespace Memoyed.Cards.Domain
             {
             }
         }
+
+        public class CardBoxIdMismatchException : DomainException
+        {
+            public CardBoxIdMismatchException() : base("The given card doesn't belong to the card box. ")
+            {
+            }
+        }
     }
 }

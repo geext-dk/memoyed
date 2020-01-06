@@ -1,5 +1,6 @@
 using System;
 using Memoyed.Cards.Domain;
+using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.LearningCards;
 using Xunit;
 
@@ -126,7 +127,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
         }
 
         [Fact]
-        public void LearningCard_CreateWithAnyArgs_PropertiesReturnPassedValues()
+        public void LearningCard_CreateWithAnyArgs_InitializedProperly()
         {
             // Arrange
             var id = new LearningCardId(Guid.NewGuid());
@@ -136,13 +137,16 @@ namespace Memoyed.UnitTests.CardsDomainTests
             LearningCard card;
             
             // Act
-            card = new LearningCard(id, nativeLanguageWord, targetLanguageWord, comment);
+            card = new LearningCard(id, nativeLanguageWord, 
+                targetLanguageWord, comment);
             
             // Assert
-            Assert.Equal(id.Value, card.Id.Value);
-            Assert.Equal(nativeLanguageWord.Value, card.NativeLanguageWord.Value);
-            Assert.Equal(targetLanguageWord.Value, card.TargetLanguageWord.Value);
-            Assert.Equal(comment.Value, card.Comment.Value);
+            Assert.Equal(id, card.Id);
+            Assert.Equal(nativeLanguageWord, card.NativeLanguageWord);
+            Assert.Equal(targetLanguageWord, card.TargetLanguageWord);
+            Assert.Equal(comment, card.Comment);
+            Assert.Null(card.CardBoxChangedDate);
+            Assert.Null(card.CardBoxId);
         }
 
         [Fact]
@@ -153,7 +157,8 @@ namespace Memoyed.UnitTests.CardsDomainTests
             var nativeLanguageWord = new LearningCardWord("Привет");
             var targetLanguageWord = new LearningCardWord("Hei");
             var comment = new LearningCardComment("testComment");
-            var card = new LearningCard(id, nativeLanguageWord, targetLanguageWord, comment);
+            var card = new LearningCard(id,
+                nativeLanguageWord, targetLanguageWord, comment);
 
             var newTargetLanguageWord = new LearningCardWord("Hello");
             
@@ -161,7 +166,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
             card.ChangeTargetLanguageWord(newTargetLanguageWord);
             
             // Assert
-            Assert.Equal(newTargetLanguageWord.Value, card.TargetLanguageWord.Value);
+            Assert.Equal(newTargetLanguageWord, card.TargetLanguageWord);
         }
         
         [Fact]
@@ -172,7 +177,8 @@ namespace Memoyed.UnitTests.CardsDomainTests
             var nativeLanguageWord = new LearningCardWord("Привет");
             var targetLanguageWord = new LearningCardWord("Hei");
             var comment = new LearningCardComment("testComment");
-            var card = new LearningCard(id, nativeLanguageWord, targetLanguageWord, comment);
+            var card = new LearningCard(id, nativeLanguageWord,
+                targetLanguageWord, comment);
 
             var newNativeLanguageWord = new LearningCardWord("Здравствуйте");
             
@@ -180,7 +186,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
             card.ChangeNativeLanguageWord(newNativeLanguageWord);
             
             // Assert
-            Assert.Equal(newNativeLanguageWord.Value, card.NativeLanguageWord.Value);
+            Assert.Equal(newNativeLanguageWord, card.NativeLanguageWord);
         }
         
         [Fact]
@@ -191,7 +197,8 @@ namespace Memoyed.UnitTests.CardsDomainTests
             var nativeLanguageWord = new LearningCardWord("Привет");
             var targetLanguageWord = new LearningCardWord("Hei");
             var comment = new LearningCardComment("testComment");
-            var card = new LearningCard(id, nativeLanguageWord, targetLanguageWord, comment);
+            var card = new LearningCard(id,
+                nativeLanguageWord, targetLanguageWord, comment);
 
             var newComment = new LearningCardComment("It is a greeting");
             
@@ -199,7 +206,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
             card.ChangeComment(newComment);
             
             // Assert
-            Assert.Equal(newComment.Value, card.Comment.Value);
+            Assert.Equal(newComment, card.Comment);
         }
     }
 }

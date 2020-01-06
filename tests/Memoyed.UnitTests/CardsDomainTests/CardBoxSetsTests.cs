@@ -338,9 +338,9 @@ namespace Memoyed.UnitTests.CardsDomainTests
             set.AddNewCard(learningCard);
 
             // Assert
-            Assert.True(set.CardBoxes.Any(b =>
+            Assert.Contains(set.CardBoxes, b =>
                 b.LearningCards.Any(c =>
-                    c.Id == learningCard.Id)));
+                    c.Id == learningCard.Id));
         }
 
         [Fact]
@@ -352,10 +352,12 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new CardBoxSetLanguage("Russian", testValidator),
                 new CardBoxSetLanguage("Norwegian", testValidator));
 
-            set.AddCardBox(new CardBox(new CardBoxId(Guid.NewGuid()),
-                set.Id, new CardBoxLevel(0), new CardBoxRepeatDelay(4)));
-            set.AddCardBox(new CardBox(new CardBoxId(Guid.NewGuid()),
-                set.Id, new CardBoxLevel(1), new CardBoxRepeatDelay(7)));
+            var firstCardBox = new CardBox(new CardBoxId(Guid.NewGuid()),
+                set.Id, new CardBoxLevel(0), new CardBoxRepeatDelay(4));
+            var secondCardBox = new CardBox(new CardBoxId(Guid.NewGuid()),
+                set.Id, new CardBoxLevel(1), new CardBoxRepeatDelay(7));
+            set.AddCardBox(firstCardBox);
+            set.AddCardBox(secondCardBox);
             
             var learningCard = new LearningCard(
                 new LearningCardId(Guid.NewGuid()),
@@ -367,8 +369,8 @@ namespace Memoyed.UnitTests.CardsDomainTests
             set.AddNewCard(learningCard);
 
             // Assert
-            var box = set.CardBoxes.Aggregate((prev, next) => prev.Level < next.Level ? prev : next);
-            Assert.True(box.LearningCards.Any(c => c.Id == learningCard.Id));
+            Assert.Contains(firstCardBox.LearningCards, c => c.Id == learningCard.Id);
+            Assert.Equal(firstCardBox.Id, learningCard.CardBoxId);
         }
 
         [Fact]
@@ -426,10 +428,12 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new CardBoxSetLanguage("Russian", testValidator),
                 new CardBoxSetLanguage("Norwegian", testValidator));
 
-            set.AddCardBox(new CardBox(new CardBoxId(Guid.NewGuid()),
-                set.Id, new CardBoxLevel(0), new CardBoxRepeatDelay(4)));
-            set.AddCardBox(new CardBox(new CardBoxId(Guid.NewGuid()),
-                set.Id, new CardBoxLevel(1), new CardBoxRepeatDelay(7)));
+            var firstCardBox = new CardBox(new CardBoxId(Guid.NewGuid()),
+                set.Id, new CardBoxLevel(0), new CardBoxRepeatDelay(4));
+            var secondCardBox = new CardBox(new CardBoxId(Guid.NewGuid()),
+                set.Id, new CardBoxLevel(1), new CardBoxRepeatDelay(7));
+            set.AddCardBox(firstCardBox);
+            set.AddCardBox(secondCardBox);
             
             var learningCard = new LearningCard(
                 new LearningCardId(Guid.NewGuid()),
@@ -438,13 +442,15 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardComment(null));
             
             set.AddNewCard(learningCard);
+            var firstCardBoxChangeDate = learningCard.CardBoxChangedDate;
             
             // Act
             set.PromoteCardToNextLevel(learningCard);
             
             // Assert
-            var box = set.CardBoxes.First(b => b.Level == 1);
-            Assert.True(box.LearningCards.Any(c => c.Id == learningCard.Id));
+            Assert.Contains(secondCardBox.LearningCards, c => c.Id == learningCard.Id);
+            Assert.Equal(secondCardBox.Id, learningCard.CardBoxId);
+            Assert.NotEqual(firstCardBoxChangeDate, learningCard.CardBoxChangedDate);
         }
 
         [Fact]
@@ -456,8 +462,9 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new CardBoxSetLanguage("Russian", testValidator),
                 new CardBoxSetLanguage("Norwegian", testValidator));
 
-            set.AddCardBox(new CardBox(new CardBoxId(Guid.NewGuid()),
-                set.Id, new CardBoxLevel(0), new CardBoxRepeatDelay(4)));
+            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()),
+                set.Id, new CardBoxLevel(0), new CardBoxRepeatDelay(4));
+            set.AddCardBox(cardBox);
             
             var learningCard = new LearningCard(
                 new LearningCardId(Guid.NewGuid()),
@@ -466,17 +473,19 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardComment(null));
             
             set.AddNewCard(learningCard);
+            var cardBoxChangeDate = learningCard.CardBoxChangedDate;
             
             // Act
             set.PromoteCardToNextLevel(learningCard);
             
             // Assert
-            var box = set.CardBoxes.First(b => b.Level == 0);
-            Assert.True(box.LearningCards.Any(c => c.Id == learningCard.Id));
+            Assert.Contains(cardBox.LearningCards, c => c.Id == learningCard.Id);
+            Assert.Equal(cardBoxChangeDate, learningCard.CardBoxChangedDate);
+            Assert.Equal(cardBox.Id, learningCard.CardBoxId);
         }
 
         [Fact]
-        public void CardBoxPromoteCardToNextLevel_NoSuchCardInSet_ThrowsLearningCardNotInSetExceptiion()
+        public void CardBoxPromoteCardToNextLevel_NoSuchCardInSet_ThrowsLearningCardNotInSetException()
         {
             // Arrange
             DomainChecks.ValidateLanguage testValidator = _ => true;
@@ -484,7 +493,8 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new CardBoxSetLanguage("Russian", testValidator),
                 new CardBoxSetLanguage("Norwegian", testValidator));
 
-            set.AddCardBox(new CardBox(new CardBoxId(Guid.NewGuid()),
+            var cardBoxId = new CardBoxId(Guid.NewGuid());
+            set.AddCardBox(new CardBox(cardBoxId,
                 set.Id, new CardBoxLevel(0), new CardBoxRepeatDelay(4)));
             
             var learningCard = new LearningCard(

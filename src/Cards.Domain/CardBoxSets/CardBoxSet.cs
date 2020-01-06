@@ -63,6 +63,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             }
 
             box = GetMinimalLevelBox();
+            card.ChangeCardBoxId(box.Id);
             box.AddCard(card);
         }
 
@@ -81,6 +82,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             }
             
             box.RemoveCard(card);
+            card.ChangeCardBoxId(nextLevelBox.Id);
             nextLevelBox.AddCard(card);
         }
 

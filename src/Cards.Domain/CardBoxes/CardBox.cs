@@ -24,13 +24,23 @@ namespace Memoyed.Cards.Domain.CardBoxes
         public CardBoxRepeatDelay RepeatDelay { get; }
         
         
-        public void AddCard(LearningCard card)
+        internal void AddCard(LearningCard card)
         {
+            if (card.CardBoxId != Id)
+            {
+                throw new DomainException.CardBoxIdMismatchException();
+            }
+            
             _learningCards.Add(card);
         }
 
-        public void RemoveCard(LearningCard card)
+        internal void RemoveCard(LearningCard card)
         {
+            if (card.CardBoxId != Id)
+            {
+                throw new DomainException.CardBoxIdMismatchException();
+            }
+
             _learningCards.Remove(card);
         }
 
