@@ -1,5 +1,7 @@
 using System;
 using Memoyed.Cards.Domain;
+using Memoyed.Cards.Domain.CardBoxes;
+using Memoyed.Cards.Domain.CardBoxSets;
 using Memoyed.Cards.Domain.LearningCards;
 using Xunit;
 
@@ -184,6 +186,116 @@ namespace Memoyed.UnitTests.CardsDomainTests
             
             // Assert
             Assert.Equal(newComment, card.Comment);
+        }
+
+        [Fact]
+        public void LearningCardCreateSnapshot_CalledOnAnyObject_ReturnsSnapshotOfTheInstance()
+        {
+            // Arrange
+            var learningCard = new LearningCard(
+                new LearningCardId(Guid.NewGuid()),
+                new LearningCardWord("Привет"),
+                new LearningCardWord("Hei"),
+                new LearningCardComment("Test"));
+            
+            // Let's change cardBoxSetId of the card
+            var box = new CardBox(new CardBoxId(Guid.NewGuid()),
+                new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxLevel(0),
+                new CardBoxRevisionDelay(7));
+            
+            var set = new CardBoxSet(
+                box.SetId,
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Norwegian", _ => true));
+
+            set.AddCardBox(box);
+            set.AddNewCard(learningCard);
+            
+            // Act
+            var snapshot = learningCard.CreateSnapshot();
+            
+            // Assert
+            Assert.Equal(learningCard.Id.Value, snapshot.Id);
+            Assert.Equal(learningCard.Comment.Value, snapshot.Comment);
+            Assert.Equal(learningCard.CardBoxId.Value, snapshot.CardBoxId);
+            Assert.Equal(learningCard.NativeLanguageWord.Value, snapshot.NativeLanguageWord);
+            Assert.Equal(learningCard.TargetLanguageWord.Value, snapshot.TargetLanguageWord);
+            Assert.Equal(learningCard.CardBoxChangedDate, snapshot.CardBoxChangedDate);
+        }
+        
+        private class TestSnapshot : ILearningCardSnapshot
+        {
+            public Guid Id { get; set; }
+            public Guid? CardBoxId { get; set; }
+            public string NativeLanguageWord { get; set; }
+            public string TargetLanguageWord { get; set; }
+            public string Comment { get; set; }
+            public DateTime? CardBoxChangedDate { get; set; }
+        }
+
+        [Fact]
+        public void LearningCardFromSnapshot_ValidSnapshotPassed_ReturnsRestoredObject()
+        {
+            // Arrange
+            var snapshot = new TestSnapshot
+            {
+                Id = Guid.NewGuid(),
+                CardBoxId = Guid.NewGuid(),
+                NativeLanguageWord = "Привет",
+                TargetLanguageWord = "Hei",
+                Comment = "Test",
+                CardBoxChangedDate = DateTime.UtcNow
+            };
+            
+            // Act
+            var learningCard = LearningCard.FromSnapshot(snapshot);
+            
+            // Assert
+            Assert.Equal(snapshot.Id, learningCard.Id.Value);
+            Assert.Equal(snapshot.CardBoxId, learningCard.CardBoxId.Value);
+            Assert.Equal(snapshot.NativeLanguageWord, learningCard.NativeLanguageWord.Value);
+            Assert.Equal(snapshot.TargetLanguageWord, learningCard.TargetLanguageWord.Value);
+            Assert.Equal(snapshot.Comment, learningCard.Comment.Value);
+            Assert.Equal(snapshot.CardBoxChangedDate, learningCard.CardBoxChangedDate);
+        }
+
+        [Fact]
+        public void LearningCardFromSnapshot_JustCreatedSnapshotPassed_ReturnsObjectEqualToOriginal()
+        {
+            // Arrange
+            var learningCard = new LearningCard(
+                new LearningCardId(Guid.NewGuid()),
+                new LearningCardWord("Привет"),
+                new LearningCardWord("Hei"),
+                new LearningCardComment("Test"));
+            
+            // Let's change cardBoxSetId of the card
+            var box = new CardBox(new CardBoxId(Guid.NewGuid()),
+                new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxLevel(0),
+                new CardBoxRevisionDelay(7));
+            
+            var set = new CardBoxSet(
+                box.SetId,
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Norwegian", _ => true));
+
+            set.AddCardBox(box);
+            set.AddNewCard(learningCard);
+
+            var snapshot = learningCard.CreateSnapshot();
+            
+            // Act
+            var fromSnapshot = LearningCard.FromSnapshot(snapshot);
+            
+            // Assert
+            Assert.Equal(learningCard.Id, fromSnapshot.Id);
+            Assert.Equal(learningCard.CardBoxId, fromSnapshot.CardBoxId);
+            Assert.Equal(learningCard.NativeLanguageWord, fromSnapshot.NativeLanguageWord);
+            Assert.Equal(learningCard.TargetLanguageWord, fromSnapshot.TargetLanguageWord);
+            Assert.Equal(learningCard.Comment, fromSnapshot.Comment);
+            Assert.Equal(learningCard.CardBoxChangedDate, fromSnapshot.CardBoxChangedDate);
         }
     }
 }

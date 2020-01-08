@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Memoyed.Cards.Domain.CardBoxSets;
 using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.DomainFramework;
 
 namespace Memoyed.Cards.Domain.CardBoxes
 {
-    public class CardBox
+    public class CardBox : ISnapshotable<ICardBoxSnapshot>
     {
         private readonly List<LearningCard> _learningCards = new List<LearningCard>();
         
@@ -23,7 +25,18 @@ namespace Memoyed.Cards.Domain.CardBoxes
             Level = level;
             RevisionDelay = revisionDelay;
         }
-        
+
+        private CardBox(ICardBoxSnapshot snapshot) : this(
+            new CardBoxId(snapshot.Id),
+            new CardBoxSetId(snapshot.SetId),
+            new CardBoxLevel(snapshot.Level),
+            new CardBoxRevisionDelay(snapshot.RevisionDelay))
+        {
+            _learningCards = snapshot.LearningCards
+                .Select(LearningCard.FromSnapshot)
+                .ToList();
+        }
+
         /// <summary>
         /// Enumerable of the learning cards contained in the card box
         /// </summary>
@@ -68,6 +81,25 @@ namespace Memoyed.Cards.Domain.CardBoxes
             }
 
             _learningCards.Remove(card);
+        }
+
+        public ICardBoxSnapshot CreateSnapshot() => new Snapshot(this);
+        public static CardBox FromSnapshot(ICardBoxSnapshot snapshot) => new CardBox(snapshot);
+
+        private class Snapshot : ICardBoxSnapshot
+        {
+            private readonly CardBox _cardBox;
+            public Snapshot(CardBox cardBox)
+            {
+                _cardBox = cardBox;
+            }
+
+            public Guid Id => _cardBox.Id.Value;
+            public Guid SetId => _cardBox.SetId.Value;
+            public int Level => _cardBox.Level.Value;
+            public int RevisionDelay => _cardBox.RevisionDelay.Value;
+            public IEnumerable<ILearningCardSnapshot> LearningCards => _cardBox.LearningCards
+                .Select(c => c.CreateSnapshot());
         }
     }
 }

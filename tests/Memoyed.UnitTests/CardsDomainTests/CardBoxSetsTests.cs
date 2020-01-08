@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Memoyed.Cards.Domain;
 using Memoyed.Cards.Domain.CardBoxes;
@@ -518,6 +519,163 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 b=> Assert.Equal(firstCardBox.Id, b.Id),
                 b => Assert.Equal(secondCardBox.Id, b.Id),
                 b => Assert.Equal(thirdCardBox.Id, b.Id));
+        }
+
+        [Fact]
+        public void CardBoxSetCreateSnapshot_CalledOnAnyObject_ReturnsSnapshotOfTheInstance()
+        {
+            // Arrange
+            var set = new CardBoxSet(
+                new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Norwegian", _ => true));
+            
+            var box = new CardBox(
+                new CardBoxId(Guid.NewGuid()),
+                set.Id,
+                new CardBoxLevel(0),
+                new CardBoxRevisionDelay(7));
+            
+            var card = new LearningCard(
+                new LearningCardId(Guid.NewGuid()),
+                new LearningCardWord("Привет"),
+                new LearningCardWord("Hei"),
+                new LearningCardComment(null));
+
+            set.AddCardBox(box);
+            set.AddNewCard(card);
+            
+            // Act
+            var snapshot = set.CreateSnapshot();
+            
+            // Assert
+            Assert.Equal(set.Id.Value, snapshot.Id);
+            Assert.Equal(set.NativeLanguage.Value, snapshot.NativeLanguage);
+            Assert.Equal(set.TargetLanguage.Value, snapshot.TargetLanguage);
+            Assert.Collection(set.CardBoxes,
+                b =>
+                {
+                    Assert.Equal(box.Id, b.Id);
+                    Assert.Collection(box.LearningCards,
+                        c => Assert.Equal(card.Id, c.Id));
+                });
+        }
+
+        private class TestSnapshot : ICardBoxSetSnapshot
+        {
+            public Guid Id { get; set; }
+            public string NativeLanguage { get; set; }
+            public string TargetLanguage { get; set; }
+            public IEnumerable<ICardBoxSnapshot> CardBoxes { get; set; }
+        }
+
+        private class TestBoxSnapshot : ICardBoxSnapshot
+        {
+            public Guid Id { get; set; }
+            public Guid SetId { get; set; }
+            public int Level { get; set; }
+            public int RevisionDelay { get; set; }
+            public IEnumerable<ILearningCardSnapshot> LearningCards { get; set; }
+        }
+        
+        private class TestCardSnapshot : ILearningCardSnapshot
+        {
+            public Guid Id { get; set; }
+            public Guid? CardBoxId { get; set; }
+            public string NativeLanguageWord { get; set; }
+            public string TargetLanguageWord { get; set; }
+            public string Comment { get; set; }
+            public DateTime? CardBoxChangedDate { get; set; }
+        }
+
+        [Fact]
+        public void CardBoxSetFromSnapshot_ValidObjectPassed_ReturnsRestoredObject()
+        {
+            // Arrange
+            var cardSnapshot = new TestCardSnapshot
+            {
+                Comment = null,
+                Id = Guid.NewGuid(),
+                CardBoxId = null,
+                NativeLanguageWord = "Привет",
+                TargetLanguageWord = "Hei",
+                CardBoxChangedDate = null
+            };
+            
+            var boxSnapshot = new TestBoxSnapshot
+            {
+                Id = Guid.NewGuid(),
+                Level = 0,
+                RevisionDelay = 7,
+                SetId = Guid.NewGuid(),
+                LearningCards = new List<TestCardSnapshot>
+                {
+                    cardSnapshot
+                }
+            };
+
+            var snapshot = new TestSnapshot
+            {
+                Id = boxSnapshot.SetId,
+                NativeLanguage = "Russian",
+                TargetLanguage = "Norwegian",
+                CardBoxes = new List<TestBoxSnapshot>
+                {
+                    boxSnapshot
+                }
+            };
+            
+            // Act
+            var set = CardBoxSet.FromSnapshot(snapshot);
+            
+            // Assert
+            Assert.Equal(snapshot.Id, set.Id.Value);
+            Assert.Equal(snapshot.NativeLanguage, set.NativeLanguage.Value);
+            Assert.Equal(snapshot.TargetLanguage, set.TargetLanguage.Value);
+            Assert.Collection(set.CardBoxes,
+                b =>
+                {
+                    Assert.Equal(boxSnapshot.Id, b.Id.Value);
+                    Assert.Collection(b.LearningCards, c =>
+                            Assert.Equal(cardSnapshot.Id, c.Id.Value));
+                });
+        }
+
+        [Fact]
+        public void CardBoxSetFromSnapshot_JustCreatedSnapshotPassed_ReturnsObjectEqualToOriginal()
+        {
+            // Arrange
+            var set = new CardBoxSet(
+                new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Norwegian", _ => true));
+            
+            var box = new CardBox(
+                new CardBoxId(Guid.NewGuid()),
+                set.Id,
+                new CardBoxLevel(0),
+                new CardBoxRevisionDelay(7));
+            
+            var card = new LearningCard(
+                new LearningCardId(Guid.NewGuid()),
+                new LearningCardWord("Привет"),
+                new LearningCardWord("Hei"),
+                new LearningCardComment(null));
+
+            set.AddCardBox(box);
+            set.AddNewCard(card);
+
+            var snapshot = set.CreateSnapshot();
+            
+            // Act
+            var fromSnapshot = CardBoxSet.FromSnapshot(snapshot);
+            
+            // Assert
+            Assert.Equal(set.Id, fromSnapshot.Id);
+            Assert.Equal(set.NativeLanguage, fromSnapshot.NativeLanguage);
+            Assert.Equal(set.TargetLanguage, fromSnapshot.TargetLanguage);
+            Assert.Collection(set.CardBoxes,
+                b => Assert.Equal(box.Id, b.Id));
         }
     }
 }

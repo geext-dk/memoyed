@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.DomainFramework;
 
 namespace Memoyed.Cards.Domain.CardBoxSets
 {
-    public class CardBoxSet
+    public class CardBoxSet : ISnapshotable<ICardBoxSetSnapshot>
     {
         private readonly List<CardBox> _cardBoxes = new List<CardBox>();
         
@@ -21,6 +22,16 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             Id = id;
             NativeLanguage = nativeLanguage;
             TargetLanguage = targetLanguage;
+        }
+
+        private CardBoxSet(ICardBoxSetSnapshot snapshot) : this(
+            new CardBoxSetId(snapshot.Id),
+            new CardBoxSetLanguage(snapshot.NativeLanguage, _ => true),
+            new CardBoxSetLanguage(snapshot.TargetLanguage, _ => true))
+        {
+            _cardBoxes = snapshot.CardBoxes
+                .Select(CardBox.FromSnapshot)
+                .ToList();
         }
 
         /// <summary>
@@ -47,14 +58,14 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// Adds a card box to the set
         /// </summary>
         /// <param name="cardBox">A card box to add</param>
-        /// <exception cref="CardBoxSetIdMismatchException">Throws if the card box's set id doesn't match
-        /// with the set's id</exception>
-        /// <exception cref="CardBoxAlreadyInSetException">Throws if a card box with the same id is already
-        /// in the set</exception>
-        /// <exception cref="CardBoxLevelAlreadyExistException">Throws if a card box with the same level is
+        /// <exception cref="DomainException.CardBoxSetIdMismatchException">Throws if the card box's set id doesn't
+        /// match with the set's id</exception>
+        /// <exception cref="DomainException.CardBoxAlreadyInSetException">Throws if a card box with the same id is
         /// already in the set</exception>
-        /// <exception cref="DecreasingRevisionDelayException">Throws if there exists a card box in the set
-        /// with level lesser than the added card box but its revision delay is greater than the added card box has
+        /// <exception cref="DomainException.CardBoxLevelAlreadyExistException">Throws if a card box with the same level
+        /// is already in the set</exception>
+        /// <exception cref="DomainException.DecreasingRevisionDelayException">Throws if there exists a card box in the
+        /// set with level lesser than the added card box but its revision delay is greater than the added card box has
         /// </exception>
         public void AddCardBox(CardBox cardBox)
         {
@@ -111,8 +122,8 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// Add new card to the set. It is placed in a box with a lowest level.
         /// </summary>
         /// <param name="card">A learning card to add</param>
-        /// <exception cref="LearningCardAlreadyInSetException">Throws if a card with the same id already exists
-        /// in the set</exception>
+        /// <exception cref="DomainException.LearningCardAlreadyInSetException">Throws if a card with the same id
+        /// already exists in the set</exception>
         public void AddNewCard(LearningCard card)
         {
             EnsureAtLeastOneBoxExists();
@@ -133,8 +144,8 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// among boxes with greater level than the card is contained in before the operation.
         /// </summary>
         /// <param name="card">A card to promote</param>
-        /// <exception cref="LearningCardNotInSetException">Throws if the given card doesn't exist in the set
-        /// </exception>
+        /// <exception cref="DomainException.LearningCardNotInSetException">Throws if the given card doesn't exist in
+        /// the set </exception>
         public void PromoteCardToNextLevel(LearningCard card)
         {
             var box = GetBoxContainingCard(card);
@@ -183,6 +194,25 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             {
                 throw new DomainException.NoBoxesInSetException();
             }
+        }
+
+        public ICardBoxSetSnapshot CreateSnapshot() => new Snapshot(this);
+
+        public static CardBoxSet FromSnapshot(ICardBoxSetSnapshot snapshot) => new CardBoxSet(snapshot);
+
+        private class Snapshot : ICardBoxSetSnapshot
+        {
+            private readonly CardBoxSet _set;
+            public Snapshot(CardBoxSet set)
+            {
+                _set = set;
+            }
+
+            public Guid Id => _set.Id.Value;
+            public string NativeLanguage => _set.NativeLanguage.Value;
+            public string TargetLanguage => _set.TargetLanguage.Value;
+            public IEnumerable<ICardBoxSnapshot> CardBoxes => _set.CardBoxes
+                .Select(c => c.CreateSnapshot());
         }
     }
 }
