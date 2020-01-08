@@ -13,27 +13,6 @@ namespace Memoyed.Cards.Domain.LearningCards
             TargetLanguageWord = targetLanguageWord;
             Comment = comment;
         }
-
-        public void ChangeNativeLanguageWord(LearningCardWord nativeLanguageWord)
-        {
-            NativeLanguageWord = nativeLanguageWord;
-        }
-
-        public void ChangeTargetLanguageWord(LearningCardWord targetLanguageWord)
-        {
-            TargetLanguageWord = targetLanguageWord;
-        }
-
-        public void ChangeComment(LearningCardComment comment)
-        {
-            Comment = comment;
-        }
-
-        internal void ChangeCardBoxId(CardBoxId cardBoxId)
-        {
-            CardBoxChangedDate = DateTime.UtcNow;
-            CardBoxId = cardBoxId;
-        }
         
         /// <summary>
         /// Id of the learning card
@@ -64,5 +43,38 @@ namespace Memoyed.Cards.Domain.LearningCards
         /// The time the card was last time moved to another card box in UTC
         /// </summary>
         public DateTime? CardBoxChangedDate { get; private set; }
+
+        /// <summary>
+        /// Changes the native language word
+        /// </summary>
+        /// <param name="nativeLanguageWord">A new word in a native language</param>
+        public void ChangeNativeLanguageWord(LearningCardWord nativeLanguageWord)
+        {
+            NativeLanguageWord = nativeLanguageWord;
+        }
+
+        /// <summary>
+        /// Change the target language word
+        /// </summary>
+        /// <param name="targetLanguageWord">A new word in a target language</param>
+        public void ChangeTargetLanguageWord(LearningCardWord targetLanguageWord)
+        {
+            TargetLanguageWord = targetLanguageWord;
+        }
+
+        /// <summary>
+        /// Change the comment
+        /// </summary>
+        /// <param name="comment">A new comment</param>
+        public void ChangeComment(LearningCardComment comment)
+        {
+            Comment = comment;
+        }
+
+        internal void ChangeCardBoxId(CardBoxId cardBoxId)
+        {
+            CardBoxChangedDate = DateTime.UtcNow;
+            CardBoxId = cardBoxId;
+        }
     }
 }

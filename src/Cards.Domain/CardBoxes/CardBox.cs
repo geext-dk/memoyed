@@ -7,6 +7,15 @@ namespace Memoyed.Cards.Domain.CardBoxes
 {
     public class CardBox
     {
+        private readonly List<LearningCard> _learningCards = new List<LearningCard>();
+        
+        /// <summary>
+        /// Card Box constructor, used for creating new card boxes
+        /// </summary>
+        /// <param name="id">Id of the card box</param>
+        /// <param name="setId">Id of the card box set the card box belongs to</param>
+        /// <param name="level">Level of the card box</param>
+        /// <param name="revisionDelay">Days until revision of cards in the card box</param>
         public CardBox(CardBoxId id, CardBoxSetId setId, CardBoxLevel level, CardBoxRevisionDelay revisionDelay)
         {
             Id = id;
@@ -15,7 +24,9 @@ namespace Memoyed.Cards.Domain.CardBoxes
             RevisionDelay = revisionDelay;
         }
         
-        private readonly List<LearningCard> _learningCards = new List<LearningCard>();
+        /// <summary>
+        /// Enumerable of the learning cards contained in the card box
+        /// </summary>
         public IEnumerable<LearningCard> LearningCards => _learningCards.AsEnumerable();
         
         /// <summary>
@@ -39,7 +50,6 @@ namespace Memoyed.Cards.Domain.CardBoxes
         /// </summary>
         public CardBoxRevisionDelay RevisionDelay { get; }
         
-        
         internal void AddCard(LearningCard card)
         {
             if (card.CardBoxId != Id)
@@ -59,6 +69,5 @@ namespace Memoyed.Cards.Domain.CardBoxes
 
             _learningCards.Remove(card);
         }
-
     }
 }
