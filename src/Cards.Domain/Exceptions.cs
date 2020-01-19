@@ -104,5 +104,20 @@ namespace Memoyed.Cards.Domain
             {
             }
         }
+
+        public class RevisionSetIdMismatchException : DomainException
+        {
+            public RevisionSetIdMismatchException() : base("The set isn't linked to the revision")
+            {
+            }
+        }
+
+        public class PromoteFromLevelMismatchException : DomainException
+        {
+            public PromoteFromLevelMismatchException() : base("The box the card is contained in doesn't" +
+                                                              " match with the level the card must be promoted from")
+            {
+            }
+        }
     }
 }

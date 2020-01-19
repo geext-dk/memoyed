@@ -382,7 +382,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
             var firstCardBoxChangeDate = learningCard.CardBoxChangedDate;
             
             // Act
-            set.PromoteCardToNextLevel(learningCard);
+            set.PromoteCard(learningCard.Id);
             
             // Assert
             Assert.Contains(secondCardBox.LearningCards, c => c.Id == learningCard.Id);
@@ -413,7 +413,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
             var cardBoxChangeDate = learningCard.CardBoxChangedDate;
             
             // Act
-            set.PromoteCardToNextLevel(learningCard);
+            set.PromoteCard(learningCard.Id);
             
             // Assert
             Assert.Contains(cardBox.LearningCards, c => c.Id == learningCard.Id);
@@ -442,7 +442,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
             
             // Act && Assert
             Assert.Throws<DomainException.LearningCardNotInSetException>(
-                () => set.PromoteCardToNextLevel(learningCard));
+                () => set.PromoteCard(learningCard.Id));
         }
 
         [Fact]

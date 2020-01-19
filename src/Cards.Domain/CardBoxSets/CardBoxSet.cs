@@ -31,6 +31,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         {
             _cardBoxes = snapshot.CardBoxes
                 .Select(CardBox.FromSnapshot)
+                .OrderBy(c => c.Level)
                 .ToList();
         }
 
@@ -128,7 +129,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         {
             EnsureAtLeastOneBoxExists();
             
-            var box = GetBoxContainingCard(card);
+            var box = GetBoxContainingCard(card.Id);
             if (box != null)
             {
                 throw new DomainException.LearningCardAlreadyInSetException();
@@ -143,49 +144,69 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// Moves the card to a box with a greater level. The card will be placed in a box which level is minimal
         /// among boxes with greater level than the card is contained in before the operation.
         /// </summary>
-        /// <param name="card">A card to promote</param>
+        /// <param name="cardId">An Id of the card to promote</param>
         /// <exception cref="DomainException.LearningCardNotInSetException">Throws if the given card doesn't exist in
         /// the set </exception>
-        public void PromoteCardToNextLevel(LearningCard card)
+        public void PromoteCard(LearningCardId cardId)
         {
-            var box = GetBoxContainingCard(card);
+            var box = GetBoxContainingCard(cardId);
             if (box == null)
             {
                 throw new DomainException.LearningCardNotInSetException();
             }
 
-            var nextLevelBox = GetNextLevelBox(box);
+            var nextLevelBox = GetNextLevelBox(box.Level);
             if (nextLevelBox == null)
             {
                 return;
             }
-            
+
+            var card = box.LearningCards.Single(c => c.Id == cardId);
             box.RemoveCard(card);
             card.ChangeCardBoxId(nextLevelBox.Id);
             nextLevelBox.AddCard(card);
         }
 
-        private CardBox GetBoxContainingCard(LearningCard card)
+        public void DemoteCard(LearningCardId cardId)
         {
-            return _cardBoxes.FirstOrDefault(b => b.LearningCards.Any(c => c.Id == card.Id));
+            var box = GetBoxContainingCard(cardId);
+            if (box == null)
+            {
+                throw new DomainException.LearningCardNotInSetException();
+            }
+
+            var prevLevelBox = GetPreviousLevelBox(box.Level);
+            if (prevLevelBox == null)
+            {
+                return;
+            }
+
+            var card = box.LearningCards.Single(c => c.Id == cardId);
+            box.RemoveCard(card);
+            card.ChangeCardBoxId(prevLevelBox.Id);
+            prevLevelBox.AddCard(card);
+        }
+
+        private CardBox GetBoxContainingCard(LearningCardId cardId)
+        {
+            return _cardBoxes.FirstOrDefault(b => b.LearningCards.Any(c => c.Id == cardId));
         }
 
         private CardBox GetMinimalLevelBox() => _cardBoxes.Aggregate((prev, next) =>
             prev.Level < next.Level ? prev : next);
 
-        private CardBox GetNextLevelBox(CardBox box)
+        private CardBox GetNextLevelBox(CardBoxLevel level)
         {
-            var nextLevelBoxes = _cardBoxes
-                .Where(b => b.Level > box.Level)
-                .ToList();
+            var nextLevelBoxIndex = _cardBoxes.FindIndex(b => b.Level > level);
 
-            if (nextLevelBoxes.Count == 0)
-            {
-                return null;
-            }
-            
-            return nextLevelBoxes
-                .Aggregate((prev, next) => prev.Level < next.Level ? prev : next);
+            return nextLevelBoxIndex != -1 ? _cardBoxes[nextLevelBoxIndex] : null;
+        }
+
+        private CardBox GetPreviousLevelBox(CardBoxLevel level)
+        {
+            var previousLevelBoxIndex = _cardBoxes.FindLastIndex(b => b.Level < level);
+
+            return previousLevelBoxIndex != -1 ? _cardBoxes[previousLevelBoxIndex] : null;
         }
 
         private void EnsureAtLeastOneBoxExists()
