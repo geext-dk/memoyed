@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Memoyed.Cards.Domain;
 using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.CardBoxSets;
 using Memoyed.Cards.Domain.LearningCards;
@@ -96,6 +97,24 @@ namespace Memoyed.UnitTests.CardsDomainTests
             {
                 Assert.Equal(sc.LearningCardId, card2.Id);
             });
+        }
+        
+        [Fact]
+        public void RevisionSessionConstructor_PassCardBoxIdNotFromSet_ThrowsCardBoxNotFoundInSetException()
+        {
+            // Arrange
+            var cardBoxSet = new CardBoxSet(new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Norwegian", _ => true));
+
+            var cardBox1 = new CardBox(
+                new CardBoxId(Guid.NewGuid()),
+                cardBoxSet.Id, new CardBoxLevel(1), new CardBoxRevisionDelay(2));
+            
+            // Act && Assert
+            Assert.Throws<DomainException.CardBoxNotFoundInSetException>(() =>
+                new RevisionSession(new RevisionSessionId(Guid.NewGuid()),
+                cardBoxSet, cardBox1.Id, new UtcTime(new DateTime(2020, 1, 10))));
         }
     }
 }
