@@ -12,6 +12,7 @@ namespace Memoyed.Cards.Domain.RevisionSessions
     public class RevisionSession
     {
         private readonly List<SessionCard> _sessionCards;
+        private readonly CardBoxSet _set;
 
         /// <summary>
         /// Creates a revision session with cards from the cardBox specified in the arguments
@@ -21,15 +22,9 @@ namespace Memoyed.Cards.Domain.RevisionSessions
         /// <param name="cardBoxId">ID of the card box for which the session is created</param>
         /// <param name="now">Current time in UTC</param>
         public RevisionSession(RevisionSessionId id, CardBoxSet cardBoxSet, CardBoxId cardBoxId, UtcTime now)
+            : this(id, cardBoxSet, GetSessionCardsFromSet(id, now, cardBoxSet, cardBoxId))
         {
-            Id = id;
-            _sessionCards = GetSessionCardsFromSet(now, cardBoxSet, cardBoxId);
-            if (_sessionCards.Count == 0)
-            {
-                throw new DomainException.NoCardsForRevisionException();
-            }
         }
-
 
         /// <summary>
         /// Creates a revision session with cards from the entire set (which are ready for revision)
@@ -38,29 +33,84 @@ namespace Memoyed.Cards.Domain.RevisionSessions
         /// <param name="cardBoxSet">Set of card boxes for which the session is created</param>
         /// <param name="now">Current time in UTC</param>
         public RevisionSession(RevisionSessionId id, CardBoxSet cardBoxSet, UtcTime now)
+            : this(id, cardBoxSet, GetSessionCardsFromSet(id, now, cardBoxSet))
         {
+        }
+
+        private RevisionSession(RevisionSessionId id, CardBoxSet cardBoxSet, List<SessionCard> sessionCards)
+        {
+            if (sessionCards.Count == 0)
+            {
+                throw new DomainException.NoCardsForRevisionException();
+            }
+            
             Id = id;
-            _sessionCards = GetSessionCardsFromSet(now, cardBoxSet);
+            _set = cardBoxSet;
+            _sessionCards = sessionCards;
         }
 
         public RevisionSessionId Id { get; }
         public IEnumerable<SessionCard> SessionCards => _sessionCards;
+        public RevisionSessionStatus Status { get; private set; }
 
-        public void CardAnswered(LearningCardId cardId, AnswerType targetLanguage, string word)
+        public void CardAnswered(LearningCardId cardId, AnswerType answerType, string word)
         {
             var sessionCard = _sessionCards.FirstOrDefault(sc => sc.LearningCardId == cardId);
             if (sessionCard == null)
             {
                 throw new DomainException.SessionCardNotFoundException();
             }
+
+            var correctWord = answerType switch
+            {
+                AnswerType.NativeLanguage => sessionCard.NativeLanguageWord,
+                AnswerType.TargetLanguage => sessionCard.TargetLanguageWord,
+                _ => throw new ArgumentException("Unknown AnswerType")
+            };
+            
+            // TODO: Maybe do a more light check
+            sessionCard.Status = correctWord != word
+                ? SessionCardStatus.AnsweredWrong
+                : SessionCardStatus.AnsweredCorrectly;
         }
 
-        public void CompleteSession()
+        public void CompleteSession(UtcTime? now = null)
         {
-            throw new System.NotImplementedException();
+            if (Status == RevisionSessionStatus.Completed)
+            {
+                throw new DomainException.SessionAlreadyCompletedException();
+            }
+            var cardIdsByStatus = _sessionCards
+                .GroupBy(sc => sc.Status)
+                .ToDictionary(k => k.Key,
+                    v => v.Select(c => c.LearningCardId)
+                    .ToList());
+            if (cardIdsByStatus.ContainsKey(SessionCardStatus.NotAnswered))
+            {
+                throw new DomainException.NotAllCardsAnsweredException();
+            }
+
+            if (cardIdsByStatus.TryGetValue(SessionCardStatus.AnsweredCorrectly, out var cardsToPromote))
+            {
+                foreach (var card in cardsToPromote)
+                {
+                    _set.PromoteCard(card, now);
+                }
+            }
+
+            if (cardIdsByStatus.TryGetValue(SessionCardStatus.AnsweredWrong, out var cardsToDemote))
+            {
+                foreach (var card in cardsToDemote)
+                {
+                    _set.DemoteCard(card, now);
+                }
+            }
+
+            Status = RevisionSessionStatus.Completed;
         }
 
-        private List<SessionCard> GetSessionCardsFromSet(DateTime now, CardBoxSet set, CardBoxId boxId = null)
+        private static List<SessionCard> GetSessionCardsFromSet(RevisionSessionId sessionId, DateTime now,
+            CardBoxSet set, CardBoxId boxId = null)
         {
             var cardsForRevision = new List<LearningCard>();
             var boxes = set.CardBoxes;
@@ -83,7 +133,7 @@ namespace Memoyed.Cards.Domain.RevisionSessions
             }
 
             return cardsForRevision
-                .Select(c => new SessionCard(Id, c))
+                .Select(c => new SessionCard(sessionId, c))
                 .ToList();
         }
     }

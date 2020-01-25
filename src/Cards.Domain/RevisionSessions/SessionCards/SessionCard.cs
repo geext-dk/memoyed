@@ -15,7 +15,7 @@ namespace Memoyed.Cards.Domain.RevisionSessions.SessionCards
         
         public RevisionSessionId SessionId { get; }
         public LearningCardId LearningCardId { get; }
-        public SessionCardStatus Status { get; }
+        public SessionCardStatus Status { get; internal set; }
         public LearningCardWord NativeLanguageWord { get; }
         public LearningCardWord TargetLanguageWord { get; }
     }

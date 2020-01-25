@@ -148,5 +148,20 @@ namespace Memoyed.Cards.Domain
             {
             }
         }
+
+        public class NotAllCardsAnsweredException : DomainException
+        {
+            public NotAllCardsAnsweredException() : base("All card must be answered to complete a session")
+            {
+            }
+        }
+
+        public class SessionAlreadyCompletedException : DomainException
+        {
+            public SessionAlreadyCompletedException() : base("Couldn't complete the session because it " +
+                                                             "is already completed")
+            {
+            }
+        }
     }
 }

@@ -150,7 +150,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// <param name="now">current Time</param>
         /// <exception cref="DomainException.LearningCardNotInSetException">Throws if the given card doesn't exist in
         /// the set </exception>
-        public void PromoteCard(LearningCardId cardId, UtcTime now)
+        public void PromoteCard(LearningCardId cardId, UtcTime? now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null)
@@ -166,11 +166,11 @@ namespace Memoyed.Cards.Domain.CardBoxSets
 
             var card = box.LearningCards.Single(c => c.Id == cardId);
             box.RemoveCard(card);
-            card.ChangeCardBoxId(nextLevelBox.Id, now);
+            card.ChangeCardBoxId(nextLevelBox.Id, now ?? new UtcTime(DateTime.UtcNow));
             nextLevelBox.AddCard(card);
         }
 
-        public void DemoteCard(LearningCardId cardId)
+        public void DemoteCard(LearningCardId cardId, UtcTime now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null)
@@ -186,7 +186,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
 
             var card = box.LearningCards.Single(c => c.Id == cardId);
             box.RemoveCard(card);
-            card.ChangeCardBoxId(prevLevelBox.Id, new UtcTime(DateTime.UtcNow));
+            card.ChangeCardBoxId(prevLevelBox.Id, now ?? new UtcTime(DateTime.UtcNow));
             prevLevelBox.AddCard(card);
         }
 
