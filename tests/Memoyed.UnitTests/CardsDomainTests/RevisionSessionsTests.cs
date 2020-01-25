@@ -116,5 +116,32 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new RevisionSession(new RevisionSessionId(Guid.NewGuid()),
                 cardBoxSet, cardBox1.Id, new UtcTime(new DateTime(2020, 1, 10))));
         }
+        
+        [Fact]
+        public void RevisionSessionConstructor_NoSessionCardsCreated_ThrowsNoCardsForRevisionException()
+        {
+            // Arrange
+            var cardBoxSet = new CardBoxSet(new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Norwegian", _ => true));
+
+            var cardBox = new CardBox(
+                new CardBoxId(Guid.NewGuid()),
+                cardBoxSet.Id, new CardBoxLevel(1), new CardBoxRevisionDelay(2));
+
+            cardBoxSet.AddCardBox(cardBox);
+            
+            var card = new LearningCard(new LearningCardId(Guid.NewGuid()),
+                new LearningCardWord("Привет"), 
+                new LearningCardWord("Hei"),
+                null);
+
+            cardBoxSet.AddNewCard(card, new UtcTime(new DateTime(2020, 1, 1)));
+            
+            // Act
+            Assert.Throws<DomainException.NoCardsForRevisionException>(() => 
+                new RevisionSession(new RevisionSessionId(Guid.NewGuid()),
+                cardBoxSet, cardBox.Id, new UtcTime(new DateTime(2020, 1, 1))));
+        }
     }
 }

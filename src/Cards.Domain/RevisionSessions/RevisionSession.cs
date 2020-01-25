@@ -24,6 +24,10 @@ namespace Memoyed.Cards.Domain.RevisionSessions
         {
             Id = id;
             _sessionCards = GetSessionCardsFromSet(now, cardBoxSet, cardBoxId);
+            if (_sessionCards.Count == 0)
+            {
+                throw new DomainException.NoCardsForRevisionException();
+            }
         }
 
 

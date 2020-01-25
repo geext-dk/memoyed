@@ -133,5 +133,13 @@ namespace Memoyed.Cards.Domain
             {
             }
         }
+
+        public class NoCardsForRevisionException : DomainException
+        {
+            public NoCardsForRevisionException() : base("Couldn't create a revision session." +
+                                                        " No cards are eligible for a revision")
+            {
+            }
+        }
     }
 }
