@@ -119,5 +119,19 @@ namespace Memoyed.Cards.Domain
             {
             }
         }
+
+        public class CardBoxNotFoundInSetException : DomainException
+        {
+            public CardBoxNotFoundInSetException() : base("The given card box is not found in the set")
+            {
+            }
+        }
+
+        public class LocalDateTimeException : DomainException
+        {
+            public LocalDateTimeException() : base("The given date time is local")
+            {
+            }
+        }
     }
 }

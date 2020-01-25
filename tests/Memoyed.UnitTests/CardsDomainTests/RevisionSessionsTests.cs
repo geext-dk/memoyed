@@ -4,6 +4,7 @@ using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.CardBoxSets;
 using Memoyed.Cards.Domain.LearningCards;
 using Memoyed.Cards.Domain.RevisionSessions;
+using Memoyed.Cards.Domain.Shared;
 using Xunit;
 
 namespace Memoyed.UnitTests.CardsDomainTests
@@ -34,18 +35,18 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardWord("Hei"),
                 null);
 
-            cardBoxSet.AddNewCard(card1);
+            cardBoxSet.AddNewCard(card1, new UtcTime(new DateTime(2020, 1, 1)));
             var card2 = new LearningCard(new LearningCardId(Guid.NewGuid()),
                 new LearningCardWord("Дом"),
                 new LearningCardWord("Hus"),
                 null);
-            cardBoxSet.AddNewCard(card2);
+            cardBoxSet.AddNewCard(card2, new UtcTime(new DateTime(2020, 1, 1)));
             
-            cardBoxSet.PromoteCard(card2.Id);
+            cardBoxSet.PromoteCard(card2.Id, new UtcTime(new DateTime(2020, 1, 1)));
             
             // Act
             var session = new RevisionSession(new RevisionSessionId(Guid.NewGuid()),
-                cardBoxSet);
+                cardBoxSet, new UtcTime(new DateTime(2020, 1, 10)));
             
             // Assert
             Assert.Equal(2, session.SessionCards.Count());

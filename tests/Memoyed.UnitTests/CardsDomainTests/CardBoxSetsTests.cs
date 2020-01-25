@@ -5,6 +5,7 @@ using Memoyed.Cards.Domain;
 using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.CardBoxSets;
 using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Shared;
 using Xunit;
 
 namespace Memoyed.UnitTests.CardsDomainTests
@@ -272,7 +273,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardComment(null));
             
             // Act
-            set.AddNewCard(learningCard);
+            set.AddNewCard(learningCard, new UtcTime(DateTime.UtcNow));
 
             // Assert
             Assert.Contains(set.CardBoxes, b =>
@@ -303,7 +304,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardComment(null));
             
             // Act
-            set.AddNewCard(learningCard);
+            set.AddNewCard(learningCard, new UtcTime(DateTime.UtcNow));
 
             // Assert
             Assert.Contains(firstCardBox.LearningCards, c => c.Id == learningCard.Id);
@@ -329,11 +330,11 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardWord("Hei"),
                 new LearningCardComment(null));
 
-            set.AddNewCard(learningCard);
+            set.AddNewCard(learningCard, new UtcTime(DateTime.UtcNow));
             
             // Act && Assert
             Assert.Throws<DomainException.LearningCardAlreadyInSetException>(
-                () => set.AddNewCard(learningCard));
+                () => set.AddNewCard(learningCard, new UtcTime(DateTime.UtcNow)));
         }
 
         [Fact]
@@ -353,7 +354,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
             
             // Act && Assert
             Assert.Throws<DomainException.NoBoxesInSetException>(
-                () => set.AddNewCard(learningCard));
+                () => set.AddNewCard(learningCard, new UtcTime(DateTime.UtcNow)));
         }
 
         [Fact]
@@ -378,11 +379,11 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardWord("Hei"),
                 new LearningCardComment(null));
             
-            set.AddNewCard(learningCard);
+            set.AddNewCard(learningCard, new UtcTime(DateTime.UtcNow));
             var firstCardBoxChangeDate = learningCard.CardBoxChangedDate;
             
             // Act
-            set.PromoteCard(learningCard.Id);
+            set.PromoteCard(learningCard.Id, new UtcTime(DateTime.UtcNow));
             
             // Assert
             Assert.Contains(secondCardBox.LearningCards, c => c.Id == learningCard.Id);
@@ -409,11 +410,11 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardWord("Hei"),
                 new LearningCardComment(null));
             
-            set.AddNewCard(learningCard);
+            set.AddNewCard(learningCard, new UtcTime(DateTime.UtcNow));
             var cardBoxChangeDate = learningCard.CardBoxChangedDate;
             
             // Act
-            set.PromoteCard(learningCard.Id);
+            set.PromoteCard(learningCard.Id, new UtcTime(DateTime.UtcNow));
             
             // Assert
             Assert.Contains(cardBox.LearningCards, c => c.Id == learningCard.Id);
@@ -442,7 +443,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
             
             // Act && Assert
             Assert.Throws<DomainException.LearningCardNotInSetException>(
-                () => set.PromoteCard(learningCard.Id));
+                () => set.PromoteCard(learningCard.Id, new UtcTime(DateTime.UtcNow)));
         }
 
         [Fact]
@@ -543,7 +544,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardComment(null));
 
             set.AddCardBox(box);
-            set.AddNewCard(card);
+            set.AddNewCard(card, new UtcTime(DateTime.UtcNow));
             
             // Act
             var snapshot = set.CreateSnapshot();
@@ -663,7 +664,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardComment(null));
 
             set.AddCardBox(box);
-            set.AddNewCard(card);
+            set.AddNewCard(card, new UtcTime(DateTime.UtcNow));
 
             var snapshot = set.CreateSnapshot();
             

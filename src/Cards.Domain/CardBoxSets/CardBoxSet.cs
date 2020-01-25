@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Shared;
 using Memoyed.DomainFramework;
 
 namespace Memoyed.Cards.Domain.CardBoxSets
@@ -123,9 +124,10 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// Add new card to the set. It is placed in a box with a lowest level.
         /// </summary>
         /// <param name="card">A learning card to add</param>
+        /// <param name="now">Current time in UTC</param>
         /// <exception cref="DomainException.LearningCardAlreadyInSetException">Throws if a card with the same id
         /// already exists in the set</exception>
-        public void AddNewCard(LearningCard card)
+        public void AddNewCard(LearningCard card, UtcTime now)
         {
             EnsureAtLeastOneBoxExists();
             
@@ -136,7 +138,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             }
 
             box = GetMinimalLevelBox();
-            card.ChangeCardBoxId(box.Id);
+            card.ChangeCardBoxId(box.Id, now);
             box.AddCard(card);
         }
 
@@ -145,9 +147,10 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// among boxes with greater level than the card is contained in before the operation.
         /// </summary>
         /// <param name="cardId">An Id of the card to promote</param>
+        /// <param name="now">current Time</param>
         /// <exception cref="DomainException.LearningCardNotInSetException">Throws if the given card doesn't exist in
         /// the set </exception>
-        public void PromoteCard(LearningCardId cardId)
+        public void PromoteCard(LearningCardId cardId, UtcTime now)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null)
@@ -163,7 +166,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
 
             var card = box.LearningCards.Single(c => c.Id == cardId);
             box.RemoveCard(card);
-            card.ChangeCardBoxId(nextLevelBox.Id);
+            card.ChangeCardBoxId(nextLevelBox.Id, now);
             nextLevelBox.AddCard(card);
         }
 
@@ -183,7 +186,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
 
             var card = box.LearningCards.Single(c => c.Id == cardId);
             box.RemoveCard(card);
-            card.ChangeCardBoxId(prevLevelBox.Id);
+            card.ChangeCardBoxId(prevLevelBox.Id, new UtcTime(DateTime.UtcNow));
             prevLevelBox.AddCard(card);
         }
 

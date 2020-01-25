@@ -1,5 +1,6 @@
 using System;
 using Memoyed.Cards.Domain.CardBoxes;
+using Memoyed.Cards.Domain.Shared;
 using Memoyed.DomainFramework;
 
 namespace Memoyed.Cards.Domain.LearningCards
@@ -21,7 +22,10 @@ namespace Memoyed.Cards.Domain.LearningCards
             new LearningCardWord(snapshot.TargetLanguageWord),
             new LearningCardComment(snapshot.Comment))
         {
-            CardBoxChangedDate = snapshot.CardBoxChangedDate;
+            CardBoxChangedDate = snapshot.CardBoxChangedDate.HasValue
+                ? new UtcTime(snapshot.CardBoxChangedDate.Value)
+                : null;
+            
             if (snapshot.CardBoxId.HasValue)
             {
                 CardBoxId = new CardBoxId(snapshot.CardBoxId.Value);
@@ -56,7 +60,7 @@ namespace Memoyed.Cards.Domain.LearningCards
         /// <summary>
         /// The time the card was last time moved to another card box in UTC
         /// </summary>
-        public DateTime? CardBoxChangedDate { get; private set; }
+        public UtcTime? CardBoxChangedDate { get; private set; }
 
         /// <summary>
         /// Changes the native language word
@@ -85,9 +89,9 @@ namespace Memoyed.Cards.Domain.LearningCards
             Comment = comment;
         }
 
-        internal void ChangeCardBoxId(CardBoxId cardBoxId)
+        internal void ChangeCardBoxId(CardBoxId cardBoxId, UtcTime now)
         {
-            CardBoxChangedDate = DateTime.UtcNow;
+            CardBoxChangedDate = now;
             CardBoxId = cardBoxId;
         }
 

@@ -3,6 +3,7 @@ using Memoyed.Cards.Domain;
 using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.CardBoxSets;
 using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Shared;
 using Xunit;
 
 namespace Memoyed.UnitTests.CardsDomainTests
@@ -210,7 +211,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new CardBoxSetLanguage("Norwegian", _ => true));
 
             set.AddCardBox(box);
-            set.AddNewCard(learningCard);
+            set.AddNewCard(learningCard, new UtcTime(DateTime.UtcNow));
             
             // Act
             var snapshot = learningCard.CreateSnapshot();
@@ -282,7 +283,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new CardBoxSetLanguage("Norwegian", _ => true));
 
             set.AddCardBox(box);
-            set.AddNewCard(learningCard);
+            set.AddNewCard(learningCard, new UtcTime(DateTime.UtcNow));
 
             var snapshot = learningCard.CreateSnapshot();
             

@@ -4,6 +4,7 @@ using Memoyed.Cards.Domain;
 using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.CardBoxSets;
 using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Shared;
 using Xunit;
 
 namespace Memoyed.UnitTests.CardsDomainTests
@@ -161,7 +162,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardWord("Hei"),
                 new LearningCardComment(null));
             
-            set.AddNewCard(card);
+            set.AddNewCard(card, new UtcTime(DateTime.UtcNow));
 
             // Act
             var snapshot = box.CreateSnapshot();
@@ -256,7 +257,7 @@ namespace Memoyed.UnitTests.CardsDomainTests
                 new LearningCardWord("Hei"),
                 new LearningCardComment(null));
             
-            set.AddNewCard(card);
+            set.AddNewCard(card, new UtcTime(DateTime.UtcNow));
 
             var snapshot = box.CreateSnapshot();
             
