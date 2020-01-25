@@ -48,7 +48,11 @@ namespace Memoyed.Cards.Domain.RevisionSessions
 
         public void CardAnswered(LearningCardId cardId, AnswerType targetLanguage, string word)
         {
-            throw new System.NotImplementedException();
+            var sessionCard = _sessionCards.FirstOrDefault(sc => sc.LearningCardId == cardId);
+            if (sessionCard == null)
+            {
+                throw new DomainException.SessionCardNotFoundException();
+            }
         }
 
         public void CompleteSession()

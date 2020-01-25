@@ -141,5 +141,12 @@ namespace Memoyed.Cards.Domain
             {
             }
         }
+
+        public class SessionCardNotFoundException : DomainException
+        {
+            public SessionCardNotFoundException() : base("Session card with the given id hasn't been found")
+            {
+            }
+        }
     }
 }

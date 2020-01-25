@@ -138,10 +138,39 @@ namespace Memoyed.UnitTests.CardsDomainTests
 
             cardBoxSet.AddNewCard(card, new UtcTime(new DateTime(2020, 1, 1)));
             
-            // Act
+            // Act && Assert
             Assert.Throws<DomainException.NoCardsForRevisionException>(() => 
                 new RevisionSession(new RevisionSessionId(Guid.NewGuid()),
                 cardBoxSet, cardBox.Id, new UtcTime(new DateTime(2020, 1, 1))));
+        }
+
+        [Fact]
+        public void RevisionSessionCardAnswered_PassWrongLearningCardId_ThrowsSessionCardNotFoundException()
+        {
+            // Arrange
+            var cardBoxSet = new CardBoxSet(new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Norwegian", _ => true));
+
+            var cardBox = new CardBox(
+                new CardBoxId(Guid.NewGuid()),
+                cardBoxSet.Id, new CardBoxLevel(1), new CardBoxRevisionDelay(2));
+
+            cardBoxSet.AddCardBox(cardBox);
+            
+            var card = new LearningCard(new LearningCardId(Guid.NewGuid()),
+                new LearningCardWord("Привет"), 
+                new LearningCardWord("Hei"),
+                null);
+
+            cardBoxSet.AddNewCard(card, new UtcTime(new DateTime(2020, 1, 1)));
+            var session = new RevisionSession(new RevisionSessionId(Guid.NewGuid()),
+                cardBoxSet, new UtcTime(new DateTime(2020, 1, 1)));
+            
+            // Act && Assert
+            Assert.Throws<DomainException.SessionCardNotFoundException>(
+                () => session.CardAnswered(new LearningCardId(Guid.NewGuid()), AnswerType.NativeLanguage,
+                    "test"));
         }
     }
 }
