@@ -5,14 +5,14 @@ namespace Memoyed.Cards.Domain.LearningCards
 {
     public class LearningCardId : DomainValue<Guid>
     {
-        public LearningCardId(Guid id)
+        public LearningCardId(Guid value)
         {
-            if (id == Guid.Empty)
+            if (value == Guid.Empty)
             {
                 throw new DomainException.EmptyIdException();
             }
 
-            Value = id;
+            Value = value;
         }
     }
 }

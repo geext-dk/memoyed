@@ -19,6 +19,10 @@ namespace Memoyed.Cards.Domain.Shared
 
             Value = time;
         }
-        
+
+        private UtcTime()
+        {
+        }
+
     }
 }

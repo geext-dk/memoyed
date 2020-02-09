@@ -4,9 +4,9 @@ namespace Memoyed.Cards.Domain.LearningCards
 {
     public class LearningCardComment : DomainValue<string>
     {
-        public LearningCardComment(string comment)
+        public LearningCardComment(string value)
         {
-            Value = comment?.Trim();
+            Value = value?.Trim();
         }
     }
 }

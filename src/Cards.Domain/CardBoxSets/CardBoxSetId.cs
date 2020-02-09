@@ -5,14 +5,14 @@ namespace Memoyed.Cards.Domain.CardBoxSets
 {
     public class CardBoxSetId : DomainValue<Guid>
     {
-        public CardBoxSetId(Guid id)
+        public CardBoxSetId(Guid value)
         {
-            if (id == Guid.Empty)
+            if (value == Guid.Empty)
             {
                 throw new DomainException.EmptyIdException();
             }
 
-            Value = id;
+            Value = value;
         }
     }
 }

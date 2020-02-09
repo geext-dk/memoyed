@@ -4,9 +4,9 @@ namespace Memoyed.Cards.Domain.LearningCards
 {
     public class LearningCardWord : DomainValue<string>
     {
-        public LearningCardWord(string word)
+        public LearningCardWord(string value)
         {
-            var value = word?.Trim();
+            value = value?.Trim();
             if (string.IsNullOrEmpty(value))
             {
                 throw new DomainException.EmptyWordException();

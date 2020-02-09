@@ -1,8 +1,9 @@
 using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.DomainFramework;
 
 namespace Memoyed.Cards.Domain.RevisionSessions.SessionCards
 {
-    public class SessionCard
+    public class SessionCard : Entity
     {
         public SessionCard(RevisionSessionId sessionId, LearningCard card)
         {
@@ -12,7 +13,11 @@ namespace Memoyed.Cards.Domain.RevisionSessions.SessionCards
             TargetLanguageWord = card.TargetLanguageWord;
             Status = SessionCardStatus.NotAnswered;
         }
-        
+
+        private SessionCard()
+        {
+        }
+
         public RevisionSessionId SessionId { get; }
         public LearningCardId LearningCardId { get; }
         public SessionCardStatus Status { get; internal set; }

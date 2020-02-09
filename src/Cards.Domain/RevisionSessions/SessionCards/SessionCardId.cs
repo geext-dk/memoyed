@@ -5,14 +5,14 @@ namespace Memoyed.Cards.Domain.RevisionSessions.SessionCards
 {
     public class SessionCardId : DomainValue<Guid>
     {
-        public SessionCardId(Guid id)
+        public SessionCardId(Guid value)
         {
-            if (id == Guid.Empty)
+            if (value == Guid.Empty)
             {
                 throw new DomainException.EmptyIdException();
             }
 
-            Value = id;
+            Value = value;
         }
     }
 }

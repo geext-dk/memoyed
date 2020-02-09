@@ -5,7 +5,7 @@ using Memoyed.DomainFramework;
 
 namespace Memoyed.Cards.Domain.LearningCards
 {
-    public class LearningCard : ISnapshotable<ILearningCardSnapshot>
+    public class LearningCard : Entity
     {
         public LearningCard(LearningCardId id, LearningCardWord nativeLanguageWord, LearningCardWord targetLanguageWord,
             LearningCardComment comment)
@@ -16,22 +16,10 @@ namespace Memoyed.Cards.Domain.LearningCards
             Comment = comment;
         }
 
-        private LearningCard(ILearningCardSnapshot snapshot) : this(
-            new LearningCardId(snapshot.Id),
-            new LearningCardWord(snapshot.NativeLanguageWord),
-            new LearningCardWord(snapshot.TargetLanguageWord),
-            new LearningCardComment(snapshot.Comment))
+        private LearningCard()
         {
-            CardBoxChangedDate = snapshot.CardBoxChangedDate.HasValue
-                ? new UtcTime(snapshot.CardBoxChangedDate.Value)
-                : null;
-            
-            if (snapshot.CardBoxId.HasValue)
-            {
-                CardBoxId = new CardBoxId(snapshot.CardBoxId.Value);
-            }
         }
-        
+
         /// <summary>
         /// Id of the learning card
         /// </summary>
@@ -93,26 +81,6 @@ namespace Memoyed.Cards.Domain.LearningCards
         {
             CardBoxChangedDate = now;
             CardBoxId = cardBoxId;
-        }
-
-        public ILearningCardSnapshot CreateSnapshot() => new Snapshot(this);
-        public static LearningCard FromSnapshot(ILearningCardSnapshot snapshot) => new LearningCard(snapshot);
-
-        private class Snapshot : ILearningCardSnapshot
-        {
-            private readonly LearningCard _card;
-
-            public Snapshot(LearningCard card)
-            {
-                _card = card;
-            }
-
-            public Guid Id => _card.Id;
-            public Guid? CardBoxId => _card.CardBoxId;
-            public string NativeLanguageWord => _card.NativeLanguageWord;
-            public string TargetLanguageWord => _card.TargetLanguageWord;
-            public string Comment => _card.Comment;
-            public DateTime? CardBoxChangedDate => _card.CardBoxChangedDate;
         }
     }
 }

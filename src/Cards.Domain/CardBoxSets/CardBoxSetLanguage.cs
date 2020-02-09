@@ -4,14 +4,18 @@ namespace Memoyed.Cards.Domain.CardBoxSets
 {
     public class CardBoxSetLanguage : DomainValue<string>
     {
-        public CardBoxSetLanguage(string language, DomainChecks.ValidateLanguage validateLanguage)
+        public CardBoxSetLanguage(string value, DomainChecks.ValidateLanguage validateLanguage)
         {
-            if (!validateLanguage(language))
+            if (!validateLanguage(value))
             {
                 throw new DomainException.InvalidLanguageException();
             }
 
-            Value = language;
+            Value = value;
+        }
+
+        private CardBoxSetLanguage()
+        {
         }
     }
 }

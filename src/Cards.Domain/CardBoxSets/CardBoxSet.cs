@@ -1,60 +1,115 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.RevisionSessions;
+using Memoyed.Cards.Domain.RevisionSessions.SessionCards;
 using Memoyed.Cards.Domain.Shared;
 using Memoyed.DomainFramework;
 
 namespace Memoyed.Cards.Domain.CardBoxSets
 {
-    public class CardBoxSet : ISnapshotable<ICardBoxSetSnapshot>
+    public class CardBoxSet : AggregateRoot
     {
-        private readonly List<CardBox> _cardBoxes = new List<CardBox>();
-        
         /// <summary>
         /// Card Box Set constructor, intended for creating new instances
         /// </summary>
         /// <param name="id">Id of the card box set</param>
+        /// <param name="name"></param>
         /// <param name="nativeLanguage">Language which user knows</param>
         /// <param name="targetLanguage">Language which user is learning</param>
-        public CardBoxSet(CardBoxSetId id, CardBoxSetLanguage nativeLanguage, CardBoxSetLanguage targetLanguage)
+        public CardBoxSet(CardBoxSetId id, CardBoxSetName name, CardBoxSetLanguage nativeLanguage,
+            CardBoxSetLanguage targetLanguage)
         {
-            Id = id;
+            _id = id;
+            Name = name;
             NativeLanguage = nativeLanguage;
             TargetLanguage = targetLanguage;
         }
 
-        private CardBoxSet(ICardBoxSetSnapshot snapshot) : this(
-            new CardBoxSetId(snapshot.Id),
-            new CardBoxSetLanguage(snapshot.NativeLanguage, _ => true),
-            new CardBoxSetLanguage(snapshot.TargetLanguage, _ => true))
+        private CardBoxSet()
         {
-            _cardBoxes = snapshot.CardBoxes
-                .Select(CardBox.FromSnapshot)
-                .OrderBy(c => c.Level)
-                .ToList();
         }
 
         /// <summary>
         /// Id of the card box set
         /// </summary>
-        public CardBoxSetId Id { get; }
+        public CardBoxSetId Id => _id;
+
+        private readonly CardBoxSetId _id;
         
+        public CardBoxSetName Name { get; private set; }
+
         /// <summary>
         /// Language that user knows
         /// </summary>
-        public CardBoxSetLanguage NativeLanguage { get; }
+        public CardBoxSetLanguage NativeLanguage { get; private set; }
         
         /// <summary>
         /// Language that user is learning
         /// </summary>
-        public CardBoxSetLanguage TargetLanguage { get; }
+        public CardBoxSetLanguage TargetLanguage { get; private set; }
         
         /// <summary>
         /// Card boxes contained in the set, positioned in an increasing level order
         /// </summary>
-        public IEnumerable<CardBox> CardBoxes => _cardBoxes.AsEnumerable();
+        public IEnumerable<CardBox> CardBoxes => _cardBoxes.AsReadOnly();
+        private readonly List<CardBox> _cardBoxes = new List<CardBox>();
+
+        public ReadOnlyCollection<RevisionSessionId> CompletedRevisionSessionIds => _completedSessionIds.AsReadOnly();
+        private readonly List<RevisionSessionId> _completedSessionIds = new List<RevisionSessionId>();
+
+        public void Rename(CardBoxSetName newName)
+        {
+            Name = newName;
+        }
+
+        public RevisionSession StartRevisionSession(UtcTime now = null)
+        {
+            now ??= new UtcTime(DateTime.UtcNow);
+
+            var cardsReadyForSession = _cardBoxes
+                .SelectMany(b => b.LearningCards.Select(c => new
+                {
+                    box = b,
+                    card = c
+                }).Where(bc => bc.card.CardBoxChangedDate != null
+                               && bc.card.CardBoxChangedDate.Value.AddDays(bc.box.RevisionDelay) <= now))
+                .Select(bc => bc.card)
+                .ToList();
+
+            var sessionId = new RevisionSessionId(Guid.NewGuid());
+            var sessionCards = cardsReadyForSession
+                .Select(c => new SessionCard(sessionId, c))
+                .ToList();
+            
+            return new RevisionSession(sessionId, Id, sessionCards);
+        }
+
+        public void ProcessCardsFromRevisionSession(RevisionSessionId revisionSessionId,
+            IEnumerable<LearningCardId> answeredCorrectlyLearningCardIds,
+            IEnumerable<LearningCardId> answeredWrongLearningCardIds,
+            UtcTime dateTime)
+        {
+            if (_completedSessionIds.Contains(revisionSessionId))
+            {
+                return;
+            }
+
+            foreach (var cardId in answeredCorrectlyLearningCardIds)
+            {
+                PromoteCard(cardId, dateTime);
+            }
+
+            foreach (var cardId in answeredWrongLearningCardIds)
+            {
+                DemoteCard(cardId, dateTime);
+            }
+            
+            _completedSessionIds.Add(revisionSessionId);
+        }
 
         /// <summary>
         /// Adds a card box to the set
@@ -142,6 +197,12 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             box.AddCard(card);
         }
 
+        public void RemoveCard(LearningCardId id)
+        {
+            var box = GetBoxContainingCard(id);
+            box?.RemoveCard(id);
+        }
+
         /// <summary>
         /// Moves the card to a box with a greater level. The card will be placed in a box which level is minimal
         /// among boxes with greater level than the card is contained in before the operation.
@@ -150,7 +211,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// <param name="now">current Time</param>
         /// <exception cref="DomainException.LearningCardNotInSetException">Throws if the given card doesn't exist in
         /// the set </exception>
-        public void PromoteCard(LearningCardId cardId, UtcTime? now = null)
+        private void PromoteCard(LearningCardId cardId, UtcTime? now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null)
@@ -165,12 +226,18 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             }
 
             var card = box.LearningCards.Single(c => c.Id == cardId);
-            box.RemoveCard(card);
+            box.RemoveCard(card.Id);
             card.ChangeCardBoxId(nextLevelBox.Id, now ?? new UtcTime(DateTime.UtcNow));
             nextLevelBox.AddCard(card);
         }
 
-        public void DemoteCard(LearningCardId cardId, UtcTime now = null)
+        /// <summary>
+        /// Moves the card to the box with the lowest level
+        /// </summary>
+        /// <param name="cardId"></param>
+        /// <param name="now"></param>
+        /// <exception cref="DomainException.LearningCardNotInSetException"></exception>
+        private void DemoteCard(LearningCardId cardId, UtcTime now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null)
@@ -185,7 +252,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             }
 
             var card = box.LearningCards.Single(c => c.Id == cardId);
-            box.RemoveCard(card);
+            box.RemoveCard(card.Id);
             card.ChangeCardBoxId(prevLevelBox.Id, now ?? new UtcTime(DateTime.UtcNow));
             prevLevelBox.AddCard(card);
         }
@@ -218,25 +285,6 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             {
                 throw new DomainException.NoBoxesInSetException();
             }
-        }
-
-        public ICardBoxSetSnapshot CreateSnapshot() => new Snapshot(this);
-
-        public static CardBoxSet FromSnapshot(ICardBoxSetSnapshot snapshot) => new CardBoxSet(snapshot);
-
-        private class Snapshot : ICardBoxSetSnapshot
-        {
-            private readonly CardBoxSet _set;
-            public Snapshot(CardBoxSet set)
-            {
-                _set = set;
-            }
-
-            public Guid Id => _set.Id.Value;
-            public string NativeLanguage => _set.NativeLanguage.Value;
-            public string TargetLanguage => _set.TargetLanguage.Value;
-            public IEnumerable<ICardBoxSnapshot> CardBoxes => _set.CardBoxes
-                .Select(c => c.CreateSnapshot());
         }
     }
 }
