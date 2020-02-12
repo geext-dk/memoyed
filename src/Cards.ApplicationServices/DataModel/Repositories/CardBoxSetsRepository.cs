@@ -17,7 +17,7 @@ namespace Memoyed.Cards.ApplicationServices.DataModel.Repositories
         public async Task<CardBoxSet> Get(CardBoxSetId id)
         {
             return await _cardsContext.CardBoxSets
-                .FirstOrDefaultAsync(c => c.Id == id)
+                .FirstOrDefaultAsync(c => c.Id.Value == id)
                 .ConfigureAwait(false);
         }
 
