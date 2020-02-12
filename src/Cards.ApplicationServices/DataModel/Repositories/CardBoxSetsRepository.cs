@@ -17,6 +17,9 @@ namespace Memoyed.Cards.ApplicationServices.DataModel.Repositories
         public async Task<CardBoxSet> Get(CardBoxSetId id)
         {
             return await _cardsContext.CardBoxSets
+                .Include(s => s.CardBoxes)
+                    .ThenInclude(b => b.LearningCards)
+                .Include(s => s.CompletedRevisionSessionIds)
                 .FirstOrDefaultAsync(c => c.Id.Value == id)
                 .ConfigureAwait(false);
         }

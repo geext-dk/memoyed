@@ -17,6 +17,7 @@ namespace Memoyed.Cards.ApplicationServices.DataModel.Repositories
         public async Task<RevisionSession> Get(RevisionSessionId id)
         {
             return await _db.RevisionSessions
+                .Include(s => s.SessionCards)
                 .FirstOrDefaultAsync(s => s.Id == id)
                 .ConfigureAwait(false);
         }
