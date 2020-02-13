@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Memoyed.Cards.ApplicationServices.Dto;
-using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Cards;
 using Memoyed.Cards.Domain.RevisionSessions;
 
 namespace Memoyed.Cards.ApplicationServices.Services
@@ -20,7 +20,7 @@ namespace Memoyed.Cards.ApplicationServices.Services
                 .Get(new RevisionSessionId(command.RevisionSessionId))
                 .ConfigureAwait(false);
                 
-            session.CardAnswered(new LearningCardId(command.LearningCardId), AnswerType.TargetLanguage, command.Answer);
+            session.CardAnswered(new CardId(command.CardId), AnswerType.TargetLanguage, command.Answer);
 
             await _unitOfWork.Commit()
                 .ConfigureAwait(false);

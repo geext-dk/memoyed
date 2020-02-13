@@ -11,8 +11,8 @@ namespace Memoyed.Cards.ApplicationServices.DataModel.Mappings
             builder.HasKey("DbId");
             builder.OwnsOne(c => c.SessionId,
                 a => a.Property(c => c.Value).HasColumnName("SessionId"));
-            builder.OwnsOne(c => c.LearningCardId,
-                a => a.Property(c => c.Value).HasColumnName("LearningCardId"));
+            builder.OwnsOne(c => c.CardId,
+                a => a.Property(c => c.Value).HasColumnName("CardId"));
             builder.OwnsOne(c => c.NativeLanguageWord,
                 a => a.Property(c => c.Value).HasColumnName("NativeLanguageWord"));
             builder.OwnsOne(c => c.TargetLanguageWord,

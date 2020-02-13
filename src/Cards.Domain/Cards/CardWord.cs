@@ -1,10 +1,10 @@
 using Memoyed.DomainFramework;
 
-namespace Memoyed.Cards.Domain.LearningCards
+namespace Memoyed.Cards.Domain.Cards
 {
-    public class LearningCardWord : DomainValue<string>
+    public class CardWord : DomainValue<string>
     {
-        public LearningCardWord(string value)
+        public CardWord(string value)
         {
             value = value?.Trim();
             if (string.IsNullOrEmpty(value))

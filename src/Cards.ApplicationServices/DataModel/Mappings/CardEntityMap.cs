@@ -1,12 +1,12 @@
-﻿using Memoyed.Cards.Domain.LearningCards;
+﻿using Memoyed.Cards.Domain.Cards;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Memoyed.Cards.ApplicationServices.DataModel.Mappings
 {
-    public class LearningCardEntityMap : IEntityTypeConfiguration<LearningCard>
+    public class CardEntityMap : IEntityTypeConfiguration<Card>
     {
-        public void Configure(EntityTypeBuilder<LearningCard> builder)
+        public void Configure(EntityTypeBuilder<Card> builder)
         {
             builder.HasKey("DbId");
 

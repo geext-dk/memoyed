@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.CardBoxSets;
-using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Cards;
 using Memoyed.Cards.Domain.RevisionSessions.SessionCards;
 using Memoyed.Cards.Domain.Shared;
 using Memoyed.DomainFramework;
@@ -36,9 +36,9 @@ namespace Memoyed.Cards.Domain.RevisionSessions
         private readonly List<SessionCard> _sessionCards;
         public RevisionSessionStatus Status { get; private set; }
 
-        public void CardAnswered(LearningCardId cardId, AnswerType answerType, string word)
+        public void CardAnswered(CardId cardId, AnswerType answerType, string word)
         {
-            var sessionCard = _sessionCards.FirstOrDefault(sc => sc.LearningCardId == cardId);
+            var sessionCard = _sessionCards.FirstOrDefault(sc => sc.CardId == cardId);
             if (sessionCard == null)
             {
                 throw new DomainException.SessionCardNotFoundException();
@@ -67,7 +67,7 @@ namespace Memoyed.Cards.Domain.RevisionSessions
             var cardIdsByStatus = _sessionCards
                 .GroupBy(sc => sc.Status)
                 .ToDictionary(k => k.Key,
-                    v => v.Select(c => c.LearningCardId)
+                    v => v.Select(c => c.CardId)
                     .ToList());
             
             if (cardIdsByStatus.ContainsKey(SessionCardStatus.NotAnswered))
@@ -79,12 +79,12 @@ namespace Memoyed.Cards.Domain.RevisionSessions
 
             if (!cardIdsByStatus.TryGetValue(SessionCardStatus.AnsweredCorrectly, out var answeredCorrectlyCards))
             {
-                answeredCorrectlyCards = new List<LearningCardId>();
+                answeredCorrectlyCards = new List<CardId>();
             }
             
             if (!cardIdsByStatus.TryGetValue(SessionCardStatus.AnsweredWrong, out var answeredWrongCards))
             {
-                answeredWrongCards = new List<LearningCardId>();
+                answeredWrongCards = new List<CardId>();
             }
             
             EventPublisher.Publish(new RevisionSessionEvents.RevisionSessionCompleted(Id, CardBoxSetId,

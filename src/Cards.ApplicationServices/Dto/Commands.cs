@@ -20,7 +20,7 @@ namespace Memoyed.Cards.ApplicationServices.Dto
             public int RevisionDelay { get; set; }
         }
 
-        public class AddNewLearningCardCommand
+        public class AddNewCardCommand
         {
             public Guid CardBoxSetId { get; set; }
             public string NativeLanguageWord { get; set; }
@@ -28,10 +28,10 @@ namespace Memoyed.Cards.ApplicationServices.Dto
             public string Comment { get; set; }
         }
 
-        public class RemoveLearningCardCommand
+        public class RemoveCardCommand
         {
             public Guid CardBoxSetId { get; set; }
-            public Guid LearningCardId { get; set; }
+            public Guid CardId { get; set; }
         }
 
         public class RenameCardBoxSetCommand
@@ -48,7 +48,7 @@ namespace Memoyed.Cards.ApplicationServices.Dto
         public class SetCardAnswerCommand
         {
             public Guid RevisionSessionId { get; set; }
-            public Guid LearningCardId { get; set; }
+            public Guid CardId { get; set; }
             public string Answer { get; set; }
         }
 

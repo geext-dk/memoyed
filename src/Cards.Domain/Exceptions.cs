@@ -77,16 +77,16 @@ namespace Memoyed.Cards.Domain
             }
         }
 
-        public class LearningCardAlreadyInSetException : DomainException
+        public class CardAlreadyInSetException : DomainException
         {
-            public LearningCardAlreadyInSetException() : base("The given learning card is already in the set")
+            public CardAlreadyInSetException() : base("The given card is already in the set")
             {
             }
         }
 
-        public class LearningCardNotInSetException : DomainException
+        public class CardNotInSetException : DomainException
         {
-            public LearningCardNotInSetException() : base("The given learning card is not in the set")
+            public CardNotInSetException() : base("The given card is not in the set")
             {
             }
         }

@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Memoyed.Cards.Domain.CardBoxSets;
-using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Cards;
 using Memoyed.DomainFramework;
 
 namespace Memoyed.Cards.Domain.CardBoxes
 {
     public class CardBox : Entity
     {
-        private readonly List<LearningCard> _learningCards = new List<LearningCard>();
+        private readonly List<Card> _cards = new List<Card>();
         
         /// <summary>
         /// Card Box constructor, used for creating new card boxes
@@ -33,7 +33,7 @@ namespace Memoyed.Cards.Domain.CardBoxes
         /// <summary>
         /// Enumerable of the learning cards contained in the card box
         /// </summary>
-        public IEnumerable<LearningCard> LearningCards => _learningCards.AsEnumerable();
+        public IEnumerable<Card> Cards => _cards.AsEnumerable();
         
         /// <summary>
         /// Id of the card box
@@ -56,19 +56,19 @@ namespace Memoyed.Cards.Domain.CardBoxes
         /// </summary>
         public CardBoxRevisionDelay RevisionDelay { get; }
         
-        internal void AddCard(LearningCard card)
+        internal void AddCard(Card card)
         {
             if (card.CardBoxId != Id)
             {
                 throw new DomainException.CardBoxIdMismatchException();
             }
             
-            _learningCards.Add(card);
+            _cards.Add(card);
         }
 
-        internal void RemoveCard(LearningCardId cardId)
+        internal void RemoveCard(CardId cardId)
         {
-            _learningCards.RemoveAll(c => c.Id == cardId);
+            _cards.RemoveAll(c => c.Id == cardId);
         }
     }
 }

@@ -37,15 +37,15 @@ namespace Memoyed.Cards.ApplicationServices.Services
             });
         }
 
-        public async Task<IEnumerable<ReturnModels.LearningCardModel>> GetLearningCards(Queries.GetLearningCardsQuery query)
+        public async Task<IEnumerable<ReturnModels.CardModel>> GetCards(Queries.GetCardsQuery query)
         {
-            const string getLearningCardsSql = @"SELECT c.Id, c.NativeLanguageWord, c.TargetLanguageWord,
+            const string getCardsSql = @"SELECT c.Id, c.NativeLanguageWord, c.TargetLanguageWord,
                                                     c.Comment, c.CardBoxId, b.SetId
-                                                 FROM LearningCards AS c
+                                                 FROM Cards AS c
                                                  INNER JOIN CardBoxes AS b ON b.Id = c.CardBoxId
                                                  WHERE c.CardBoxId = @CardBoxId AND b.SetId = @SetId";
 
-            return await _connection.QueryAsync<ReturnModels.LearningCardModel>(getLearningCardsSql, new
+            return await _connection.QueryAsync<ReturnModels.CardModel>(getCardsSql, new
             {
                 CardBoxId = query.CardBoxId,
                 SetId = query.CardBoxSetId

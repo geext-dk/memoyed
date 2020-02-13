@@ -35,12 +35,12 @@ namespace Memoyed.Cards.Api.Controllers
             return await _queriesHandler.GetCardBoxes(query);
         }
 
-        [HttpGet("getLearningCards")]
-        public async Task<IEnumerable<ReturnModels.LearningCardModel>> GetLearningCards(
-            [FromQuery] Queries.GetLearningCardsQuery query)
+        [HttpGet("getCards")]
+        public async Task<IEnumerable<ReturnModels.CardModel>> GetCards(
+            [FromQuery] Queries.GetCardsQuery query)
         {
 
-            return await _queriesHandler.GetLearningCards(query);
+            return await _queriesHandler.GetCards(query);
         }
 
         [HttpPost("createSet")]
@@ -56,9 +56,9 @@ namespace Memoyed.Cards.Api.Controllers
         }
 
         [HttpPost("createCard")]
-        public async Task CreateLearning(Commands.AddNewLearningCardCommand command)
+        public async Task CreateCard(Commands.AddNewCardCommand command)
         {
-            await _commandsHandler.AddNewLearningCard(command);
+            await _commandsHandler.AddNewCard(command);
         }
     }
 }

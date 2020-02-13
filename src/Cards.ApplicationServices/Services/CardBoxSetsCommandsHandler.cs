@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Memoyed.Cards.ApplicationServices.Dto;
 using Memoyed.Cards.Domain.CardBoxes;
 using Memoyed.Cards.Domain.CardBoxSets;
-using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Cards;
 using Memoyed.Cards.Domain.Shared;
 
 namespace Memoyed.Cards.ApplicationServices.Services
@@ -47,28 +47,28 @@ namespace Memoyed.Cards.ApplicationServices.Services
                 .ConfigureAwait(false);
         }
 
-        public async Task AddNewLearningCard(Commands.AddNewLearningCardCommand dto)
+        public async Task AddNewCard(Commands.AddNewCardCommand dto)
         {
             var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(new CardBoxSetId(dto.CardBoxSetId))
                 .ConfigureAwait(false);
             
-            var learningCard = new LearningCard(new LearningCardId(Guid.NewGuid()), 
-                new LearningCardWord(dto.NativeLanguageWord), 
-                new LearningCardWord(dto.TargetLanguageWord), 
-                new LearningCardComment(dto.Comment));
+            var card = new Card(new CardId(Guid.NewGuid()), 
+                new CardWord(dto.NativeLanguageWord), 
+                new CardWord(dto.TargetLanguageWord), 
+                new CardComment(dto.Comment));
 
-            cardBoxSet.AddNewCard(learningCard, new UtcTime(DateTime.UtcNow));
+            cardBoxSet.AddNewCard(card, new UtcTime(DateTime.UtcNow));
 
             await _unitOfWork.Commit()
                 .ConfigureAwait(false);
         }
 
-        public async Task RemoveLearningCard(Commands.RemoveLearningCardCommand dto)
+        public async Task RemoveCard(Commands.RemoveCardCommand dto)
         {
             var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(new CardBoxSetId(dto.CardBoxSetId))
                 .ConfigureAwait(false);
             
-            cardBoxSet.RemoveCard(new LearningCardId(dto.LearningCardId));
+            cardBoxSet.RemoveCard(new CardId(dto.CardId));
 
             await _unitOfWork.Commit()
                 .ConfigureAwait(false);

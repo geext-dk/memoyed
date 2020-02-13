@@ -21,7 +21,7 @@ namespace Memoyed.Cards.ApplicationServices.Dto
             public int RevisionDelay { get; set; }
         }
 
-        public class LearningCardModel
+        public class CardModel
         {
             public Guid Id { get; set; }
             public Guid SetId { get; set; }

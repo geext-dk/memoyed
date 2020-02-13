@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Memoyed.Cards.Domain.CardBoxSets;
-using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Cards;
 using Memoyed.Cards.Domain.Repositories;
 using Memoyed.Cards.Domain.RevisionSessions;
 using Memoyed.Cards.Domain.Shared;
@@ -80,10 +80,10 @@ namespace Memoyed.Cards.ApplicationServices
                     
                     cardBoxSet.ProcessCardsFromRevisionSession(
                         new RevisionSessionId(revisionSessionCompleted.RevisionSessionId),
-                        revisionSessionCompleted.AnsweredSuccessfullyLearningCardIds
-                            .Select(c => new LearningCardId(c)),
-                        revisionSessionCompleted.AnsweredWrongLearningCardsId
-                            .Select(c => new LearningCardId(c)),
+                        revisionSessionCompleted.AnsweredSuccessfullyCardIds
+                            .Select(c => new CardId(c)),
+                        revisionSessionCompleted.AnsweredWrongCardsId
+                            .Select(c => new CardId(c)),
                         new UtcTime(revisionSessionCompleted.DateTime));
                     
                     break;

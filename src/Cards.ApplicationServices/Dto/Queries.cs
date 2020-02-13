@@ -13,7 +13,7 @@ namespace Memoyed.Cards.ApplicationServices.Dto
             public Guid CardBoxSetId { get; set; }
         }
 
-        public class GetLearningCardsQuery
+        public class GetCardsQuery
         {
             public Guid CardBoxSetId { get; set; }
             public Guid CardBoxId { get; set; }

@@ -1,11 +1,11 @@
 using System;
 using Memoyed.DomainFramework;
 
-namespace Memoyed.Cards.Domain.LearningCards
+namespace Memoyed.Cards.Domain.Cards
 {
-    public class LearningCardId : DomainValue<Guid>
+    public class CardId : DomainValue<Guid>
     {
-        public LearningCardId(Guid value)
+        public CardId(Guid value)
         {
             if (value == Guid.Empty)
             {

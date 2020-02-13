@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Memoyed.Cards.Domain.CardBoxes;
-using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Cards;
 using Memoyed.Cards.Domain.RevisionSessions;
 using Memoyed.Cards.Domain.RevisionSessions.SessionCards;
 using Memoyed.Cards.Domain.Shared;
@@ -71,7 +71,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             now ??= new UtcTime(DateTime.UtcNow);
 
             var cardsReadyForSession = _cardBoxes
-                .SelectMany(b => b.LearningCards.Select(c => new
+                .SelectMany(b => b.Cards.Select(c => new
                 {
                     box = b,
                     card = c
@@ -89,8 +89,8 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         }
 
         public void ProcessCardsFromRevisionSession(RevisionSessionId revisionSessionId,
-            IEnumerable<LearningCardId> answeredCorrectlyLearningCardIds,
-            IEnumerable<LearningCardId> answeredWrongLearningCardIds,
+            IEnumerable<CardId> answeredCorrectlyCardIds,
+            IEnumerable<CardId> answeredWrongCardIds,
             UtcTime dateTime)
         {
             if (_completedSessionIds.Contains(revisionSessionId))
@@ -98,12 +98,12 @@ namespace Memoyed.Cards.Domain.CardBoxSets
                 return;
             }
 
-            foreach (var cardId in answeredCorrectlyLearningCardIds)
+            foreach (var cardId in answeredCorrectlyCardIds)
             {
                 PromoteCard(cardId, dateTime);
             }
 
-            foreach (var cardId in answeredWrongLearningCardIds)
+            foreach (var cardId in answeredWrongCardIds)
             {
                 DemoteCard(cardId, dateTime);
             }
@@ -178,18 +178,18 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// <summary>
         /// Add new card to the set. It is placed in a box with a lowest level.
         /// </summary>
-        /// <param name="card">A learning card to add</param>
+        /// <param name="card">A card to add</param>
         /// <param name="now">Current time in UTC</param>
-        /// <exception cref="DomainException.LearningCardAlreadyInSetException">Throws if a card with the same id
+        /// <exception cref="DomainException.CardAlreadyInSetException">Throws if a card with the same id
         /// already exists in the set</exception>
-        public void AddNewCard(LearningCard card, UtcTime now)
+        public void AddNewCard(Card card, UtcTime now)
         {
             EnsureAtLeastOneBoxExists();
             
             var box = GetBoxContainingCard(card.Id);
             if (box != null)
             {
-                throw new DomainException.LearningCardAlreadyInSetException();
+                throw new DomainException.CardAlreadyInSetException();
             }
 
             box = GetMinimalLevelBox();
@@ -197,7 +197,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
             box.AddCard(card);
         }
 
-        public void RemoveCard(LearningCardId id)
+        public void RemoveCard(CardId id)
         {
             var box = GetBoxContainingCard(id);
             box?.RemoveCard(id);
@@ -209,14 +209,14 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// </summary>
         /// <param name="cardId">An Id of the card to promote</param>
         /// <param name="now">current Time</param>
-        /// <exception cref="DomainException.LearningCardNotInSetException">Throws if the given card doesn't exist in
+        /// <exception cref="DomainException.CardNotInSetException">Throws if the given card doesn't exist in
         /// the set </exception>
-        private void PromoteCard(LearningCardId cardId, UtcTime? now = null)
+        private void PromoteCard(CardId cardId, UtcTime? now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null)
             {
-                throw new DomainException.LearningCardNotInSetException();
+                throw new DomainException.CardNotInSetException();
             }
 
             var nextLevelBox = GetNextLevelBox(box.Level);
@@ -225,7 +225,7 @@ namespace Memoyed.Cards.Domain.CardBoxSets
                 return;
             }
 
-            var card = box.LearningCards.Single(c => c.Id == cardId);
+            var card = box.Cards.Single(c => c.Id == cardId);
             box.RemoveCard(card.Id);
             card.ChangeCardBoxId(nextLevelBox.Id, now ?? new UtcTime(DateTime.UtcNow));
             nextLevelBox.AddCard(card);
@@ -236,13 +236,13 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// </summary>
         /// <param name="cardId"></param>
         /// <param name="now"></param>
-        /// <exception cref="DomainException.LearningCardNotInSetException"></exception>
-        private void DemoteCard(LearningCardId cardId, UtcTime now = null)
+        /// <exception cref="DomainException.CardNotInSetException"></exception>
+        private void DemoteCard(CardId cardId, UtcTime now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null)
             {
-                throw new DomainException.LearningCardNotInSetException();
+                throw new DomainException.CardNotInSetException();
             }
 
             var prevLevelBox = GetPreviousLevelBox(box.Level);
@@ -251,15 +251,15 @@ namespace Memoyed.Cards.Domain.CardBoxSets
                 return;
             }
 
-            var card = box.LearningCards.Single(c => c.Id == cardId);
+            var card = box.Cards.Single(c => c.Id == cardId);
             box.RemoveCard(card.Id);
             card.ChangeCardBoxId(prevLevelBox.Id, now ?? new UtcTime(DateTime.UtcNow));
             prevLevelBox.AddCard(card);
         }
 
-        private CardBox GetBoxContainingCard(LearningCardId cardId)
+        private CardBox GetBoxContainingCard(CardId cardId)
         {
-            return _cardBoxes.FirstOrDefault(b => b.LearningCards.Any(c => c.Id == cardId));
+            return _cardBoxes.FirstOrDefault(b => b.Cards.Any(c => c.Id == cardId));
         }
 
         private CardBox GetMinimalLevelBox() => _cardBoxes.Aggregate((prev, next) =>

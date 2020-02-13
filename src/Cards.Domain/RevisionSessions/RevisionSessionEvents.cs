@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Memoyed.Cards.Domain.CardBoxSets;
-using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Cards.Domain.Cards;
 using Memoyed.Cards.Domain.Shared;
 
 namespace Memoyed.Cards.Domain.RevisionSessions
@@ -13,17 +13,17 @@ namespace Memoyed.Cards.Domain.RevisionSessions
         {
             public RevisionSessionCompleted(RevisionSessionId sessionId,
                 CardBoxSetId setId,
-                IEnumerable<LearningCardId> answeredCorrectlyLearningCardIds,
-                IEnumerable<LearningCardId> answeredWrongLearningCardIds,
+                IEnumerable<CardId> answeredCorrectlyCardIds,
+                IEnumerable<CardId> answeredWrongCardIds,
                 UtcTime dateTime)
             {
                 RevisionSessionId = sessionId;
                 CardBoxSetId = setId.Value;
-                AnsweredSuccessfullyLearningCardIds = answeredCorrectlyLearningCardIds
+                AnsweredSuccessfullyCardIds = answeredCorrectlyCardIds
                     .Select(c => c.Value)
                     .ToList();
                 
-                AnsweredWrongLearningCardsId = answeredWrongLearningCardIds
+                AnsweredWrongCardsId = answeredWrongCardIds
                     .Select(c => c.Value)
                     .ToList();
 
@@ -32,8 +32,8 @@ namespace Memoyed.Cards.Domain.RevisionSessions
             
             public Guid RevisionSessionId { get; }
             public Guid CardBoxSetId { get; }
-            public List<Guid> AnsweredSuccessfullyLearningCardIds { get; }
-            public List<Guid> AnsweredWrongLearningCardsId { get; }
+            public List<Guid> AnsweredSuccessfullyCardIds { get; }
+            public List<Guid> AnsweredWrongCardsId { get; }
             public DateTime DateTime { get; }
         }
     }
