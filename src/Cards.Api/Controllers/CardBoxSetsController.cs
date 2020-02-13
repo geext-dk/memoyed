@@ -21,48 +21,41 @@ namespace Memoyed.Cards.Api.Controllers
             _queriesHandler = queriesHandler;
         }
 
-        [HttpGet]
+        [HttpGet("getCardBoxSets")]
         public async Task<IEnumerable<ReturnModels.CardBoxSetModel>> GetCardBoxSets(
             [FromQuery]Queries.GetCardBoxSetsQuery query)
         {
             return await _queriesHandler.GetCardBoxSets(query);
         }
 
-        [Route("{setId:guid}")]
-        [HttpGet]
-        public async Task<IEnumerable<ReturnModels.CardBoxModel>> GetCardBoxes(Guid setId,
-            [FromQuery]Queries.GetCardBoxesQuery query)
+        [HttpGet("getCardBoxes")]
+        public async Task<IEnumerable<ReturnModels.CardBoxModel>> GetCardBoxes(
+            [FromQuery] Queries.GetCardBoxesQuery query)
         {
-            query.CardBoxSetId = setId;
             return await _queriesHandler.GetCardBoxes(query);
         }
 
-        [Route("{setId:guid}/{cardBoxId:guid}")]
-        [HttpGet]
-        public async Task<IEnumerable<ReturnModels.LearningCardModel>> GetLearningCards(Guid setId, Guid boxId,
-            [FromQuery]Queries.GetLearningCardsQuery query)
+        [HttpGet("getLearningCards")]
+        public async Task<IEnumerable<ReturnModels.LearningCardModel>> GetLearningCards(
+            [FromQuery] Queries.GetLearningCardsQuery query)
         {
-            query.CardBoxSetId = setId;
-            query.CardBoxId = boxId;
+
             return await _queriesHandler.GetLearningCards(query);
         }
 
-        [HttpPost]
-        [Route("createSet")]
+        [HttpPost("createSet")]
         public async Task CreateCardBoxSet(Commands.CreateCardBoxSetCommand command)
         {
             await _commandsHandler.CreateCardBoxSet(command);
         }
 
-        [HttpPost]
-        [Route("createBox")]
+        [HttpPost("createBox")]
         public async Task CreateCardBox(Commands.CreateCardBoxCommand command)
         {
             await _commandsHandler.CreateCardBox(command);
         }
 
-        [HttpPost]
-        [Route("createCard")]
+        [HttpPost("createCard")]
         public async Task CreateLearning(Commands.AddNewLearningCardCommand command)
         {
             await _commandsHandler.AddNewLearningCard(command);
