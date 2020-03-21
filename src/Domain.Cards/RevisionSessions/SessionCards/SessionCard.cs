@@ -1,7 +1,7 @@
-using Memoyed.Cards.Domain.Cards;
+using Memoyed.Domain.Cards.Cards;
 using Memoyed.DomainFramework;
 
-namespace Memoyed.Cards.Domain.RevisionSessions.SessionCards
+namespace Memoyed.Domain.Cards.RevisionSessions.SessionCards
 {
     public class SessionCard : Entity
     {

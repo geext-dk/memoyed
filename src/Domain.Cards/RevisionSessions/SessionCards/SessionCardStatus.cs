@@ -1,4 +1,4 @@
-namespace Memoyed.Cards.Domain.RevisionSessions.SessionCards
+namespace Memoyed.Domain.Cards.RevisionSessions.SessionCards
 {
     public enum SessionCardStatus
     {

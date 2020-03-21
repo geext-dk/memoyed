@@ -2,7 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <RootNamespace>Users.Domain</RootNamespace>
+        <RootNamespace>Memoyed.Domain.Users</RootNamespace>
+        <AssemblyName>Memoyed.Domain.Users</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

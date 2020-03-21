@@ -1,6 +1,6 @@
 ﻿using Memoyed.DomainFramework;
 
-namespace Users.Domain.Users
+namespace Memoyed.Domain.Users.Users
 {
     public class User : AggregateRoot
     {

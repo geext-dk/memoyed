@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Memoyed.Cards.Domain.RevisionSessions;
+using Memoyed.Domain.Cards.RevisionSessions;
 
-namespace Memoyed.Cards.Domain.Repositories
+namespace Memoyed.Domain.Cards.Repositories
 {
     public interface IRevisionSessionsRepository
     {

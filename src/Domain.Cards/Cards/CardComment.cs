@@ -1,6 +1,6 @@
 using Memoyed.DomainFramework;
 
-namespace Memoyed.Cards.Domain.Cards
+namespace Memoyed.Domain.Cards.Cards
 {
     public class CardComment : DomainValue<string>
     {

@@ -1,16 +1,13 @@
 using System;
 using Memoyed.DomainFramework;
 
-namespace Memoyed.Cards.Domain.Cards
+namespace Memoyed.Domain.Cards.Cards
 {
     public class CardId : DomainValue<Guid>
     {
         public CardId(Guid value)
         {
-            if (value == Guid.Empty)
-            {
-                throw new DomainException.EmptyIdException();
-            }
+            if (value == Guid.Empty) throw new DomainException.EmptyIdException();
 
             Value = value;
         }

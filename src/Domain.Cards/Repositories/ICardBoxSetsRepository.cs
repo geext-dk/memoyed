@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Memoyed.Cards.Domain.CardBoxSets;
+using Memoyed.Domain.Cards.CardBoxSets;
 
-namespace Memoyed.Cards.Domain.Repositories
+namespace Memoyed.Domain.Cards.Repositories
 {
     public interface ICardBoxSetsRepository
     {

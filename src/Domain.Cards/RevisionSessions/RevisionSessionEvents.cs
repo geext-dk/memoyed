@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Memoyed.Cards.Domain.CardBoxSets;
-using Memoyed.Cards.Domain.Cards;
-using Memoyed.Cards.Domain.Shared;
+using Memoyed.Domain.Cards.CardBoxSets;
+using Memoyed.Domain.Cards.Cards;
+using Memoyed.Domain.Cards.Shared;
 
-namespace Memoyed.Cards.Domain.RevisionSessions
+namespace Memoyed.Domain.Cards.RevisionSessions
 {
     public static class RevisionSessionEvents
     {
@@ -22,14 +22,14 @@ namespace Memoyed.Cards.Domain.RevisionSessions
                 AnsweredSuccessfullyCardIds = answeredCorrectlyCardIds
                     .Select(c => c.Value)
                     .ToList();
-                
+
                 AnsweredWrongCardsId = answeredWrongCardIds
                     .Select(c => c.Value)
                     .ToList();
 
                 DateTime = dateTime;
             }
-            
+
             public Guid RevisionSessionId { get; }
             public Guid CardBoxSetId { get; }
             public List<Guid> AnsweredSuccessfullyCardIds { get; }

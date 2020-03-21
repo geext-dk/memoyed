@@ -13,11 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Cards", "src\Domain.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainFramework", "src\DomainFramework\DomainFramework.csproj", "{9CDE5934-D150-454B-AE84-C20728072756}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoyed.ApplicationServices", "src\Memoyed.ApplicationServices\Memoyed.ApplicationServices.csproj", "{15E3BA9A-53FE-457E-8807-6365FB7B76AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\Application\Application.csproj", "{15E3BA9A-53FE-457E-8807-6365FB7B76AB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Users", "src\Domain.Users\Domain.Users.csproj", "{7574FE88-797E-4639-848F-D9E7FE65C03E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoyed.WebApi", "src\Memoyed.WebApi\Memoyed.WebApi.csproj", "{A778FE8E-CFC4-4F6D-B6FD-2C476ED05161}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "src\WebApi\WebApi.csproj", "{A778FE8E-CFC4-4F6D-B6FD-2C476ED05161}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{0F15EEC0-9BCF-4A9E-8CA0-AFFFA422F321}"
 EndProject

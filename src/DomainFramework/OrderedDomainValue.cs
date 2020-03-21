@@ -13,19 +13,24 @@ namespace Memoyed.DomainFramework
 
         public static bool operator <(OrderedDomainValue<T> lhs, OrderedDomainValue<T> rhs)
         {
-            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
-            {
-                return false;
-            }
+            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null)) return false;
 
             return lhs.Position < rhs.Position;
         }
 
-        public static bool operator >(OrderedDomainValue<T> lhs, OrderedDomainValue<T> rhs) => rhs < lhs;
+        public static bool operator >(OrderedDomainValue<T> lhs, OrderedDomainValue<T> rhs)
+        {
+            return rhs < lhs;
+        }
 
-        public static bool operator <=(OrderedDomainValue<T> lhs, OrderedDomainValue<T> rhs) => lhs == rhs || lhs < rhs;
+        public static bool operator <=(OrderedDomainValue<T> lhs, OrderedDomainValue<T> rhs)
+        {
+            return lhs == rhs || lhs < rhs;
+        }
 
-        public static bool operator >=(OrderedDomainValue<T> lhs, OrderedDomainValue<T> rhs) => rhs <= lhs;
-        
+        public static bool operator >=(OrderedDomainValue<T> lhs, OrderedDomainValue<T> rhs)
+        {
+            return rhs <= lhs;
+        }
     }
 }

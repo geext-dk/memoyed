@@ -1,6 +1,5 @@
 using System;
-using Memoyed.Cards.Domain;
-using Memoyed.Cards.Domain.LearningCards;
+using Memoyed.Domain.Cards;
 using Xunit;
 
 namespace Memoyed.UnitTests.CardsDomainTests

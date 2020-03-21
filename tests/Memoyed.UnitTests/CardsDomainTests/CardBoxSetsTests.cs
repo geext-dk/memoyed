@@ -1,10 +1,9 @@
 using System;
 using System.Linq;
-using Memoyed.Cards.Domain;
-using Memoyed.Cards.Domain.CardBoxes;
-using Memoyed.Cards.Domain.CardBoxSets;
-using Memoyed.Cards.Domain.LearningCards;
-using Memoyed.Cards.Domain.Shared;
+using Memoyed.Domain.Cards;
+using Memoyed.Domain.Cards.CardBoxes;
+using Memoyed.Domain.Cards.CardBoxSets;
+using Memoyed.Domain.Cards.Shared;
 using Xunit;
 
 namespace Memoyed.UnitTests.CardsDomainTests

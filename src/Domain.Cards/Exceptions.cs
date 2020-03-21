@@ -1,6 +1,6 @@
 using System;
 
-namespace Memoyed.Cards.Domain
+namespace Memoyed.Domain.Cards
 {
     public abstract class DomainException : Exception
     {
@@ -25,7 +25,7 @@ namespace Memoyed.Cards.Domain
         public class InvalidLanguageException : DomainException
         {
             public InvalidLanguageException() : base("The given language string hasn't passed " +
-                                                           "the language check")
+                                                     "the language check")
             {
             }
         }
@@ -33,7 +33,7 @@ namespace Memoyed.Cards.Domain
         public class CardBoxSetIdMismatchException : DomainException
         {
             public CardBoxSetIdMismatchException()
-                : base($"The given card box is for other card box set")
+                : base("The given card box is for other card box set")
             {
             }
         }
@@ -41,7 +41,7 @@ namespace Memoyed.Cards.Domain
         public class CardBoxAlreadyInSetException : DomainException
         {
             public CardBoxAlreadyInSetException() : base("The given card box is in the " +
-                                                                  "card box set already")
+                                                         "card box set already")
             {
             }
         }
@@ -49,7 +49,7 @@ namespace Memoyed.Cards.Domain
         public class InvalidRevisionDelayException : DomainException
         {
             public InvalidRevisionDelayException() : base("The given days value should be" +
-                                                                         " greater than 0 and lesser than 31")
+                                                          " greater than 0 and lesser than 31")
             {
             }
         }
@@ -64,7 +64,7 @@ namespace Memoyed.Cards.Domain
         public class DecreasingRevisionDelayException : DomainException
         {
             public DecreasingRevisionDelayException() : base("The repeat delays of the boxes should increase" +
-                                                           " while the levels increase")
+                                                             " while the levels increase")
             {
             }
         }
