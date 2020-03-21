@@ -3,38 +3,57 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Memoyed.Application.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                "CardBoxSets",
-                table => new
+                name: "CardBoxSets",
+                columns: table => new
                 {
-                    DbId = table.Column<int>()
+                    DbId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Id = table.Column<Guid>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     NativeLanguage = table.Column<string>(nullable: true),
                     TargetLanguage = table.Column<string>(nullable: true)
                 },
-                constraints: table => { table.PrimaryKey("PK_CardBoxSets", x => x.DbId); });
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CardBoxSets", x => x.DbId);
+                });
 
             migrationBuilder.CreateTable(
-                "RevisionSessions",
-                table => new
+                name: "RevisionSessions",
+                columns: table => new
                 {
-                    DbId = table.Column<int>()
+                    DbId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Status = table.Column<int>()
+                    Status = table.Column<int>(nullable: false)
                 },
-                constraints: table => { table.PrimaryKey("PK_RevisionSessions", x => x.DbId); });
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RevisionSessions", x => x.DbId);
+                });
 
             migrationBuilder.CreateTable(
-                "CardBoxes",
-                table => new
+                name: "Users",
+                columns: table => new
                 {
-                    DbId = table.Column<int>()
+                    DbId = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.DbId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CardBoxes",
+                columns: table => new
+                {
+                    DbId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Id = table.Column<Guid>(nullable: true),
                     SetId = table.Column<Guid>(nullable: true),
@@ -46,42 +65,42 @@ namespace Memoyed.Application.Migrations
                 {
                     table.PrimaryKey("PK_CardBoxes", x => x.DbId);
                     table.ForeignKey(
-                        "FK_CardBoxes_CardBoxSets_CardBoxSetDbId",
-                        x => x.CardBoxSetDbId,
-                        "CardBoxSets",
-                        "DbId",
+                        name: "FK_CardBoxes_CardBoxSets_CardBoxSetDbId",
+                        column: x => x.CardBoxSetDbId,
+                        principalTable: "CardBoxSets",
+                        principalColumn: "DbId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                "CardBoxSets_CompletedRevisionSessionIds",
-                table => new
+                name: "CardBoxSets_CompletedRevisionSessionIds",
+                columns: table => new
                 {
-                    CardBoxSetDbId = table.Column<int>(),
-                    Id = table.Column<int>()
+                    CardBoxSetDbId = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Value = table.Column<Guid>()
+                    Value = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CardBoxSets_CompletedRevisionSessionIds", x => new {x.CardBoxSetDbId, x.Id});
+                    table.PrimaryKey("PK_CardBoxSets_CompletedRevisionSessionIds", x => new { x.CardBoxSetDbId, x.Id });
                     table.ForeignKey(
-                        "FK_CardBoxSets_CompletedRevisionSessionIds_CardBoxSets_CardBoxSetDbId",
-                        x => x.CardBoxSetDbId,
-                        "CardBoxSets",
-                        "DbId",
+                        name: "FK_CardBoxSets_CompletedRevisionSessionIds_CardBoxSets_CardBoxSetDbId",
+                        column: x => x.CardBoxSetDbId,
+                        principalTable: "CardBoxSets",
+                        principalColumn: "DbId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                "SessionCards",
-                table => new
+                name: "SessionCards",
+                columns: table => new
                 {
-                    DbId = table.Column<int>()
+                    DbId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     SessionId = table.Column<Guid>(nullable: true),
                     CardId = table.Column<Guid>(nullable: true),
-                    Status = table.Column<int>(),
+                    Status = table.Column<int>(nullable: false),
                     NativeLanguageWord = table.Column<string>(nullable: true),
                     TargetLanguageWord = table.Column<string>(nullable: true),
                     RevisionSessionDbId = table.Column<int>(nullable: true)
@@ -90,73 +109,76 @@ namespace Memoyed.Application.Migrations
                 {
                     table.PrimaryKey("PK_SessionCards", x => x.DbId);
                     table.ForeignKey(
-                        "FK_SessionCards_RevisionSessions_RevisionSessionDbId",
-                        x => x.RevisionSessionDbId,
-                        "RevisionSessions",
-                        "DbId",
+                        name: "FK_SessionCards_RevisionSessions_RevisionSessionDbId",
+                        column: x => x.RevisionSessionDbId,
+                        principalTable: "RevisionSessions",
+                        principalColumn: "DbId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                "Domain.Cards",
-                table => new
+                name: "Cards",
+                columns: table => new
                 {
-                    DbId = table.Column<int>()
+                    DbId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Id = table.Column<Guid>(nullable: true),
                     CardBoxId = table.Column<Guid>(nullable: true),
                     NativeLanguageWord = table.Column<string>(nullable: true),
                     TargetLanguageWord = table.Column<string>(nullable: true),
                     Comment = table.Column<string>(nullable: true),
-                    CardBoxChangeDate = table.Column<DateTime>(nullable: true),
+                    CardBoxChangedDate = table.Column<DateTime>(nullable: true),
                     CardBoxDbId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cards", x => x.DbId);
                     table.ForeignKey(
-                        "FK_Cards_CardBoxes_CardBoxDbId",
-                        x => x.CardBoxDbId,
-                        "CardBoxes",
-                        "DbId",
+                        name: "FK_Cards_CardBoxes_CardBoxDbId",
+                        column: x => x.CardBoxDbId,
+                        principalTable: "CardBoxes",
+                        principalColumn: "DbId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                "IX_CardBoxes_CardBoxSetDbId",
-                "CardBoxes",
-                "CardBoxSetDbId");
+                name: "IX_CardBoxes_CardBoxSetDbId",
+                table: "CardBoxes",
+                column: "CardBoxSetDbId");
 
             migrationBuilder.CreateIndex(
-                "IX_Cards_CardBoxDbId",
-                "Domain.Cards",
-                "CardBoxDbId");
+                name: "IX_Cards_CardBoxDbId",
+                table: "Cards",
+                column: "CardBoxDbId");
 
             migrationBuilder.CreateIndex(
-                "IX_SessionCards_RevisionSessionDbId",
-                "SessionCards",
-                "RevisionSessionDbId");
+                name: "IX_SessionCards_RevisionSessionDbId",
+                table: "SessionCards",
+                column: "RevisionSessionDbId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                "CardBoxSets_CompletedRevisionSessionIds");
+                name: "CardBoxSets_CompletedRevisionSessionIds");
 
             migrationBuilder.DropTable(
-                "Domain.Cards");
+                name: "Cards");
 
             migrationBuilder.DropTable(
-                "SessionCards");
+                name: "SessionCards");
 
             migrationBuilder.DropTable(
-                "CardBoxes");
+                name: "Users");
 
             migrationBuilder.DropTable(
-                "RevisionSessions");
+                name: "CardBoxes");
 
             migrationBuilder.DropTable(
-                "CardBoxSets");
+                name: "RevisionSessions");
+
+            migrationBuilder.DropTable(
+                name: "CardBoxSets");
         }
     }
 }

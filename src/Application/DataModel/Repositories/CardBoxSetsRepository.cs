@@ -23,10 +23,9 @@ namespace Memoyed.Application.DataModel.Repositories
                 .FirstOrDefaultAsync(c => c.Id.Value == id);
         }
 
-        public Task AddNew(CardBoxSet set)
+        public void AddNew(CardBoxSet set)
         {
             _cardsContext.CardBoxSets.Add(set);
-            return Task.CompletedTask;
         }
     }
 }

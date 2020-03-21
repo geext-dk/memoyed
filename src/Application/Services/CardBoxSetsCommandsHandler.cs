@@ -96,7 +96,7 @@ namespace Memoyed.Application.Services
                 new CardBoxSetLanguage(command.NativeLanguage, DomainChecksImpl.ValidateLanguage),
                 new CardBoxSetLanguage(command.TargetLanguage, DomainChecksImpl.ValidateLanguage));
 
-            await _unitOfWork.CardBoxSetsRepository.AddNew(cardBoxSet);
+            _unitOfWork.CardBoxSetsRepository.AddNew(cardBoxSet);
 
             await _unitOfWork.Commit();
         }

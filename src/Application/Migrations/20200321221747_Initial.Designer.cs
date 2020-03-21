@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Memoyed.Application.Migrations
 {
     [DbContext(typeof(CardsContext))]
-    [Migration("20200321155359_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20200321221747_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,7 +45,7 @@ namespace Memoyed.Application.Migrations
                     b.ToTable("CardBoxes");
                 });
 
-            modelBuilder.Entity("Memoyed.Domain.Cards.Domain.Cards.Card", b =>
+            modelBuilder.Entity("Memoyed.Domain.Cards.Cards.Card", b =>
                 {
                     b.Property<int>("DbId")
                         .ValueGeneratedOnAdd()
@@ -58,7 +58,7 @@ namespace Memoyed.Application.Migrations
 
                     b.HasIndex("CardBoxDbId");
 
-                    b.ToTable("Domain.Cards");
+                    b.ToTable("Cards");
                 });
 
             modelBuilder.Entity("Memoyed.Domain.Cards.RevisionSessions.RevisionSession", b =>
@@ -92,6 +92,17 @@ namespace Memoyed.Application.Migrations
                     b.HasIndex("RevisionSessionDbId");
 
                     b.ToTable("SessionCards");
+                });
+
+            modelBuilder.Entity("Memoyed.Domain.Users.Users.User", b =>
+                {
+                    b.Property<int>("DbId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DbId");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Memoyed.Domain.Cards.CardBoxSets.CardBoxSet", b =>
@@ -263,10 +274,10 @@ namespace Memoyed.Application.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Memoyed.Domain.Cards.Domain.Cards.Card", b =>
+            modelBuilder.Entity("Memoyed.Domain.Cards.Cards.Card", b =>
                 {
                     b.HasOne("Memoyed.Domain.Cards.CardBoxes.CardBox", null)
-                        .WithMany("Domain.Cards")
+                        .WithMany("Cards")
                         .HasForeignKey("CardBoxDbId");
 
                     b.OwnsOne("Memoyed.Domain.Cards.CardBoxes.CardBoxId", "CardBoxId", b1 =>
@@ -280,13 +291,13 @@ namespace Memoyed.Application.Migrations
 
                             b1.HasKey("CardDbId");
 
-                            b1.ToTable("Domain.Cards");
+                            b1.ToTable("Cards");
 
                             b1.WithOwner()
                                 .HasForeignKey("CardDbId");
                         });
 
-                    b.OwnsOne("Memoyed.Domain.Cards.Domain.Cards.CardComment", "Comment", b1 =>
+                    b.OwnsOne("Memoyed.Domain.Cards.Cards.CardComment", "Comment", b1 =>
                         {
                             b1.Property<int>("CardDbId")
                                 .HasColumnType("INTEGER");
@@ -298,13 +309,13 @@ namespace Memoyed.Application.Migrations
 
                             b1.HasKey("CardDbId");
 
-                            b1.ToTable("Domain.Cards");
+                            b1.ToTable("Cards");
 
                             b1.WithOwner()
                                 .HasForeignKey("CardDbId");
                         });
 
-                    b.OwnsOne("Memoyed.Domain.Cards.Domain.Cards.CardId", "Id", b1 =>
+                    b.OwnsOne("Memoyed.Domain.Cards.Cards.CardId", "Id", b1 =>
                         {
                             b1.Property<int>("CardDbId")
                                 .HasColumnType("INTEGER");
@@ -315,13 +326,13 @@ namespace Memoyed.Application.Migrations
 
                             b1.HasKey("CardDbId");
 
-                            b1.ToTable("Domain.Cards");
+                            b1.ToTable("Cards");
 
                             b1.WithOwner()
                                 .HasForeignKey("CardDbId");
                         });
 
-                    b.OwnsOne("Memoyed.Domain.Cards.Domain.Cards.CardWord", "NativeLanguageWord", b1 =>
+                    b.OwnsOne("Memoyed.Domain.Cards.Cards.CardWord", "NativeLanguageWord", b1 =>
                         {
                             b1.Property<int>("CardDbId")
                                 .HasColumnType("INTEGER");
@@ -333,13 +344,13 @@ namespace Memoyed.Application.Migrations
 
                             b1.HasKey("CardDbId");
 
-                            b1.ToTable("Domain.Cards");
+                            b1.ToTable("Cards");
 
                             b1.WithOwner()
                                 .HasForeignKey("CardDbId");
                         });
 
-                    b.OwnsOne("Memoyed.Domain.Cards.Domain.Cards.CardWord", "TargetLanguageWord", b1 =>
+                    b.OwnsOne("Memoyed.Domain.Cards.Cards.CardWord", "TargetLanguageWord", b1 =>
                         {
                             b1.Property<int>("CardDbId")
                                 .HasColumnType("INTEGER");
@@ -351,7 +362,7 @@ namespace Memoyed.Application.Migrations
 
                             b1.HasKey("CardDbId");
 
-                            b1.ToTable("Domain.Cards");
+                            b1.ToTable("Cards");
 
                             b1.WithOwner()
                                 .HasForeignKey("CardDbId");
@@ -363,12 +374,12 @@ namespace Memoyed.Application.Migrations
                                 .HasColumnType("INTEGER");
 
                             b1.Property<DateTime>("Value")
-                                .HasColumnName("CardBoxChangeDate")
+                                .HasColumnName("CardBoxChangedDate")
                                 .HasColumnType("TEXT");
 
                             b1.HasKey("CardDbId");
 
-                            b1.ToTable("Domain.Cards");
+                            b1.ToTable("Cards");
 
                             b1.WithOwner()
                                 .HasForeignKey("CardDbId");
@@ -381,7 +392,7 @@ namespace Memoyed.Application.Migrations
                         .WithMany("SessionCards")
                         .HasForeignKey("RevisionSessionDbId");
 
-                    b.OwnsOne("Memoyed.Domain.Cards.Domain.Cards.CardId", "CardId", b1 =>
+                    b.OwnsOne("Memoyed.Domain.Cards.Cards.CardId", "CardId", b1 =>
                         {
                             b1.Property<int>("SessionCardDbId")
                                 .HasColumnType("INTEGER");
@@ -398,7 +409,7 @@ namespace Memoyed.Application.Migrations
                                 .HasForeignKey("SessionCardDbId");
                         });
 
-                    b.OwnsOne("Memoyed.Domain.Cards.Domain.Cards.CardWord", "NativeLanguageWord", b1 =>
+                    b.OwnsOne("Memoyed.Domain.Cards.Cards.CardWord", "NativeLanguageWord", b1 =>
                         {
                             b1.Property<int>("SessionCardDbId")
                                 .HasColumnType("INTEGER");
@@ -416,7 +427,7 @@ namespace Memoyed.Application.Migrations
                                 .HasForeignKey("SessionCardDbId");
                         });
 
-                    b.OwnsOne("Memoyed.Domain.Cards.Domain.Cards.CardWord", "TargetLanguageWord", b1 =>
+                    b.OwnsOne("Memoyed.Domain.Cards.Cards.CardWord", "TargetLanguageWord", b1 =>
                         {
                             b1.Property<int>("SessionCardDbId")
                                 .HasColumnType("INTEGER");
@@ -449,6 +460,26 @@ namespace Memoyed.Application.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("SessionCardDbId");
+                        });
+                });
+
+            modelBuilder.Entity("Memoyed.Domain.Users.Users.User", b =>
+                {
+                    b.OwnsOne("Memoyed.Domain.Users.UserId", "Id", b1 =>
+                        {
+                            b1.Property<int>("UserDbId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<Guid>("Value")
+                                .HasColumnName("Id")
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("UserDbId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserDbId");
                         });
                 });
 #pragma warning restore 612, 618

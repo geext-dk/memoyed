@@ -30,7 +30,7 @@ namespace Memoyed.Application
             serviceCollection.AddTransient<CardBoxSetsQueriesHandler>();
             serviceCollection.AddTransient<RevisionSessionsCommandsHandler>();
 
-            SqlMapper.AddTypeHandler(new SqlMapperExtensions.GuidSqlHandler());
+            // SqlMapper.AddTypeHandler(new SqlMapperExtensions.GuidSqlHandler());
         }
     }
 }
