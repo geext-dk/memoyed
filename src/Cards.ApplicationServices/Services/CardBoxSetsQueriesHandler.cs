@@ -19,8 +19,8 @@ namespace Memoyed.Cards.ApplicationServices.Services
 
         public async Task<IEnumerable<ReturnModels.CardBoxSetModel>> GetCardBoxSets(Queries.GetCardBoxSetsQuery query)
         {
-            const string getCardBoxSetsSql = "SELECT Id, Name, NativeLanguage, TargetLanguage " +
-                                              "FROM CardBoxSets";
+            const string getCardBoxSetsSql = @"SELECT Id, Name, NativeLanguage, TargetLanguage
+                                                FROM CardBoxSets";
 
             return await _connection.QueryAsync<ReturnModels.CardBoxSetModel>(getCardBoxSetsSql);
         }
