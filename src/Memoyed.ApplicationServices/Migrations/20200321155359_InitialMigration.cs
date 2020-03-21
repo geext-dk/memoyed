@@ -104,7 +104,7 @@ namespace Memoyed.Cards.ApplicationServices.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cards",
+                name: "Domain.Cards",
                 columns: table => new
                 {
                     DbId = table.Column<int>(nullable: false)
@@ -135,7 +135,7 @@ namespace Memoyed.Cards.ApplicationServices.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cards_CardBoxDbId",
-                table: "Cards",
+                table: "Domain.Cards",
                 column: "CardBoxDbId");
 
             migrationBuilder.CreateIndex(
@@ -150,7 +150,7 @@ namespace Memoyed.Cards.ApplicationServices.Migrations
                 name: "CardBoxSets_CompletedRevisionSessionIds");
 
             migrationBuilder.DropTable(
-                name: "Cards");
+                name: "Domain.Cards");
 
             migrationBuilder.DropTable(
                 name: "SessionCards");

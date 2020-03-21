@@ -41,7 +41,7 @@ namespace Memoyed.Cards.ApplicationServices.Services
         {
             const string getCardsSql = @"SELECT c.Id, c.NativeLanguageWord, c.TargetLanguageWord,
                                                     c.Comment, c.CardBoxId, b.SetId
-                                                 FROM Cards AS c
+                                                 FROM Domain.Cards AS c
                                                  INNER JOIN CardBoxes AS b ON b.Id = c.CardBoxId
                                                  WHERE c.CardBoxId = @CardBoxId AND b.SetId = @SetId";
 

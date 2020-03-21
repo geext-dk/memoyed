@@ -4,7 +4,7 @@ namespace Memoyed.Cards.Domain
 {
     public abstract class DomainException : Exception
     {
-        private DomainException(string message) : base($"Cards.Domain Exception: {message}")
+        private DomainException(string message) : base($"Domain.Cards Exception: {message}")
         {
         }
 
