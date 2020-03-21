@@ -29,10 +29,7 @@ namespace Memoyed.Cards.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCardsApplicationServices(dbOptions =>
-                {
-                    dbOptions.UseSqlite(Configuration.GetConnectionString("Default"),
-                        b => b.MigrationsAssembly("Memoyed.Cards.Api"));
-                });
+                dbOptions.UseSqlite(Configuration.GetConnectionString("Default")));
             services.AddCors();
             services.AddControllers();
 
@@ -40,7 +37,7 @@ namespace Memoyed.Cards.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Test Api",
+                    Title = "Memoyed Api",
                     Version = "v1"
                 });
             });
@@ -58,7 +55,7 @@ namespace Memoyed.Cards.Api
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Test Api v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Memoyed Api v1");
                 c.RoutePrefix = string.Empty;
             });
 
