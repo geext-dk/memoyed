@@ -26,8 +26,7 @@ namespace Memoyed.Cards.ApplicationServices
 
         public async Task Commit()
         {
-            await _cardsContext.SaveChangesAsync()
-                .ConfigureAwait(false);
+            await _cardsContext.SaveChangesAsync();
         }
     }
 }

@@ -18,15 +18,12 @@ namespace Memoyed.Cards.ApplicationServices.DataModel.Repositories
         {
             return await _db.RevisionSessions
                 .Include(s => s.SessionCards)
-                .FirstOrDefaultAsync(s => s.Id == id)
-                .ConfigureAwait(false);
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public Task AddNew(RevisionSession revisionSession)
+        public void AddNew(RevisionSession revisionSession)
         {
             _db.RevisionSessions.Add(revisionSession);
-
-            return Task.CompletedTask;
         }
     }
 }

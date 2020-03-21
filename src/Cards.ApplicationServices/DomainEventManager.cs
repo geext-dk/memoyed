@@ -38,8 +38,7 @@ namespace Memoyed.Cards.ApplicationServices
 
         public async Task Publish<T>(T @event) where T : class
         {
-            await _eventsChannel.Writer.WriteAsync(@event)
-                .ConfigureAwait(false);
+            await _eventsChannel.Writer.WriteAsync(@event);
         }
 
         private async Task EventProcessingLoop()
@@ -50,10 +49,8 @@ namespace Memoyed.Cards.ApplicationServices
                 {
                     try
                     {
-                        var @event = await _eventsChannel.Reader.ReadAsync()
-                            .ConfigureAwait(false);
-                        await HandleDomainEvent(@event)
-                            .ConfigureAwait(false);
+                        var @event = await _eventsChannel.Reader.ReadAsync();
+                        await HandleDomainEvent(@event);
                     }
                     catch (ChannelClosedException)
                     {
@@ -90,8 +87,7 @@ namespace Memoyed.Cards.ApplicationServices
                 }
             }
 
-            await unitOfWork.Commit()
-                .ConfigureAwait(false);
+            await unitOfWork.Commit();
         }
 
         public void Dispose()

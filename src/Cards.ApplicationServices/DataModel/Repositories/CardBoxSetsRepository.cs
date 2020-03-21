@@ -18,10 +18,9 @@ namespace Memoyed.Cards.ApplicationServices.DataModel.Repositories
         {
             return await _cardsContext.CardBoxSets
                 .Include(s => s.CardBoxes)
-                    .ThenInclude(b => b.Cards)
+                .ThenInclude(b => b.Cards)
                 .Include(s => s.CompletedRevisionSessionIds)
-                .FirstOrDefaultAsync(c => c.Id.Value == id)
-                .ConfigureAwait(false);
+                .FirstOrDefaultAsync(c => c.Id.Value == id);
         }
 
         public Task AddNew(CardBoxSet set)

@@ -46,19 +46,19 @@ namespace Memoyed.Cards.Api.Controllers
         [HttpPost("createSet")]
         public async Task CreateCardBoxSet(Commands.CreateCardBoxSetCommand command)
         {
-            await _commandsHandler.CreateCardBoxSet(command);
+            await _commandsHandler.Handle(command, Guid.Empty);
         }
 
         [HttpPost("createBox")]
         public async Task CreateCardBox(Commands.CreateCardBoxCommand command)
         {
-            await _commandsHandler.CreateCardBox(command);
+            await _commandsHandler.Handle(command, Guid.Empty);
         }
 
         [HttpPost("createCard")]
         public async Task CreateCard(Commands.AddNewCardCommand command)
         {
-            await _commandsHandler.AddNewCard(command);
+            await _commandsHandler.Handle(command, Guid.Empty);
         }
     }
 }

@@ -6,6 +6,6 @@ namespace Memoyed.Cards.Domain.Repositories
     public interface IRevisionSessionsRepository
     {
         Task<RevisionSession> Get(RevisionSessionId id);
-        Task AddNew(RevisionSession revisionSession);
+        void AddNew(RevisionSession revisionSession);
     }
 }

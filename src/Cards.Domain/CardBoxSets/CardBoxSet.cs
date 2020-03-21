@@ -17,10 +17,12 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         /// Card Box Set constructor, intended for creating new instances
         /// </summary>
         /// <param name="id">Id of the card box set</param>
+        /// <param name="ownerId"></param>
         /// <param name="name"></param>
         /// <param name="nativeLanguage">Language which user knows</param>
         /// <param name="targetLanguage">Language which user is learning</param>
-        public CardBoxSet(CardBoxSetId id, CardBoxSetName name, CardBoxSetLanguage nativeLanguage,
+        public CardBoxSet(CardBoxSetId id, CardBoxSetOwnerId ownerId, CardBoxSetName name,
+            CardBoxSetLanguage nativeLanguage,
             CardBoxSetLanguage targetLanguage)
         {
             _id = id;
@@ -41,6 +43,8 @@ namespace Memoyed.Cards.Domain.CardBoxSets
         private readonly CardBoxSetId _id;
         
         public CardBoxSetName Name { get; private set; }
+        
+        public CardBoxSetOwnerId OwnerId { get; }
 
         /// <summary>
         /// Language that user knows

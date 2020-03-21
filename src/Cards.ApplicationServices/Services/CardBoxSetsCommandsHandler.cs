@@ -17,86 +17,92 @@ namespace Memoyed.Cards.ApplicationServices.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreateCardBoxSet(Commands.CreateCardBoxSetCommand command)
+        public async Task Handle(object command, Guid ownerId)
         {
-            var cardBoxSet = new CardBoxSet(new CardBoxSetId(Guid.NewGuid()),
-                new CardBoxSetName(command.Name), 
+            switch (command)
+            {
+                case Commands.CreateCardBoxSetCommand createCardBoxSetCommand:
+                {
+                    await HandleCreate(createCardBoxSetCommand, ownerId);
+                    break;
+                }
+                case Commands.CreateCardBoxCommand createCardBoxCommand:
+                {
+                    await HandleUpdate(createCardBoxCommand.CardBoxSetId, s =>
+                    {
+                        var box = new CardBox(new CardBoxId(Guid.NewGuid()), s.Id,
+                            new CardBoxLevel(createCardBoxCommand.CardBoxLevel),
+                            new CardBoxRevisionDelay(createCardBoxCommand.RevisionDelay));
+
+                        s.AddCardBox(box);
+                    });
+                    break;
+                }
+                case Commands.AddNewCardCommand addNewCardCommand:
+                {
+                    await HandleUpdate(addNewCardCommand.CardBoxSetId, s =>
+                    {
+                        var card = new Card(new CardId(Guid.NewGuid()),
+                            new CardWord(addNewCardCommand.NativeLanguageWord),
+                            new CardWord(addNewCardCommand.TargetLanguageWord),
+                            new CardComment(addNewCardCommand.Comment));
+
+                        s.AddNewCard(card, new UtcTime(DateTime.UtcNow));
+                    });
+                    break;
+                }
+                case Commands.RemoveCardCommand removeCardCommand:
+                {
+                    await HandleUpdate(removeCardCommand.CardBoxSetId, s =>
+                    {
+                        s.RemoveCard(new CardId(removeCardCommand.CardId));
+                    });
+                    break;
+                }
+                case Commands.RenameCardBoxSetCommand renameCardBoxSetCommand:
+                {
+                    await HandleUpdate(renameCardBoxSetCommand.CardBoxSetId,
+                        s => { s.Rename(new CardBoxSetName(renameCardBoxSetCommand.CardBoxSetName)); });
+                    break;
+                }
+                case Commands.StartRevisionSessionCommand startRevisionSessionCommand:
+                {
+                    await HandleUpdate(startRevisionSessionCommand.CardBoxSetId, s =>
+                    {
+                        var revisionSession = s.StartRevisionSession();
+                        _unitOfWork.RevisionSessionsRepository.AddNew(revisionSession);
+                    });
+                    break;
+                }
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private async Task HandleUpdate(Guid cardBoxSetId, Action<CardBoxSet> update)
+        {
+            var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(new CardBoxSetId(cardBoxSetId));
+
+            if (cardBoxSet == null)
+            {
+                throw new InvalidOperationException("Couldn't find a card box set with the given identity");
+            }
+
+            update(cardBoxSet);
+
+            await _unitOfWork.Commit();
+        }
+
+        private async Task HandleCreate(Commands.CreateCardBoxSetCommand command, Guid ownerId)
+        {
+            var cardBoxSet = new CardBoxSet(new CardBoxSetId(Guid.NewGuid()), new CardBoxSetOwnerId(ownerId), 
+                new CardBoxSetName(command.Name),
                 new CardBoxSetLanguage(command.NativeLanguage, DomainChecksImpl.ValidateLanguage),
                 new CardBoxSetLanguage(command.TargetLanguage, DomainChecksImpl.ValidateLanguage));
 
-            await _unitOfWork.CardBoxSetsRepository.AddNew(cardBoxSet)
-                .ConfigureAwait(false);
+            await _unitOfWork.CardBoxSetsRepository.AddNew(cardBoxSet);
 
-            await _unitOfWork.Commit()
-                .ConfigureAwait(false);
-        }
-
-        public async Task CreateCardBox(Commands.CreateCardBoxCommand command)
-        {
-            var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(new CardBoxSetId(command.CardBoxSetId))
-                .ConfigureAwait(false);
-            
-            var box = new CardBox(new CardBoxId(Guid.NewGuid()),
-                cardBoxSet.Id,
-                new CardBoxLevel(command.CardBoxLevel), 
-                new CardBoxRevisionDelay(command.RevisionDelay));
-            
-            cardBoxSet.AddCardBox(box);
-
-            await _unitOfWork.Commit()
-                .ConfigureAwait(false);
-        }
-
-        public async Task AddNewCard(Commands.AddNewCardCommand dto)
-        {
-            var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(new CardBoxSetId(dto.CardBoxSetId))
-                .ConfigureAwait(false);
-            
-            var card = new Card(new CardId(Guid.NewGuid()), 
-                new CardWord(dto.NativeLanguageWord), 
-                new CardWord(dto.TargetLanguageWord), 
-                new CardComment(dto.Comment));
-
-            cardBoxSet.AddNewCard(card, new UtcTime(DateTime.UtcNow));
-
-            await _unitOfWork.Commit()
-                .ConfigureAwait(false);
-        }
-
-        public async Task RemoveCard(Commands.RemoveCardCommand dto)
-        {
-            var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(new CardBoxSetId(dto.CardBoxSetId))
-                .ConfigureAwait(false);
-            
-            cardBoxSet.RemoveCard(new CardId(dto.CardId));
-
-            await _unitOfWork.Commit()
-                .ConfigureAwait(false);
-        }
-
-        public async Task RenameCardBoxSet(Commands.RenameCardBoxSetCommand command)
-        {
-            var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(new CardBoxSetId(command.CardBoxSetId))
-                .ConfigureAwait(false);
-            
-            cardBoxSet.Rename(new CardBoxSetName(command.CardBoxSetName));
-
-            await _unitOfWork.Commit()
-                .ConfigureAwait(false);
-        }
-
-        public async Task StartRevisionSession(Commands.StartRevisionSessionCommand command)
-        {
-            var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(new CardBoxSetId(command.CardBoxSetId))
-                .ConfigureAwait(false);
-
-            var revisionSession = cardBoxSet.StartRevisionSession();
-
-            await _unitOfWork.RevisionSessionsRepository.AddNew(revisionSession)
-                .ConfigureAwait(false);
-
-            await _unitOfWork.Commit()
-                .ConfigureAwait(false);
+            await _unitOfWork.Commit();
         }
     }
 }

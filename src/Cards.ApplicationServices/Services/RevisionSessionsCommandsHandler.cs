@@ -17,25 +17,21 @@ namespace Memoyed.Cards.ApplicationServices.Services
         public async Task SetCardAnswer(Commands.SetCardAnswerCommand command)
         {
             var session = await _unitOfWork.RevisionSessionsRepository
-                .Get(new RevisionSessionId(command.RevisionSessionId))
-                .ConfigureAwait(false);
+                .Get(new RevisionSessionId(command.RevisionSessionId));
                 
             session.CardAnswered(new CardId(command.CardId), AnswerType.TargetLanguage, command.Answer);
 
-            await _unitOfWork.Commit()
-                .ConfigureAwait(false);
+            await _unitOfWork.Commit();
         }
 
         public async Task CompleteSession(Commands.SetCardAnswerCommand command)
         {
             var session = await _unitOfWork.RevisionSessionsRepository
-                .Get(new RevisionSessionId(command.RevisionSessionId))
-                .ConfigureAwait(false);
+                .Get(new RevisionSessionId(command.RevisionSessionId));
             
             session.CompleteSession();
 
-            await _unitOfWork.Commit()
-                .ConfigureAwait(false);
+            await _unitOfWork.Commit();
         }
     }
 }
