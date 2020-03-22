@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Memoyed.Application.Dto;
 using Memoyed.Domain.Cards.Cards;
 using Memoyed.Domain.Cards.RevisionSessions;
@@ -18,8 +19,18 @@ namespace Memoyed.Application.Services
         {
             var session = await _unitOfWork.RevisionSessionsRepository
                 .Get(new RevisionSessionId(command.RevisionSessionId));
+            
+            var cardId = new CardId(command.CardId);
+            var card = session.SessionCards.First(sc => sc.CardId == cardId);
 
-            session.CardAnswered(new CardId(command.CardId), AnswerType.TargetLanguage, command.Answer);
+            if (command.Answer == card.TargetLanguageWord)
+            {
+                session.CardAnsweredCorrectly(cardId);
+            }
+            else
+            {
+                session.CardAnsweredWrong(cardId);
+            }
 
             await _unitOfWork.Commit();
         }

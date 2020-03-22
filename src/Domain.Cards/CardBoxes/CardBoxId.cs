@@ -7,7 +7,10 @@ namespace Memoyed.Domain.Cards.CardBoxes
     {
         public CardBoxId(Guid value)
         {
-            if (value == Guid.Empty) throw new DomainException.EmptyIdException();
+            if (value == Guid.Empty)
+            {
+                throw new DomainException.EmptyIdException();
+            }
 
             Value = value;
         }

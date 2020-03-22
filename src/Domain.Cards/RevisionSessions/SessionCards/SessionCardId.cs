@@ -7,7 +7,10 @@ namespace Memoyed.Domain.Cards.RevisionSessions.SessionCards
     {
         public SessionCardId(Guid value)
         {
-            if (value == Guid.Empty) throw new DomainException.EmptyIdException();
+            if (value == Guid.Empty)
+            {
+                throw new DomainException.EmptyIdException();
+            }
 
             Value = value;
         }

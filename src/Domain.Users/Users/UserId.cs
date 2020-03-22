@@ -7,7 +7,11 @@ namespace Memoyed.Domain.Users
     {
         public UserId(Guid value)
         {
-            if (value == Guid.Empty) throw new InvalidOperationException();
+            if (value == Guid.Empty)
+            {
+                throw new InvalidOperationException();
+            }
+
             Value = value;
         }
     }

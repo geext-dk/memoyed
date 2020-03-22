@@ -7,7 +7,10 @@ namespace Memoyed.Domain.Cards.Cards
         public CardWord(string value)
         {
             value = value?.Trim();
-            if (string.IsNullOrEmpty(value)) throw new DomainException.EmptyWordException();
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new DomainException.EmptyWordException();
+            }
 
             Value = value;
         }

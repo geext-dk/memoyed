@@ -12,7 +12,7 @@ namespace Memoyed.Application.Extensions
         public static void OwnsSingle<T, TValue, TInner>(this EntityTypeBuilder<T> builder,
             Expression<Func<T, TValue>> propertyAccess,
             Expression<Func<TValue, TInner>> valueAccess)
-            where T : class 
+            where T : class
             where TValue : DomainValue<TInner>
         {
             if (!(propertyAccess.Body is MemberExpression memberExpression) ||
@@ -25,6 +25,5 @@ namespace Memoyed.Application.Extensions
             builder.OwnsOne(propertyAccess,
                 opt => opt.Property(valueAccess).HasColumnName(memberExpression.Member.Name));
         }
-
     }
 }

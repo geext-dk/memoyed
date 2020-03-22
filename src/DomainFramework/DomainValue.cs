@@ -14,15 +14,31 @@ namespace Memoyed.DomainFramework
 
         public bool Equals(DomainValue<T> other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             return EqualityComparer<T>.Default.Equals(Value, other.Value);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
             return obj.GetType() == GetType()
                    && Equals((DomainValue<T>) obj);
         }

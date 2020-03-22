@@ -18,7 +18,6 @@ namespace Memoyed.Application
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private readonly Channel<object> _eventsChannel = Channel.CreateBounded<object>(100);
         private readonly IServiceProvider _serviceProvider;
-        private Task _processEventsTask;
 
         public DomainEventManager(IServiceProvider serviceProvider)
         {
@@ -40,7 +39,7 @@ namespace Memoyed.Application
         private void InitializeEventHandler()
         {
             var token = _cts.Token;
-            _processEventsTask = Task.Factory
+            Task.Factory
                 .StartNew(EventProcessingLoop, token, TaskCreationOptions.LongRunning, TaskScheduler.Default)
                 .Unwrap();
         }
@@ -50,6 +49,7 @@ namespace Memoyed.Application
             try
             {
                 while (true)
+                {
                     try
                     {
                         var @event = await _eventsChannel.Reader.ReadAsync();
@@ -59,6 +59,7 @@ namespace Memoyed.Application
                     {
                         break;
                     }
+                }
             }
             catch (TaskCanceledException)
             {
@@ -74,15 +75,13 @@ namespace Memoyed.Application
                 case RevisionSessionEvents.RevisionSessionCompleted revisionSessionCompleted:
                 {
                     var cardBoxSetRepository = scope.ServiceProvider.GetService<ICardBoxSetsRepository>();
+                    var revisionSessionRepository = scope.ServiceProvider.GetService<IRevisionSessionsRepository>();
                     var cardBoxSet = await cardBoxSetRepository.Get(
                         new CardBoxSetId(revisionSessionCompleted.CardBoxSetId));
+                    var revisionSession = await revisionSessionRepository.Get(
+                        new RevisionSessionId(revisionSessionCompleted.RevisionSessionId));
 
-                    cardBoxSet.ProcessCardsFromRevisionSession(
-                        new RevisionSessionId(revisionSessionCompleted.RevisionSessionId),
-                        revisionSessionCompleted.AnsweredSuccessfullyCardIds
-                            .Select(c => new CardId(c)),
-                        revisionSessionCompleted.AnsweredWrongCardsId
-                            .Select(c => new CardId(c)),
+                    cardBoxSet.ProcessCardsFromRevisionSession(revisionSession,
                         new UtcTime(revisionSessionCompleted.DateTime));
 
                     break;

@@ -16,7 +16,10 @@ namespace Memoyed.Domain.Cards.RevisionSessions
 
         internal RevisionSession(RevisionSessionId id, CardBoxSetId cardBoxSetId, List<SessionCard> sessionCards)
         {
-            if (sessionCards.Count == 0) throw new DomainException.NoCardsForRevisionException();
+            if (sessionCards.Count == 0)
+            {
+                throw new DomainException.NoCardsForRevisionException();
+            }
 
             Id = id;
             CardBoxSetId = cardBoxSetId;
@@ -32,27 +35,31 @@ namespace Memoyed.Domain.Cards.RevisionSessions
         public ReadOnlyCollection<SessionCard> SessionCards => _sessionCards.AsReadOnly();
         public RevisionSessionStatus Status { get; private set; }
 
-        public void CardAnswered(CardId cardId, AnswerType answerType, string word)
+        public void CardAnsweredCorrectly(CardId cardId) => CardAnswered(cardId, SessionCardStatus.AnsweredCorrectly);
+        public void CardAnsweredWrong(CardId cardId) => CardAnswered(cardId, SessionCardStatus.AnsweredWrong);
+
+        private void CardAnswered(CardId cardId, SessionCardStatus status)
         {
             var sessionCard = _sessionCards.FirstOrDefault(sc => sc.CardId == cardId);
-            if (sessionCard == null) throw new DomainException.SessionCardNotFoundException();
-
-            var correctWord = answerType switch
+            if (sessionCard == null)
             {
-                AnswerType.NativeLanguage => sessionCard.NativeLanguageWord,
-                AnswerType.TargetLanguage => sessionCard.TargetLanguageWord,
-                _ => throw new ArgumentException("Unknown AnswerType")
-            };
+                throw new DomainException.SessionCardNotFoundException();
+            }
 
-            // TODO: Maybe do a more light check
-            sessionCard.Status = correctWord != word
-                ? SessionCardStatus.AnsweredWrong
-                : SessionCardStatus.AnsweredCorrectly;
+            if (sessionCard.Status != SessionCardStatus.NotAnswered)
+            {
+                throw new DomainException.CardAlreadyAnsweredException();
+            }
+
+            sessionCard.Status = status;
         }
 
         public void CompleteSession(UtcTime? now = null)
         {
-            if (Status == RevisionSessionStatus.Completed) throw new DomainException.SessionAlreadyCompletedException();
+            if (Status == RevisionSessionStatus.Completed)
+            {
+                throw new DomainException.SessionAlreadyCompletedException();
+            }
 
             var cardIdsByStatus = _sessionCards
                 .GroupBy(sc => sc.Status)
@@ -61,18 +68,11 @@ namespace Memoyed.Domain.Cards.RevisionSessions
                         .ToList());
 
             if (cardIdsByStatus.ContainsKey(SessionCardStatus.NotAnswered))
+            {
                 throw new DomainException.NotAllCardsAnsweredException();
+            }
 
             Status = RevisionSessionStatus.Completed;
-
-            if (!cardIdsByStatus.TryGetValue(SessionCardStatus.AnsweredCorrectly, out var answeredCorrectlyCards))
-                answeredCorrectlyCards = new List<CardId>();
-
-            if (!cardIdsByStatus.TryGetValue(SessionCardStatus.AnsweredWrong, out var answeredWrongCards))
-                answeredWrongCards = new List<CardId>();
-
-            EventPublisher.Publish(new RevisionSessionEvents.RevisionSessionCompleted(Id, CardBoxSetId,
-                answeredCorrectlyCards, answeredWrongCards, now ?? new UtcTime(DateTime.UtcNow)));
         }
     }
 }

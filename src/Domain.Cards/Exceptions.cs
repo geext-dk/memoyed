@@ -163,5 +163,20 @@ namespace Memoyed.Domain.Cards
             {
             }
         }
+
+        public class CardAlreadyAnsweredException : DomainException
+        {
+            public CardAlreadyAnsweredException() : base("The card has already been answered")
+            {
+            }
+        }
+
+        public class RevisionSessionNotCompletedException : DomainException
+        {
+            public RevisionSessionNotCompletedException() : base("The revision session should be completed for this " +
+                                                                 "operation")
+            {
+            }
+        }
     }
 }

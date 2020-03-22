@@ -13,7 +13,10 @@ namespace Memoyed.DomainFramework
 
         public static bool operator <(OrderedDomainValue<T> lhs, OrderedDomainValue<T> rhs)
         {
-            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null)) return false;
+            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+            {
+                return false;
+            }
 
             return lhs.Position < rhs.Position;
         }

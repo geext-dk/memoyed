@@ -6,13 +6,12 @@ namespace Memoyed.Domain.Cards.Cards
 {
     public class Card : Entity
     {
-        public Card(CardId id, CardWord nativeLanguageWord, CardWord targetLanguageWord,
-            CardComment comment)
+        public Card(CardId id, CardWord nativeLanguageWord, CardWord targetLanguageWord)
         {
             Id = id;
             NativeLanguageWord = nativeLanguageWord;
             TargetLanguageWord = targetLanguageWord;
-            Comment = comment;
+            Comment = new CardComment(null);
         }
 
         private Card()

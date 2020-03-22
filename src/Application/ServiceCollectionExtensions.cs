@@ -1,8 +1,6 @@
 ﻿using System;
-using Dapper;
 using Memoyed.Application.DataModel;
 using Memoyed.Application.DataModel.Repositories;
-using Memoyed.Application.Extensions;
 using Memoyed.Application.Services;
 using Memoyed.Domain.Cards.Repositories;
 using Memoyed.DomainFramework;

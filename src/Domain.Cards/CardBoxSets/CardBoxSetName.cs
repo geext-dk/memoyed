@@ -7,7 +7,10 @@ namespace Memoyed.Domain.Cards.CardBoxSets
     {
         public CardBoxSetName(string value)
         {
-            if (string.IsNullOrWhiteSpace(value)) throw new InvalidOperationException("Name shouldn't be empty");
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException("Name shouldn't be empty");
+            }
 
             Value = value;
         }
