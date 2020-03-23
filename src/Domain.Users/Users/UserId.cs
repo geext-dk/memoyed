@@ -1,20 +1,18 @@
 ﻿using System;
 using Memoyed.DomainFramework;
 
-namespace Memoyed.Domain.Users.Users
+namespace Memoyed.Domain.Users
 {
-    public class UserId : DomainValue
+    public class UserId : DomainValue<Guid>
     {
-        public UserId(Guid id)
+        public UserId(Guid value)
         {
-            if (id == Guid.Empty)
+            if (value == Guid.Empty)
             {
                 throw new InvalidOperationException();
             }
 
-            Id = id;
+            Value = value;
         }
-        
-        public Guid Id { get; }
     }
 }

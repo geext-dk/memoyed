@@ -2,7 +2,7 @@ using System;
 
 namespace Memoyed.DomainFramework
 {
-    public abstract class OrderedDomainValue<T> : DomainValue, IComparable<OrderedDomainValue<T>>
+    public abstract class OrderedDomainValue<T> : DomainValue<T>, IComparable<OrderedDomainValue<T>>
     {
         protected abstract int Position { get; }
 

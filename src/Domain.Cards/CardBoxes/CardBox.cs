@@ -25,13 +25,8 @@ namespace Memoyed.Domain.Cards.CardBoxes
             RevisionDelay = revisionDelay;
         }
 
-        // ReSharper disable once UnusedMember.Local
         private CardBox()
         {
-            Id = null!;
-            SetId = null!;
-            Level = null!;
-            RevisionDelay = null!;
         }
 
         /// <summary>

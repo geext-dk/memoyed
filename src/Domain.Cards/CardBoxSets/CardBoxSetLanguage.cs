@@ -1,27 +1,21 @@
-using System;
-using System.Buffers.Text;
 using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Cards.CardBoxSets
 {
-    public class CardBoxSetLanguage : DomainValue
+    public class CardBoxSetLanguage : DomainValue<string>
     {
-        public CardBoxSetLanguage(string language, DomainChecks.ValidateLanguage validateLanguage)
+        public CardBoxSetLanguage(string value, DomainChecks.ValidateLanguage validateLanguage)
         {
-            if (!validateLanguage(language))
+            if (!validateLanguage(value))
             {
                 throw new DomainException.InvalidLanguageException();
             }
 
-            Language = language;
+            Value = value;
         }
-        
-        public string Language { get; }
 
-        // ReSharper disable once UnusedMember.Local
         private CardBoxSetLanguage()
         {
-            Language = null!;
         }
     }
 }

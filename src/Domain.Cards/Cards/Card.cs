@@ -14,15 +14,8 @@ namespace Memoyed.Domain.Cards.Cards
             Comment = new CardComment(null);
         }
 
-        // ReSharper disable once UnusedMember.Local
         private Card()
         {
-            Id = null!;
-            Comment = null!;
-            CardBoxId = null!;
-            NativeLanguageWord = null!;
-            TargetLanguageWord = null!;
-            CardBoxChangedDate = null!;
         }
 
         /// <summary>

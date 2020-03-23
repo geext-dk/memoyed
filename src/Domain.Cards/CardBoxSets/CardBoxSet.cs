@@ -37,11 +37,6 @@ namespace Memoyed.Domain.Cards.CardBoxSets
         // ReSharper disable once UnusedMember.Local
         private CardBoxSet()
         {
-            Id = null!;
-            Name = null!;
-            OwnerId = null!;
-            NativeLanguage = null!;
-            TargetLanguage = null!;
         }
 
         /// <summary>
@@ -75,7 +70,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             Name = newName;
         }
 
-        public RevisionSession StartRevisionSession(UtcTime? now = null)
+        public RevisionSession StartRevisionSession(UtcTime now = null)
         {
             now ??= new UtcTime(DateTime.UtcNow);
 
@@ -85,7 +80,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
                     box = b,
                     card = c
                 }).Where(bc => bc.card.CardBoxChangedDate != null &&
-                               bc.card.CardBoxChangedDate.Time.AddDays(bc.box.RevisionDelay.Delay) <= now.Time))
+                               bc.card.CardBoxChangedDate.Value.AddDays(bc.box.RevisionDelay) <= now))
                 .Select(bc => bc.card)
                 .ToList();
 
@@ -218,7 +213,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
                 throw new DomainException.CardAlreadyInSetException();
             }
 
-            box = GetMinimalLevelBox()!;
+            box = GetMinimalLevelBox();
             card.ChangeCardBoxId(box.Id, now);
             box.AddCard(card);
         }

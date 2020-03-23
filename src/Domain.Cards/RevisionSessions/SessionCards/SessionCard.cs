@@ -14,13 +14,8 @@ namespace Memoyed.Domain.Cards.RevisionSessions.SessionCards
             Status = SessionCardStatus.NotAnswered;
         }
 
-        // ReSharper disable once UnusedMember.Local
         private SessionCard()
         {
-            SessionId = null!;
-            CardId = null!;
-            NativeLanguageWord = null!;
-            TargetLanguageWord = null!;
         }
 
         public RevisionSessionId SessionId { get; }

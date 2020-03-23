@@ -4,7 +4,7 @@ namespace Memoyed.DomainFramework
 {
     public abstract class AggregateRoot : Entity
     {
-        private IDomainEventPublisher? _domainEventPublisher;
+        private IDomainEventPublisher _domainEventPublisher;
 
         protected IDomainEventPublisher? EventPublisher
         {

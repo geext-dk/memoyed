@@ -3,18 +3,16 @@ using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Cards.RevisionSessions
 {
-    public class RevisionSessionId : DomainValue
+    public class RevisionSessionId : DomainValue<Guid>
     {
-        public RevisionSessionId(Guid id)
+        public RevisionSessionId(Guid value)
         {
-            if (id == Guid.Empty)
+            if (value == Guid.Empty)
             {
                 throw new DomainException.EmptyIdException();
             }
 
-            Id = id;
+            Value = value;
         }
-        
-        public Guid Id { get; }
     }
 }

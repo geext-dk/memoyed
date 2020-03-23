@@ -12,7 +12,7 @@ namespace Memoyed.Application.DataModel.Mappings
             builder.Property<int>("DbId");
             builder.HasKey("DbId");
 
-            builder.OwnsSingle(u => u.Id, id => id.Id);
+            builder.OwnsSingle(u => u.Id, id => id.Value);
         }
     }
 }

@@ -3,7 +3,7 @@ using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Cards.Shared
 {
-    public class UtcTime : DomainValue
+    public class UtcTime : DomainValue<DateTime>
     {
         public UtcTime(DateTime time)
         {
@@ -17,12 +17,9 @@ namespace Memoyed.Domain.Cards.Shared
                 time = DateTime.SpecifyKind(time, DateTimeKind.Utc);
             }
 
-            Time = time;
+            Value = time;
         }
-        
-        public DateTime Time { get; }
 
-        // ReSharper disable once UnusedMember.Local
         private UtcTime()
         {
         }

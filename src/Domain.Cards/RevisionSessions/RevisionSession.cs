@@ -26,12 +26,8 @@ namespace Memoyed.Domain.Cards.RevisionSessions
             _sessionCards = sessionCards;
         }
 
-        // ReSharper disable once UnusedMember.Local
         private RevisionSession()
         {
-            Id = null!;
-            CardBoxSetId = null!;
-            _sessionCards = null!;
         }
 
         public RevisionSessionId Id { get; }

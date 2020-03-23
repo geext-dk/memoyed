@@ -13,7 +13,7 @@ namespace Memoyed.Application.Extensions
             Expression<Func<T, TValue>> propertyAccess,
             Expression<Func<TValue, TInner>> valueAccess)
             where T : class
-            where TValue : DomainValue
+            where TValue : DomainValue<TInner>
         {
             if (!(propertyAccess.Body is MemberExpression memberExpression) ||
                 memberExpression.Member.MemberType != MemberTypes.Property)

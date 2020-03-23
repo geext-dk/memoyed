@@ -10,10 +10,10 @@ namespace Memoyed.Application.DataModel.Mappings
         public void Configure(EntityTypeBuilder<CardBox> builder)
         {
             builder.HasKey("DbId");
-            builder.OwnsSingle(c => c.Id, id => id.Id);
-            builder.OwnsSingle(c => c.Level, l => l.Level);
-            builder.OwnsSingle(c => c.RevisionDelay, d => d.Delay);
-            builder.OwnsSingle(c => c.SetId, id => id.Id);
+            builder.OwnsSingle(c => c.Id, id => id.Value);
+            builder.OwnsSingle(c => c.Level, l => l.Value);
+            builder.OwnsSingle(c => c.RevisionDelay, d => d.Value);
+            builder.OwnsSingle(c => c.SetId, id => id.Value);
         }
     }
 }
