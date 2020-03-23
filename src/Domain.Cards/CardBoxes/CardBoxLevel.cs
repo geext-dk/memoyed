@@ -4,16 +4,17 @@ namespace Memoyed.Domain.Cards.CardBoxes
 {
     public class CardBoxLevel : OrderedDomainValue<int>
     {
-        public CardBoxLevel(int value)
+        public CardBoxLevel(int level)
         {
-            if (value < 0)
+            if (level < 0)
             {
                 throw new DomainException.InvalidCardBoxLevelException();
             }
 
-            Value = value;
+            Level = level;
         }
 
-        protected override int Position => Value;
+        protected override int Position => Level;
+        public int Level { get; }
     }
 }

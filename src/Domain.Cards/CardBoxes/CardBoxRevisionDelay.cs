@@ -4,16 +4,18 @@ namespace Memoyed.Domain.Cards.CardBoxes
 {
     public class CardBoxRevisionDelay : OrderedDomainValue<int>
     {
-        public CardBoxRevisionDelay(int value)
+        public CardBoxRevisionDelay(int delay)
         {
-            if (value < 1 || value > 30)
+            if (delay < 1 || delay > 30)
             {
                 throw new DomainException.InvalidRevisionDelayException();
             }
 
-            Value = value;
+            Delay = delay;
         }
 
-        protected override int Position => Value;
+        public int Delay { get; }
+
+        protected override int Position => Delay;
     }
 }

@@ -10,10 +10,10 @@ namespace Memoyed.Application.DataModel.Mappings
         public void Configure(EntityTypeBuilder<SessionCard> builder)
         {
             builder.HasKey("DbId");
-            builder.OwnsSingle(c => c.SessionId, id => id.Value);
-            builder.OwnsSingle(c => c.CardId, id => id.Value);
-            builder.OwnsSingle(c => c.NativeLanguageWord, w => w.Value);
-            builder.OwnsSingle(c => c.TargetLanguageWord, w => w.Value);
+            builder.OwnsSingle(c => c.SessionId, id => id.Id);
+            builder.OwnsSingle(c => c.CardId, id => id.Id);
+            builder.OwnsSingle(c => c.NativeLanguageWord, w => w.Word);
+            builder.OwnsSingle(c => c.TargetLanguageWord, w => w.Word);
         }
     }
 }

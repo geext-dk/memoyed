@@ -15,9 +15,9 @@ namespace Memoyed.Domain.Cards.RevisionSessions
                 CardBoxSetId setId,
                 UtcTime dateTime)
             {
-                RevisionSessionId = sessionId;
-                CardBoxSetId = setId.Value;
-                DateTime = dateTime;
+                RevisionSessionId = sessionId.Id;
+                CardBoxSetId = setId.Id;
+                DateTime = dateTime.Time;
             }
 
             public Guid RevisionSessionId { get; }

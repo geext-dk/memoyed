@@ -2,17 +2,18 @@ using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Cards.Cards
 {
-    public class CardWord : DomainValue<string>
+    public class CardWord : DomainValue
     {
-        public CardWord(string value)
+        public CardWord(string? word)
         {
-            value = value?.Trim();
-            if (string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(word))
             {
                 throw new DomainException.EmptyWordException();
             }
 
-            Value = value;
+            Word = word;
         }
+        
+        public string Word { get; }
     }
 }

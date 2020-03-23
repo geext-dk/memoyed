@@ -2,11 +2,13 @@ using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Cards.Cards
 {
-    public class CardComment : DomainValue<string>
+    public class CardComment : DomainValue
     {
-        public CardComment(string value)
+        public CardComment(string? comment)
         {
-            Value = value?.Trim();
+            Comment = comment?.Trim();
         }
+        
+        public string? Comment { get; }
     }
 }

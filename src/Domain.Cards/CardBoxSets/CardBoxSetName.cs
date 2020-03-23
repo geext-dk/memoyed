@@ -3,16 +3,18 @@ using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Cards.CardBoxSets
 {
-    public class CardBoxSetName : DomainValue<string>
+    public class CardBoxSetName : DomainValue
     {
-        public CardBoxSetName(string value)
+        public CardBoxSetName(string name)
         {
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(name))
             {
                 throw new InvalidOperationException("Name shouldn't be empty");
             }
 
-            Value = value;
+            Name = name;
         }
+        
+        public string Name { get; }
     }
 }

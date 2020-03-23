@@ -3,16 +3,18 @@ using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Cards.CardBoxSets
 {
-    public class CardBoxSetOwnerId : DomainValue<Guid>
+    public class CardBoxSetOwnerId : DomainValue
     {
-        public CardBoxSetOwnerId(Guid value)
+        public CardBoxSetOwnerId(Guid id)
         {
-            if (value == Guid.Empty)
+            if (id == Guid.Empty)
             {
                 throw new DomainException.EmptyIdException();
             }
 
-            Value = value;
+            Id = id;
         }
+        
+        public Guid Id { get; }
     }
 }
