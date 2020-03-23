@@ -163,16 +163,20 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
             cardBoxSet.AddNewCard(card, new UtcTime(new DateTime(2020, 2, 16)));
             
-            var revision = cardBoxSet.StartRevisionSession(new UtcTime(new DateTime(2020, 2, 20)));
+            var now = new UtcTime(new DateTime(2020, 2, 20));
+            var revision = cardBoxSet.StartRevisionSession(now);
             
             revision.CardAnsweredCorrectly(card.Id);
             revision.CompleteSession();
             
             // Act
-            cardBoxSet.ProcessCardsFromRevisionSession(revision);
+            cardBoxSet.ProcessCardsFromRevisionSession(revision, now);
             
             // Assert
             Assert.Single(secondCardBox.Cards);
+            Assert.Equal(card.Id, secondCardBox.Cards.First().Id);
+            Assert.Equal(secondCardBox.Id, card.CardBoxId);
+            Assert.Equal(now, card.CardBoxChangedDate);
         }
 
         [Fact]
@@ -210,6 +214,8 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             
             // Assert
             Assert.Single(firstCardBox.Cards);
+            Assert.Equal(card.Id, firstCardBox.Cards.First().Id);
+            Assert.Equal(firstCardBox.Id, card.CardBoxId);
         }
 
         [Fact]
@@ -423,5 +429,138 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         }
 
         #endregion RemoveCardBox
+        
+        #region AddNewCard
+
+        [Fact]
+        public void AddNewCard_SetWithBoxesNotContainedCard_SuccessfullyAddssCardToLowestLevelBox()
+        {
+            // Arrange
+            var now = new UtcTime(new DateTime(2020, 2, 20));
+            
+            var cardBoxSet = new CardBoxSet(
+                new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxSetOwnerId(Guid.NewGuid()),
+                new CardBoxSetName("Test Name"),
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Finnish", _ => true));
+
+            var firstCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+                new CardBoxRevisionDelay(3));
+            cardBoxSet.AddCardBox(firstCardBox);
+            
+            var secondCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(2),
+                new CardBoxRevisionDelay(5));
+            cardBoxSet.AddCardBox(secondCardBox);
+            
+            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Hei"));
+            
+            // Act
+            cardBoxSet.AddNewCard(card, now);
+
+            // Assert
+            Assert.Single(firstCardBox.Cards);
+            Assert.Empty(secondCardBox.Cards);
+            Assert.Equal(firstCardBox.Id, card.CardBoxId);
+            Assert.Equal(now, card.CardBoxChangedDate);
+        }
+
+        [Fact]
+        public void AddNewCard_SetWithoutBoxes_ThrowsNoBoxesInSetException()
+        {
+            // Arrange
+            var cardBoxSet = new CardBoxSet(
+                new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxSetOwnerId(Guid.NewGuid()),
+                new CardBoxSetName("Test Name"),
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Finnish", _ => true));
+            
+            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"),
+                new CardWord("Hei"));
+            
+            // Act & Assert
+            Assert.Throws<DomainException.NoBoxesInSetException>(
+                () => cardBoxSet.AddNewCard(card));
+        }
+        
+
+        [Fact]
+        public void AddNewCard_CardAlreadyExists_ThrowsCardAlreadyInSetException()
+        {
+            // Arrange
+            var cardBoxSet = new CardBoxSet(
+                new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxSetOwnerId(Guid.NewGuid()),
+                new CardBoxSetName("Test Name"),
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Finnish", _ => true));
+
+            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+                new CardBoxRevisionDelay(3));
+            cardBoxSet.AddCardBox(cardBox);
+            
+            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"),
+                new CardWord("Hei"));
+            cardBoxSet.AddNewCard(card);
+            
+            // Act & Assert
+            Assert.Throws<DomainException.CardAlreadyInSetException>(
+                () => cardBoxSet.AddNewCard(card));
+        }
+        
+        #endregion AddNewCard
+        
+        #region RemoveCard
+
+        [Fact]
+        public void RemoveCard_PassContainedCard_CardSuccsessfullyRemoved()
+        {
+            // Arrange
+            var cardBoxSet = new CardBoxSet(
+                new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxSetOwnerId(Guid.NewGuid()),
+                new CardBoxSetName("Test Name"),
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Finnish", _ => true));
+
+            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+                new CardBoxRevisionDelay(3));
+            cardBoxSet.AddCardBox(cardBox);
+            
+            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"),
+                new CardWord("Hei"));
+            cardBoxSet.AddNewCard(card);
+            
+            // Act
+            cardBoxSet.RemoveCard(card.Id);
+
+            // Assert
+            Assert.Empty(cardBox.Cards);
+        }
+
+        [Fact]
+        public void RemoveCard_PassNotContainedCard_ThrowsCardNotInSetException()
+        {
+            // Arrange
+            var cardBoxSet = new CardBoxSet(
+                new CardBoxSetId(Guid.NewGuid()),
+                new CardBoxSetOwnerId(Guid.NewGuid()),
+                new CardBoxSetName("Test Name"),
+                new CardBoxSetLanguage("Russian", _ => true),
+                new CardBoxSetLanguage("Finnish", _ => true));
+
+            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+                new CardBoxRevisionDelay(3));
+            cardBoxSet.AddCardBox(cardBox);
+            
+            var cardId = new CardId(Guid.NewGuid());
+            
+            // Act & Assert
+            Assert.Throws<DomainException.CardNotInSetException>(
+                () => cardBoxSet.RemoveCard(cardId));
+        }
+        
+        #endregion RemoveCard
     }
 }

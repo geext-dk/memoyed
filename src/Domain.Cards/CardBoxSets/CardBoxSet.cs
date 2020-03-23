@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Memoyed.Domain.Cards.CardBoxes;
 using Memoyed.Domain.Cards.Cards;
@@ -35,6 +34,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             TargetLanguage = targetLanguage;
         }
 
+        // ReSharper disable once UnusedMember.Local
         private CardBoxSet()
         {
         }
@@ -202,8 +202,9 @@ namespace Memoyed.Domain.Cards.CardBoxSets
         ///     Throws if a card with the same id
         ///     already exists in the set
         /// </exception>
-        public void AddNewCard(Card card, UtcTime now)
+        public void AddNewCard(Card card, UtcTime? now = null)
         {
+            now ??= new UtcTime(DateTime.UtcNow);
             EnsureAtLeastOneBoxExists();
 
             var box = GetBoxContainingCard(card.Id);
@@ -220,19 +221,14 @@ namespace Memoyed.Domain.Cards.CardBoxSets
         public void RemoveCard(CardId id)
         {
             var box = GetBoxContainingCard(id);
-            box?.RemoveCard(id);
+            if (box == null)
+            {
+                throw new DomainException.CardNotInSetException();
+            }
+            
+            box.RemoveCard(id);
         }
 
-        /// <summary>
-        ///     Moves the card to a box with a greater level. The card will be placed in a box which level is minimal
-        ///     among boxes with greater level than the card is contained in before the operation.
-        /// </summary>
-        /// <param name="cardId">An Id of the card to promote</param>
-        /// <param name="now">current Time</param>
-        /// <exception cref="DomainException.CardNotInSetException">
-        ///     Throws if the given card doesn't exist in
-        ///     the set
-        /// </exception>
         private void PromoteCard(CardId cardId, UtcTime? now = null)
         {
             var box = GetBoxContainingCard(cardId);
@@ -253,13 +249,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             nextLevelBox.AddCard(card);
         }
 
-        /// <summary>
-        ///     Moves the card to the box with the lowest level
-        /// </summary>
-        /// <param name="cardId"></param>
-        /// <param name="now"></param>
-        /// <exception cref="DomainException.CardNotInSetException"></exception>
-        private void DemoteCard(CardId cardId, UtcTime now = null)
+        private void DemoteCard(CardId cardId, UtcTime? now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null)
@@ -279,25 +269,26 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             prevLevelBox.AddCard(card);
         }
 
-        private CardBox GetBoxContainingCard(CardId cardId)
+        private CardBox? GetBoxContainingCard(CardId cardId)
         {
             return CardBoxes.FirstOrDefault(b => b.Cards.Any(c => c.Id == cardId));
         }
 
-        private CardBox GetMinimalLevelBox()
+        private CardBox? GetMinimalLevelBox()
         {
-            return CardBoxes.Aggregate((prev, next) =>
-                prev.Level < next.Level ? prev : next);
+            return CardBoxes.Count > 0
+                ? CardBoxes.Aggregate((prev, next) => prev.Level < next.Level ? prev : next)
+                : null;
         }
 
-        private CardBox GetNextLevelBox(CardBoxLevel level)
+        private CardBox? GetNextLevelBox(CardBoxLevel level)
         {
             var nextLevelBoxIndex = _cardBoxes.FindIndex(b => b.Level > level);
 
             return nextLevelBoxIndex != -1 ? _cardBoxes[nextLevelBoxIndex] : null;
         }
 
-        private CardBox GetPreviousLevelBox(CardBoxLevel level)
+        private CardBox? GetPreviousLevelBox(CardBoxLevel level)
         {
             var previousLevelBoxIndex = _cardBoxes.FindLastIndex(b => b.Level < level);
 

@@ -105,21 +105,6 @@ namespace Memoyed.Domain.Cards
             }
         }
 
-        public class RevisionSetIdMismatchException : DomainException
-        {
-            public RevisionSetIdMismatchException() : base("The set isn't linked to the revision")
-            {
-            }
-        }
-
-        public class PromoteFromLevelMismatchException : DomainException
-        {
-            public PromoteFromLevelMismatchException() : base("The box the card is contained in doesn't" +
-                                                              " match with the level the card must be promoted from")
-            {
-            }
-        }
-
         public class CardBoxNotFoundInSetException : DomainException
         {
             public CardBoxNotFoundInSetException() : base("The given card box is not found in the set")
