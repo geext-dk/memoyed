@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
+using GraphQL;
 using GraphQL.Types;
 using Memoyed.Application.DataModel;
 using Memoyed.Application.Dto;
@@ -19,12 +20,26 @@ namespace Memoyed.WebApi.GraphQL
             Name = "CardsQuery";
 
             FieldAsync<ListGraphType<CardBoxSetType>, IEnumerable<ReturnModels.CardBoxSetModel>>("cardBoxSets",
+                arguments: new QueryArguments(
+                    new QueryArgument<IdGraphType>
+                    {
+                        Name = "id",
+                        Description = "Id of a set to query"
+                    }),
                 resolve: async c =>
                 {
-
-                    const string sql = @"SELECT s.Id, s.Name, s.NativeLanguage, s.TargetLanguage
+                    var sql = @"SELECT s.Id, s.Name, s.NativeLanguage, s.TargetLanguage
                                                  FROM CardBoxSets AS s";
-                    return await connection.QueryAsync<ReturnModels.CardBoxSetModel>(sql);
+
+                    var id = c.GetArgument<Guid?>("id");
+                    if (id.HasValue)
+                    {
+                        sql += " WHERE @Id = s.Id";
+                    }
+                    return await connection.QueryAsync<ReturnModels.CardBoxSetModel>(sql, new
+                    {
+                        Id = id
+                    });
                 });
         }
         
