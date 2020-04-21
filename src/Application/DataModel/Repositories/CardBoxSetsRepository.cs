@@ -20,7 +20,7 @@ namespace Memoyed.Application.DataModel.Repositories
                 .Include(s => s.CardBoxes)
                 .ThenInclude(b => b.Cards)
                 .Include(s => s.CompletedRevisionSessionIds)
-                .FirstOrDefaultAsync(c => c.Id.Value == id);
+                .FirstOrDefaultAsync(c => c.Id.Value == id.Value);
         }
 
         public void AddNew(CardBoxSet set)

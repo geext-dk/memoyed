@@ -23,7 +23,7 @@ namespace Memoyed.Application.Services
             var cardId = new CardId(command.CardId);
             var card = session.SessionCards.First(sc => sc.CardId == cardId);
 
-            if (command.Answer == card.TargetLanguageWord)
+            if (command.Answer == card.TargetLanguageWord.Value)
             {
                 session.CardAnsweredCorrectly(cardId);
             }

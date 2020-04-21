@@ -1,4 +1,5 @@
-﻿using Memoyed.Domain.Cards.RevisionSessions;
+﻿using Memoyed.Application.Extensions;
+using Memoyed.Domain.Cards.RevisionSessions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,6 +10,8 @@ namespace Memoyed.Application.DataModel.Mappings
         public void Configure(EntityTypeBuilder<RevisionSession> builder)
         {
             builder.HasKey("DbId");
+            builder.OwnsSingle(c => c.Id, id => id.Value);
+            builder.OwnsSingle(c => c.CardBoxSetId, id => id.Value);
         }
     }
 }

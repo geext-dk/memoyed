@@ -1,6 +1,8 @@
 ﻿using System;
+using Dapper;
 using Memoyed.Application.DataModel;
 using Memoyed.Application.DataModel.Repositories;
+using Memoyed.Application.Extensions;
 using Memoyed.Application.Services;
 using Memoyed.Domain.Cards.Repositories;
 using Memoyed.DomainFramework;
@@ -25,10 +27,9 @@ namespace Memoyed.Application
             serviceCollection.AddTransient<RevisionSessionsCommandsHandler>();
 
             serviceCollection.AddTransient<CardBoxSetsCommandsHandler>();
-            serviceCollection.AddTransient<CardBoxSetsQueriesHandler>();
             serviceCollection.AddTransient<RevisionSessionsCommandsHandler>();
 
-            // SqlMapper.AddTypeHandler(new SqlMapperExtensions.GuidSqlHandler());
+            SqlMapper.AddTypeHandler(new SqlMapperExtensions.GuidSqlHandler());
         }
     }
 }

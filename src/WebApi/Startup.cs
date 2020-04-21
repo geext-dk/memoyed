@@ -1,4 +1,10 @@
+using GraphQL;
+using GraphQL.Server;
+using GraphQL.Server.Ui.GraphiQL;
+using GraphQL.Types;
 using Memoyed.Application;
+using Memoyed.WebApi.GraphQL;
+using Memoyed.WebApi.GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +40,18 @@ namespace Memoyed.WebApi
                     Version = "v1"
                 });
             });
+            
+            services.AddScoped<CardType>();
+            services.AddScoped<CardBoxType>();
+            services.AddScoped<CardBoxSetType>();
+            services.AddScoped<CardsQuery>();
+            services.AddScoped<ISchema, CardsSchema>();
+
+            services.AddGraphQL(options =>
+            {
+                options.ExposeExceptions = true;
+                options.EnableMetrics = true;
+            }).AddSystemTextJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +83,13 @@ namespace Memoyed.WebApi
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            
+            app.UseGraphQL<ISchema>();
+            
+            app.UseGraphiQLServer(new GraphiQLOptions
+            {
+                GraphQLEndPoint = "/graphql"
+            });
         }
     }
 }

@@ -12,11 +12,11 @@ namespace Memoyed.Application.DataModel.Mappings
             builder.HasKey("DbId");
 
             builder.OwnsSingle(c => c.Id, id => id.Value);
-            builder.OwnsSingle(c => c.TargetLanguageWord, id => id.Value);
-            builder.OwnsSingle(c => c.NativeLanguageWord, id => id.Value);
-            builder.OwnsSingle(c => c.Comment, id => id.Value);
+            builder.OwnsSingle(c => c.TargetLanguageWord, word => word.Value);
+            builder.OwnsSingle(c => c.NativeLanguageWord, word => word.Value);
+            builder.OwnsSingle(c => c.Comment, comment => comment.Value);
             builder.OwnsSingle(c => c.CardBoxId, id => id.Value);
-            builder.OwnsSingle(c => c.CardBoxChangedDate, id => id.Value);
+            builder.OwnsSingle(c => c.CardBoxChangedDate, date => date.Value);
         }
     }
 }

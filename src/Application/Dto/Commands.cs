@@ -6,7 +6,6 @@ namespace Memoyed.Application.Dto
     {
         public class CreateCardBoxSetCommand
         {
-            public Guid OwnerId { get; set; }
             public string Name { get; set; }
             public string TargetLanguage { get; set; }
             public string NativeLanguage { get; set; }

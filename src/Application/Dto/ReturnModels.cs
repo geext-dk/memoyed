@@ -24,7 +24,8 @@ namespace Memoyed.Application.Dto
         {
             public Guid Id { get; set; }
             public Guid SetId { get; set; }
-            public Guid BoxId { get; set; }
+            public Guid? BoxId { get; set; }
+            public int? Level { get; set; }
             public string TargetLanguageWord { get; set; }
             public string NativeLanguageWord { get; set; }
             public string Comment { get; set; }
