@@ -1,4 +1,5 @@
 using GraphQL;
+using GraphQL.DataLoader;
 using GraphQL.Server;
 using GraphQL.Server.Ui.GraphiQL;
 using GraphQL.Types;
@@ -48,10 +49,12 @@ namespace Memoyed.WebApi
             services.AddScoped<ISchema, CardsSchema>();
 
             services.AddGraphQL(options =>
-            {
-                options.ExposeExceptions = true;
-                options.EnableMetrics = true;
-            }).AddSystemTextJson();
+                {
+                    options.ExposeExceptions = true;
+                    options.EnableMetrics = true;
+                })
+                .AddSystemTextJson()
+                .AddDataLoader();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

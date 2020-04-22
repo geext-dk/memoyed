@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dapper;
+using GraphQL.DataLoader;
 using GraphQL.Types;
 using Memoyed.Application.DataModel;
 using Memoyed.Application.Dto;
@@ -9,7 +12,7 @@ namespace Memoyed.WebApi.GraphQL.Types
 {
     public sealed class CardBoxType : ObjectGraphType<ReturnModels.CardBoxModel>
     {
-        public CardBoxType(CardsContext cardsDb)
+        public CardBoxType(CardsContext cardsDb, IDataLoaderContextAccessor contextAccessor)
         {
             var connection = cardsDb.Database.GetDbConnection();
             Name = "CardBox";
@@ -21,19 +24,29 @@ namespace Memoyed.WebApi.GraphQL.Types
                                             "days should pass until a revision of a contained card");
             Field(c => c.RevisionDelay).Description("Amount of days should pass until a " +
                                                     "revision of a contained card");
-            FieldAsync<ListGraphType<CardType>, IEnumerable<ReturnModels.CardModel>>("cards", 
+            FieldAsync<ListGraphType<CardType>, IEnumerable<ReturnModels.CardModel>>("cards",
                 resolve: async c =>
-            {
-                const string sql = @"SELECT c.Id, c.NativeLanguageWord, c.TargetLanguageWord,
+                {
+                    var dataLoader =
+                        contextAccessor.Context.GetOrAddCollectionBatchLoader<Guid, ReturnModels.CardModel>(
+                            "GetBoxCards",
+                            async ids =>
+                            {
+                                const string sql = @"SELECT c.Id, c.NativeLanguageWord, c.TargetLanguageWord,
                                                     c.Comment, c.CardBoxId, b.SetId
                                                  FROM Cards AS c
                                                  INNER JOIN CardBoxes AS b ON b.Id = c.CardBoxId
-                                                 WHERE b.Id = @CardBoxId";
-                return await connection.QueryAsync<ReturnModels.CardModel>(sql, new
-                {
-                    CardBoxId = c.Source.Id
+                                                 WHERE b.Id IN @BoxIds";
+                                var result = await connection.QueryAsync<ReturnModels.CardModel>(sql, new
+                                {
+                                    BoxIds = ids
+                                });
+
+                                return result.ToLookup(r => r.CardBoxId.Value);
+                            });
+
+                    return await dataLoader.LoadAsync(c.Source.Id);
                 });
-            });
         }
     }
 }
