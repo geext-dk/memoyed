@@ -17,13 +17,11 @@ namespace Memoyed.Application.Extensions
         {
             if (!(propertyAccess.Body is MemberExpression memberExpression) ||
                 memberExpression.Member.MemberType != MemberTypes.Property)
-            {
                 throw new InvalidOperationException("The given expression is not a member expression " +
                                                     "or the member is not a property");
-            }
 
             builder.OwnsOne(propertyAccess,
-                opt => opt.Property(valueAccess).HasColumnName(memberExpression.Member.Name));
+                opt => opt.Property(valueAccess).HasColumnName(memberExpression.Member.Name.ToSnakeCase()));
         }
     }
 }

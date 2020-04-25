@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Dapper;
 using GraphQL.DataLoader;
 using GraphQL.Types;
-using Memoyed.Application.DataModel;
 using Memoyed.Application.Dto;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Memoyed.WebApi.GraphQL.Types
 {
     public sealed class CardBoxType : ObjectGraphType<ReturnModels.CardBoxModel>
     {
-        public CardBoxType(CardsContext cardsDb, IDataLoaderContextAccessor contextAccessor)
+        public CardBoxType(IServiceProvider serviceProvider, IDataLoaderContextAccessor contextAccessor)
         {
-            var connection = cardsDb.Database.GetDbConnection();
             Name = "CardBox";
             Description = "A single box from a card box set that contains cards";
 
@@ -27,16 +26,18 @@ namespace Memoyed.WebApi.GraphQL.Types
             FieldAsync<ListGraphType<CardType>, IEnumerable<ReturnModels.CardModel>>("cards",
                 resolve: async c =>
                 {
+                    using var scope = serviceProvider.CreateScope();
+                    var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
                     var dataLoader =
                         contextAccessor.Context.GetOrAddCollectionBatchLoader<Guid, ReturnModels.CardModel>(
                             "GetBoxCards",
                             async ids =>
                             {
-                                const string sql = @"SELECT c.Id, c.NativeLanguageWord, c.TargetLanguageWord,
-                                                    c.Comment, c.CardBoxId, b.SetId
-                                                 FROM Cards AS c
-                                                 INNER JOIN CardBoxes AS b ON b.Id = c.CardBoxId
-                                                 WHERE b.Id IN @BoxIds";
+                                const string sql = @"SELECT c.id, c.native_language_word, c.target_language_word,
+                                                    c.comment, c.card_box_id, b.set_id
+                                                 FROM cards AS c
+                                                 INNER JOIN card_boxes AS b ON b.id = c.card_box_id
+                                                 WHERE b.id = ANY(@BoxIds)";
                                 var result = await connection.QueryAsync<ReturnModels.CardModel>(sql, new
                                 {
                                     BoxIds = ids

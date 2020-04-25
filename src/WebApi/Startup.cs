@@ -1,5 +1,3 @@
-using GraphQL;
-using GraphQL.DataLoader;
 using GraphQL.Server;
 using GraphQL.Server.Ui.GraphiQL;
 using GraphQL.Types;
@@ -29,10 +27,11 @@ namespace Memoyed.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCardsApplicationServices(dbOptions =>
-                dbOptions.UseNpgsql(Configuration.GetConnectionString("Default")));
+                dbOptions.UseNpgsql(Configuration.GetConnectionString("Default"))
+                    .UseSnakeCaseNamingConvention());
             services.AddCors();
             services.AddControllers();
-            
+
             services.AddScoped<CardType>();
             services.AddScoped<CardBoxType>();
             services.AddScoped<CardBoxSetType>();
@@ -49,7 +48,7 @@ namespace Memoyed.WebApi
             services.AddScoped<RenameCardBoxSetInput>();
             services.AddScoped<StartRevisionSessionInput>();
             services.AddScoped<CardsMutation>();
-            
+
             services.AddScoped<ISchema, CardsSchema>();
 
             services.AddGraphQL(options =>
@@ -64,10 +63,7 @@ namespace Memoyed.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
             app.UseCors(opt =>
@@ -82,9 +78,9 @@ namespace Memoyed.WebApi
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            
+
             app.UseGraphQL<ISchema>();
-            
+
             app.UseGraphiQLServer(new GraphiQLOptions
             {
                 GraphQLEndPoint = "/graphql"

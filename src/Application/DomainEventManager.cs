@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Memoyed.Domain.Cards.CardBoxSets;
-using Memoyed.Domain.Cards.Cards;
 using Memoyed.Domain.Cards.Repositories;
 using Memoyed.Domain.Cards.RevisionSessions;
 using Memoyed.Domain.Cards.Shared;
@@ -49,7 +47,6 @@ namespace Memoyed.Application
             try
             {
                 while (true)
-                {
                     try
                     {
                         var @event = await _eventsChannel.Reader.ReadAsync();
@@ -59,7 +56,6 @@ namespace Memoyed.Application
                     {
                         break;
                     }
-                }
             }
             catch (TaskCanceledException)
             {

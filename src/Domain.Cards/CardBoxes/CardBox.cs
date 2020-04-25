@@ -57,10 +57,7 @@ namespace Memoyed.Domain.Cards.CardBoxes
 
         internal void AddCard(Card card)
         {
-            if (card.CardBoxId != Id)
-            {
-                throw new DomainException.CardBoxIdMismatchException();
-            }
+            if (card.CardBoxId != Id) throw new DomainException.CardBoxIdMismatchException();
 
             _cards.Add(card);
         }

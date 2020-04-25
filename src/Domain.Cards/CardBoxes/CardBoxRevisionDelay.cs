@@ -6,10 +6,7 @@ namespace Memoyed.Domain.Cards.CardBoxes
     {
         public CardBoxRevisionDelay(int value)
         {
-            if (value < 1 || value > 30)
-            {
-                throw new DomainException.InvalidRevisionDelayException();
-            }
+            if (value < 1 || value > 30) throw new DomainException.InvalidRevisionDelayException();
 
             Value = value;
         }

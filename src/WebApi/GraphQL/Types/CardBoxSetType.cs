@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Dapper;
 using GraphQL.DataLoader;
 using GraphQL.Types;
-using Memoyed.Application.DataModel;
 using Memoyed.Application.Dto;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Memoyed.WebApi.GraphQL.Types
 {
     public sealed class CardBoxSetType : ObjectGraphType<ReturnModels.CardBoxSetModel>
     {
-        public CardBoxSetType(CardsContext cardsDb, IDataLoaderContextAccessor contextAccessor)
+        public CardBoxSetType(IServiceProvider serviceProvider, IDataLoaderContextAccessor contextAccessor)
         {
-            var connection = cardsDb.Database.GetDbConnection();
             Name = "CardBoxSet";
             Description = "A set of card boxes. Every card box contains cards";
 
@@ -25,13 +24,15 @@ namespace Memoyed.WebApi.GraphQL.Types
             FieldAsync<ListGraphType<CardBoxType>, IEnumerable<ReturnModels.CardBoxModel>>("cardBoxes",
                 resolve: async c =>
                 {
+                    using var scope = serviceProvider.CreateScope();
+                    var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
                     var dataLoader =
                         contextAccessor.Context.GetOrAddCollectionBatchLoader<Guid, ReturnModels.CardBoxModel>(
                             "GetSetCardBoxes", async ids =>
                             {
-                                const string sql = @"SELECT c.Id, c.SetId, c.Level, c.RevisionDelay
-                                                     FROM CardBoxes AS c
-                                                     WHERE c.SetId IN @SetIds";
+                                const string sql = @"SELECT c.id, c.set_id, c.level, c.revision_delay
+                                                     FROM card_boxes AS c
+                                                     WHERE c.set_id = ANY(@SetIds)";
                                 var result = await connection.QueryAsync<ReturnModels.CardBoxModel>(sql, new
                                 {
                                     SetIds = ids
@@ -46,15 +47,17 @@ namespace Memoyed.WebApi.GraphQL.Types
             FieldAsync<ListGraphType<CardType>, IEnumerable<ReturnModels.CardModel>>("cards",
                 resolve: async c =>
                 {
+                    using var scope = serviceProvider.CreateScope();
+                    var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
                     var dataLoader =
                         contextAccessor.Context.GetOrAddCollectionBatchLoader<Guid, ReturnModels.CardModel>(
                             "GetSetCards", async ids =>
                             {
-                                const string sql = @"SELECT c.Id, c.NativeLanguageWord, c.TargetLanguageWord,
-                                                         c.Comment, c.CardBoxId, b.SetId, b.Level
-                                                     FROM Cards AS c
-                                                     INNER JOIN CardBoxes AS b ON b.Id = c.CardBoxId
-                                                     WHERE b.SetId IN @SetIds";
+                                const string sql = @"SELECT c.id, c.native_language_word, c.target_language_word,
+                                                         c.comment, c.card_box_id, b.set_id, b.level
+                                                     FROM cards AS c
+                                                     INNER JOIN card_boxes AS b ON b.id = c.card_box_id
+                                                     WHERE b.set_id = ANY(@SetIds)";
 
                                 var result = await connection.QueryAsync<ReturnModels.CardModel>(sql, new
                                 {

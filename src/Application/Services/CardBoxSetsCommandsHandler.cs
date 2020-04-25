@@ -47,9 +47,7 @@ namespace Memoyed.Application.Services
                             new CardWord(addNewCardCommand.TargetLanguageWord));
 
                         if (addNewCardCommand.Comment != null)
-                        {
                             card.ChangeComment(new CardComment(addNewCardCommand.Comment));
-                        }
 
                         s.AddNewCard(card, new UtcTime(DateTime.UtcNow));
                     });
@@ -86,9 +84,7 @@ namespace Memoyed.Application.Services
             var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(new CardBoxSetId(cardBoxSetId));
 
             if (cardBoxSet == null)
-            {
                 throw new InvalidOperationException("Couldn't find a card box set with the given identity");
-            }
 
             update(cardBoxSet);
 

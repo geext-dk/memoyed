@@ -1,6 +1,5 @@
 using GraphQL.Types;
 using Memoyed.Application.Dto;
-using Memoyed.Domain.Cards.RevisionSessions.SessionCards;
 
 namespace Memoyed.WebApi.GraphQL.Types
 {

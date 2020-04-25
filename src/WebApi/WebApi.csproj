@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="EFCore.NamingConventions" Version="1.1.0" />
       <PackageReference Include="GraphQL" Version="3.0.0-preview-1490" />
       <PackageReference Include="GraphQL.Server.Transports.AspNetCore.SystemTextJson" Version="3.5.0-alpha0046" />
       <PackageReference Include="GraphQL.Server.Ui.GraphiQL" Version="3.4.0" />

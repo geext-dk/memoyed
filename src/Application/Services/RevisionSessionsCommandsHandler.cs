@@ -9,9 +9,9 @@ namespace Memoyed.Application.Services
 {
     public class RevisionSessionsCommandsHandler
     {
-        private readonly UnitOfWork _unitOfWork;
         private readonly IDomainEventPublisher _eventPublisher;
-        
+        private readonly UnitOfWork _unitOfWork;
+
         public RevisionSessionsCommandsHandler(UnitOfWork unitOfWork, IDomainEventPublisher eventPublisher)
         {
             _unitOfWork = unitOfWork;
@@ -22,18 +22,14 @@ namespace Memoyed.Application.Services
         {
             var session = await _unitOfWork.RevisionSessionsRepository
                 .Get(new RevisionSessionId(command.RevisionSessionId));
-            
+
             var cardId = new CardId(command.CardId);
             var card = session.SessionCards.First(sc => sc.CardId == cardId);
 
             if (command.Answer == card.TargetLanguageWord.Value)
-            {
                 session.CardAnsweredCorrectly(cardId);
-            }
             else
-            {
                 session.CardAnsweredWrong(cardId);
-            }
 
             await _unitOfWork.Commit();
         }

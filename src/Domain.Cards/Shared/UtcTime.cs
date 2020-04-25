@@ -7,15 +7,9 @@ namespace Memoyed.Domain.Cards.Shared
     {
         public UtcTime(DateTime time)
         {
-            if (time.Kind == DateTimeKind.Local)
-            {
-                throw new DomainException.LocalDateTimeException();
-            }
+            if (time.Kind == DateTimeKind.Local) throw new DomainException.LocalDateTimeException();
 
-            if (time.Kind == DateTimeKind.Unspecified)
-            {
-                time = DateTime.SpecifyKind(time, DateTimeKind.Utc);
-            }
+            if (time.Kind == DateTimeKind.Unspecified) time = DateTime.SpecifyKind(time, DateTimeKind.Utc);
 
             Value = time;
         }

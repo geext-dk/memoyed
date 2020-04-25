@@ -11,7 +11,7 @@ namespace Memoyed.Application.DataModel.Mappings
         {
             builder.Property<int>("DbId");
             builder.HasKey("DbId");
-            
+
             builder.OwnsSingle(c => c.SessionId, id => id.Value);
             builder.OwnsSingle(c => c.CardId, id => id.Value);
             builder.OwnsSingle(c => c.NativeLanguageWord, w => w.Value);

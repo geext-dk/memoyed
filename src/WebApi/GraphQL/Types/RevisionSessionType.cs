@@ -1,19 +1,18 @@
 using System;
+using System.Data;
 using System.Linq;
 using Dapper;
 using GraphQL.DataLoader;
 using GraphQL.Types;
-using Memoyed.Application.DataModel;
 using Memoyed.Application.Dto;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Memoyed.WebApi.GraphQL.Types
 {
     public sealed class RevisionSessionType : ObjectGraphType<ReturnModels.RevisionSessionModel>
     {
-        public RevisionSessionType(CardsContext cardsDb, IDataLoaderContextAccessor contextAccessor)
+        public RevisionSessionType(IServiceProvider serviceProvider, IDataLoaderContextAccessor contextAccessor)
         {
-            var connection = cardsDb.Database.GetDbConnection();
             Name = "RevisionSession";
             Description = "A revision session of cards within a single card box set";
 
@@ -26,14 +25,16 @@ namespace Memoyed.WebApi.GraphQL.Types
                 "Session cards the user must answer to complete the revision session",
                 resolve: async c =>
                 {
+                    var scope = serviceProvider.CreateScope();
+                    var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
                     var dataLoader =
                         contextAccessor.Context.GetOrAddCollectionBatchLoader<Guid, ReturnModels.SessionCardModel>(
                             "GetSessionCards", async ids =>
                             {
-                                const string sql = "SELECT sc.SessionId, sc.CardId, sc.Status, " +
-                                                   "sc.NativeLanguageWord, c.TargetLanguageWord " +
-                                                   "FROM SessionCards AS sc " +
-                                                   "WHERE sc.SessionId IN @SessionIds";
+                                const string sql = @"SELECT sc.session_id, sc.card_id, sc.status, 
+                                                     sc.native_language_word, sc.target_language_word 
+                                                     FROM session_cards AS sc 
+                                                     WHERE sc.session_id = ANY(@SessionIds)";
                                 var result = await connection.QueryAsync<ReturnModels.SessionCardModel>(sql, new
                                 {
                                     SessionIds = ids

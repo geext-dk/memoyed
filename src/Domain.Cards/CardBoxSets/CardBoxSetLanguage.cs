@@ -6,10 +6,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
     {
         public CardBoxSetLanguage(string value, DomainChecks.ValidateLanguage validateLanguage)
         {
-            if (!validateLanguage(value))
-            {
-                throw new DomainException.InvalidLanguageException();
-            }
+            if (!validateLanguage(value)) throw new DomainException.InvalidLanguageException();
 
             Value = value;
         }

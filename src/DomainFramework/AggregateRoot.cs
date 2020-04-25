@@ -14,10 +14,7 @@ namespace Memoyed.DomainFramework
 
         public void SetEventPublisher(IDomainEventPublisher publisher)
         {
-            if (EventPublisher != null)
-            {
-                throw new InvalidOperationException("The event publisher has already been set");
-            }
+            if (EventPublisher != null) throw new InvalidOperationException("The event publisher has already been set");
 
             EventPublisher = publisher;
         }

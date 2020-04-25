@@ -4,26 +4,26 @@ using System.Threading.Tasks;
 using Dapper;
 using GraphQL;
 using GraphQL.Types;
-using Memoyed.Application.DataModel;
 using Memoyed.Application.Dto;
 using Memoyed.Application.Services;
 using Memoyed.WebApi.GraphQL.InputTypes;
 using Memoyed.WebApi.GraphQL.Types;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Memoyed.WebApi.GraphQL
 {
     public class CardsMutation : ObjectGraphType
     {
         private static readonly Guid TestUserGuid = Guid.Parse("deadbeef-dead-beef-dead-beef00000075");
-
-        private readonly IDbConnection _connection;
         private readonly CardBoxSetsCommandsHandler _commandsHandler;
-        public CardsMutation(CardsContext cardsDb, CardBoxSetsCommandsHandler commandsHandler)
+
+        private readonly IServiceProvider _serviceProvider;
+
+        public CardsMutation(IServiceProvider serviceProvider, CardBoxSetsCommandsHandler commandsHandler)
         {
-            _connection = cardsDb.Database.GetDbConnection();
+            _serviceProvider = serviceProvider;
             _commandsHandler = commandsHandler;
-            
+
             Name = "CardsMutation";
 
             FieldAsync<CardBoxSetType>("createCardBoxSet", "Create a card box set for the user",
@@ -110,15 +110,18 @@ namespace Memoyed.WebApi.GraphQL
                 }),
                 async c =>
                 {
+                    using var scope = serviceProvider.CreateScope();
+                    var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
                     var command = c.GetArgument<Commands.StartRevisionSessionCommand>("startRevisionSessionInput");
 
                     await commandsHandler.Handle(command, TestUserGuid);
 
                     // TODO: now there is no check that there is only one active revision at the moment.
-                    const string sql = "SELECT rs.Id, rs.CardBoxSetId, rs.Status FROM RevisionSessions " +
-                                       "WHERE rs.CardBoxSetId = @CardBoxSetId AND rs.Status = 0";
+                    const string sql = @"SELECT rs.id, rs.card_box_set_id, rs.status
+                                         FROM revision_sessions as rs 
+                                         WHERE rs.card_box_set_id = @CardBoxSetId AND rs.status = 0";
 
-                    return await _connection.QueryFirstAsync<ReturnModels.RevisionSessionModel>(sql, new
+                    return await connection.QueryFirstAsync<ReturnModels.RevisionSessionModel>(sql, new
                     {
                         command.CardBoxSetId
                     });
@@ -138,23 +141,19 @@ namespace Memoyed.WebApi.GraphQL
         private async Task<ReturnModels.CardBoxSetModel> GetCardBoxSetModel(Guid? byId, string? byName)
         {
             if (byId == null && byName == null)
-            {
                 throw new InvalidOperationException("You must specify at least 1 argument");
-            }
-            var sql = "SELECT s.Id, s.Name, s.NativeLanguage, s.TargetLanguage " +
-                      "FROM CardBoxSets AS s";
 
-            if (byId != null)
-            {
-                sql += " WHERE s.Id = @Id";
-            }
+            using var scope = _serviceProvider.CreateScope();
+            var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
 
-            if (byName != null)
-            {
-                sql += (byId == null ? " WHERE" : " AND") + " s.Name = @Name";
-            }
+            var sql = @"SELECT s.id, s.name, s.native_language, s.target_language 
+                        FROM card_box_sets AS s";
 
-            return await _connection.QueryFirstAsync<ReturnModels.CardBoxSetModel>(sql, new
+            if (byId != null) sql += " WHERE s.id = @Id";
+
+            if (byName != null) sql += (byId == null ? " WHERE" : " AND") + " s.name = @Name";
+
+            return await connection.QueryFirstAsync<ReturnModels.CardBoxSetModel>(sql, new
             {
                 Id = byId,
                 Name = byName

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Memoyed.Domain.Cards.CardBoxSets;
-using Memoyed.Domain.Cards.Cards;
 using Memoyed.Domain.Cards.Shared;
 
 namespace Memoyed.Domain.Cards.RevisionSessions
