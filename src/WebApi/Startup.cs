@@ -49,6 +49,7 @@ namespace Memoyed.WebApi
             services.AddScoped<RenameCardBoxSetInput>();
             services.AddScoped<StartRevisionSessionInput>();
             services.AddScoped<SetCardAnswerInput>();
+            services.AddScoped<CompleteRevisionSessionInput>();
             services.AddScoped<CardsMutation>();
 
             services.AddScoped<ISchema, CardsSchema>();

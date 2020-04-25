@@ -134,6 +134,22 @@ namespace Memoyed.WebApi.GraphQL
                     return await GetRevisionSessionModelById(command.RevisionSessionId);
                 });
 
+            FieldAsync<RevisionSessionType>("completeRevisionSession",
+                "Completed a revision session with the given id",
+                new QueryArguments(new QueryArgument<NonNullGraphType<CompleteRevisionSessionInput>>
+                {
+                    Name = "completeRevisionSessionInput",
+                    Description = "An input object for completing revision sessions"
+                }),
+                async c =>
+                {
+                    var command =
+                        c.GetArgument<Commands.CompleteRevisionSessionCommand>("completeRevisionSessionInput");
+
+                    await commandsHandler.Handle(command, TestUserGuid);
+
+                    return await GetRevisionSessionModelById(command.RevisionSessionId);
+                });
         }
 
         private async Task<ReturnModels.CardBoxSetModel> GetCardBoxSetModel(Guid byId)

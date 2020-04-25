@@ -34,7 +34,7 @@ namespace Memoyed.Application.Services
             await _unitOfWork.Commit();
         }
 
-        public async Task CompleteSession(Commands.CompleteSessionCommand command)
+        public async Task CompleteSession(Commands.CompleteRevisionSessionCommand command)
         {
             var session = await _unitOfWork.RevisionSessionsRepository
                 .Get(new RevisionSessionId(command.RevisionSessionId));

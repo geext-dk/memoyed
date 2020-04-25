@@ -53,7 +53,7 @@ namespace Memoyed.Application.Dto
             public string Answer { get; set; }
         }
 
-        public class CompleteSessionCommand
+        public class CompleteRevisionSessionCommand
         {
             public Guid RevisionSessionId { get; set; }
         }
