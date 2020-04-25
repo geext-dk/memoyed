@@ -43,6 +43,8 @@ namespace Memoyed.Domain.Cards.CardBoxSets
         ///     Id of the card box set
         /// </summary>
         public CardBoxSetId Id { get; }
+        
+        public RevisionSessionId? CurrentRevisionSessionId { get; private set; }
 
         public CardBoxSetName Name { get; private set; }
 
@@ -70,8 +72,13 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             Name = newName;
         }
 
-        public RevisionSession StartRevisionSession(UtcTime now = null)
+        public RevisionSession StartRevisionSession(UtcTime? now = null)
         {
+            if (CurrentRevisionSessionId != null)
+            {
+                throw new InvalidOperationException("An uncompleted revision session exists");
+            }
+            
             now ??= new UtcTime(DateTime.UtcNow);
 
             var cardsReadyForSession = _cardBoxes
@@ -89,12 +96,26 @@ namespace Memoyed.Domain.Cards.CardBoxSets
                 .Select(c => new SessionCard(sessionId, c))
                 .ToList();
 
-            return new RevisionSession(sessionId, Id, sessionCards);
+            var session = new RevisionSession(sessionId, Id, sessionCards);
+            CurrentRevisionSessionId = session.Id;
+            
+            return session;
         }
 
         public void ProcessCardsFromRevisionSession(RevisionSession revisionSession,
             UtcTime? dateTime = null)
         {
+            if (Id != revisionSession.CardBoxSetId)
+            {
+                throw new InvalidOperationException("The revision session was created from other card box set");
+            }
+
+            if (CurrentRevisionSessionId != revisionSession.Id)
+            {
+                throw new InvalidOperationException(
+                    "The revision session doesn't match with the current revision session of the set");
+            }
+            
             if (_completedSessionIds.Contains(revisionSession.Id))
             {
                 return;
@@ -127,6 +148,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             }
 
             _completedSessionIds.Add(revisionSession.Id);
+            CurrentRevisionSessionId = null;
         }
 
         /// <summary>
