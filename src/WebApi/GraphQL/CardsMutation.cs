@@ -110,22 +110,30 @@ namespace Memoyed.WebApi.GraphQL
                 }),
                 async c =>
                 {
-                    using var scope = serviceProvider.CreateScope();
-                    var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
                     var command = c.GetArgument<Commands.StartRevisionSessionCommand>("startRevisionSessionInput");
 
                     await commandsHandler.Handle(command, TestUserGuid);
 
-                    // TODO: now there is no check that there is only one active revision at the moment.
-                    const string sql = @"SELECT rs.id, rs.card_box_set_id, rs.status
-                                         FROM revision_sessions as rs 
-                                         WHERE rs.card_box_set_id = @CardBoxSetId AND rs.status = 0";
-
-                    return await connection.QueryFirstAsync<ReturnModels.RevisionSessionModel>(sql, new
-                    {
-                        command.CardBoxSetId
-                    });
+                    // TODO: currently there is no check that there is only one active revision at the moment.
+                    return await GetRevisionSessionModelBySetId(command.CardBoxSetId);
                 });
+
+            FieldAsync<RevisionSessionType>("answerCard",
+                "Answer a session card with a given answer",
+                new QueryArguments(new QueryArgument<NonNullGraphType<SetCardAnswerInput>>
+                {
+                    Name = "setCardAnswerInput",
+                    Description = "An input object for answering a card"
+                }),
+                async c =>
+                {
+                    var command = c.GetArgument<Commands.SetCardAnswerCommand>("setCardAnswerInput");
+
+                    await commandsHandler.Handle(command, TestUserGuid);
+
+                    return await GetRevisionSessionModelById(command.RevisionSessionId);
+                });
+
         }
 
         private async Task<ReturnModels.CardBoxSetModel> GetCardBoxSetModel(Guid byId)
@@ -136,6 +144,38 @@ namespace Memoyed.WebApi.GraphQL
         private async Task<ReturnModels.CardBoxSetModel> GetCardBoxSetModel(string byName)
         {
             return await GetCardBoxSetModel(null, byName);
+        }
+
+        private async Task<ReturnModels.RevisionSessionModel> GetRevisionSessionModelById(Guid id)
+        {
+            return await GetRevisionSessionModel(id, null);
+        }
+
+        private async Task<ReturnModels.RevisionSessionModel> GetRevisionSessionModelBySetId(Guid setId)
+        {
+            return await GetRevisionSessionModel(null, setId);
+        }
+
+        private async Task<ReturnModels.RevisionSessionModel> GetRevisionSessionModel(Guid? byId, Guid? bySetId)
+        {
+            if (byId == null && bySetId == null)
+                throw new InvalidOperationException("You must specify at least 1 argument");
+
+            using var scope = _serviceProvider.CreateScope();
+            var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
+
+            var sql = @"SELECT rs.id, rs.status, rs.card_box_set_id 
+                        FROM revision_sessions AS rs";
+
+            if (byId != null) sql += " WHERE rs.id = @Id";
+
+            if (bySetId!= null) sql += (byId == null ? " WHERE" : " AND") + " rs.card_box_set_id = @CardBoxSetId";
+
+            return await connection.QueryFirstAsync<ReturnModels.RevisionSessionModel>(sql, new
+            {
+                Id = byId,
+                CardBoxSetId = bySetId
+            });
         }
 
         private async Task<ReturnModels.CardBoxSetModel> GetCardBoxSetModel(Guid? byId, string? byName)
