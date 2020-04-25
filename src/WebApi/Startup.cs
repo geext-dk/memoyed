@@ -39,6 +39,7 @@ namespace Memoyed.WebApi
             services.AddScoped<RevisionSessionStatusType>();
             services.AddScoped<RevisionSessionType>();
             services.AddScoped<SessionCardType>();
+            services.AddScoped<SessionCardAnswerTypeType>();
             services.AddScoped<CardsQuery>();
 
             services.AddScoped<CardBoxSetInput>();
@@ -47,6 +48,7 @@ namespace Memoyed.WebApi
             services.AddScoped<RemoveCardInput>();
             services.AddScoped<RenameCardBoxSetInput>();
             services.AddScoped<StartRevisionSessionInput>();
+            services.AddScoped<SetCardAnswerInput>();
             services.AddScoped<CardsMutation>();
 
             services.AddScoped<ISchema, CardsSchema>();
