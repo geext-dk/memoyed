@@ -2,7 +2,7 @@ namespace Memoyed.Domain.Cards.RevisionSessions
 {
     public enum RevisionSessionStatus
     {
-        Started,
-        Completed
+        Started = 0,
+        Completed = 1
     }
 }

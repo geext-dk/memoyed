@@ -214,7 +214,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             }
 
             box = GetMinimalLevelBox();
-            card.ChangeCardBoxId(box.Id, now);
+            card.ChangeCardBoxId(box!.Id, now);
             box.AddCard(card);
         }
 

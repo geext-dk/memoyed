@@ -5,6 +5,7 @@ using GraphQL.Server.Ui.GraphiQL;
 using GraphQL.Types;
 using Memoyed.Application;
 using Memoyed.WebApi.GraphQL;
+using Memoyed.WebApi.GraphQL.InputTypes;
 using Memoyed.WebApi.GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,20 +33,24 @@ namespace Memoyed.WebApi
                 dbOptions.UseSqlite(Configuration.GetConnectionString("Default")));
             services.AddCors();
             services.AddControllers();
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Memoyed Api",
-                    Version = "v1"
-                });
-            });
             
             services.AddScoped<CardType>();
             services.AddScoped<CardBoxType>();
             services.AddScoped<CardBoxSetType>();
+            services.AddScoped<SessionCardStatusType>();
+            services.AddScoped<RevisionSessionStatusType>();
+            services.AddScoped<RevisionSessionType>();
+            services.AddScoped<SessionCardType>();
             services.AddScoped<CardsQuery>();
+
+            services.AddScoped<CardBoxSetInput>();
+            services.AddScoped<CardBoxInput>();
+            services.AddScoped<CardInput>();
+            services.AddScoped<RemoveCardInput>();
+            services.AddScoped<RenameCardBoxSetInput>();
+            services.AddScoped<StartRevisionSessionInput>();
+            services.AddScoped<CardsMutation>();
+            
             services.AddScoped<ISchema, CardsSchema>();
 
             services.AddGraphQL(options =>
@@ -64,14 +69,6 @@ namespace Memoyed.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Memoyed Api v1");
-                c.RoutePrefix = string.Empty;
-            });
 
             app.UseHttpsRedirection();
             app.UseCors(opt =>

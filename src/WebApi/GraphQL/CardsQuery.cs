@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Memoyed.WebApi.GraphQL
 {
-    public class CardsQuery : ObjectGraphType<object>
+    public class CardsQuery : ObjectGraphType
     {
         public CardsQuery(CardsContext cardsDb)
         {

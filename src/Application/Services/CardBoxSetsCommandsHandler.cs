@@ -31,22 +31,25 @@ namespace Memoyed.Application.Services
                     await HandleUpdate(createCardBoxCommand.CardBoxSetId, s =>
                     {
                         var box = new CardBox(new CardBoxId(Guid.NewGuid()), s.Id,
-                            new CardBoxLevel(createCardBoxCommand.CardBoxLevel),
+                            new CardBoxLevel(createCardBoxCommand.Level),
                             new CardBoxRevisionDelay(createCardBoxCommand.RevisionDelay));
 
                         s.AddCardBox(box);
                     });
                     break;
                 }
-                case Commands.AddNewCardCommand addNewCardCommand:
+                case Commands.CreateCardCommand addNewCardCommand:
                 {
                     await HandleUpdate(addNewCardCommand.CardBoxSetId, s =>
                     {
                         var card = new Card(new CardId(Guid.NewGuid()),
                             new CardWord(addNewCardCommand.NativeLanguageWord),
                             new CardWord(addNewCardCommand.TargetLanguageWord));
-                        
-                        card.ChangeComment(new CardComment(addNewCardCommand.Comment));
+
+                        if (addNewCardCommand.Comment != null)
+                        {
+                            card.ChangeComment(new CardComment(addNewCardCommand.Comment));
+                        }
 
                         s.AddNewCard(card, new UtcTime(DateTime.UtcNow));
                     });

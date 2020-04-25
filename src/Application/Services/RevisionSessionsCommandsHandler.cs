@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Threading.Tasks;
 using Memoyed.Application.Dto;
 using Memoyed.Domain.Cards.Cards;
@@ -35,7 +35,7 @@ namespace Memoyed.Application.Services
             await _unitOfWork.Commit();
         }
 
-        public async Task CompleteSession(Commands.SetCardAnswerCommand command)
+        public async Task CompleteSession(Commands.CompleteSessionCommand command)
         {
             var session = await _unitOfWork.RevisionSessionsRepository
                 .Get(new RevisionSessionId(command.RevisionSessionId));

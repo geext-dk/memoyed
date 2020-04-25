@@ -13,11 +13,11 @@ namespace Memoyed.Domain.Cards.RevisionSessions
         {
             public RevisionSessionCompleted(RevisionSessionId sessionId,
                 CardBoxSetId setId,
-                UtcTime dateTime)
+                UtcTime? dateTime = null)
             {
                 RevisionSessionId = sessionId;
                 CardBoxSetId = setId.Value;
-                DateTime = dateTime;
+                DateTime = dateTime ?? new UtcTime(DateTime.UtcNow);
             }
 
             public Guid RevisionSessionId { get; }

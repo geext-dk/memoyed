@@ -15,16 +15,16 @@ namespace Memoyed.Application.Dto
         {
             public Guid CardBoxSetId { get; set; }
 
-            public int CardBoxLevel { get; set; }
+            public int Level { get; set; }
             public int RevisionDelay { get; set; }
         }
 
-        public class AddNewCardCommand
+        public class CreateCardCommand
         {
             public Guid CardBoxSetId { get; set; }
             public string NativeLanguageWord { get; set; }
             public string TargetLanguageWord { get; set; }
-            public string Comment { get; set; }
+            public string? Comment { get; set; }
         }
 
         public class RemoveCardCommand
