@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Memoyed.Application.Migrations
 {
     [DbContext(typeof(CardsContext))]
-    [Migration("20200425112825_CardBoxCurrentRevisionSession")]
-    partial class CardBoxCurrentRevisionSession
+    [Migration("20200425125751_CardBoxSetCurrentRevisionSession")]
+    partial class CardBoxSetCurrentRevisionSession
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

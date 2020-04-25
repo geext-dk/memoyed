@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Memoyed.Application.Migrations
 {
-    public partial class CardBoxCurrentRevisionSession : Migration
+    public partial class CardBoxSetCurrentRevisionSession : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
