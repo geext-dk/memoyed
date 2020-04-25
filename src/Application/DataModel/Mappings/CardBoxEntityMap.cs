@@ -9,7 +9,9 @@ namespace Memoyed.Application.DataModel.Mappings
     {
         public void Configure(EntityTypeBuilder<CardBox> builder)
         {
+            builder.Property<int>("DbId");
             builder.HasKey("DbId");
+            
             builder.OwnsSingle(c => c.Id, id => id.Value);
             builder.OwnsSingle(c => c.Level, l => l.Value);
             builder.OwnsSingle(c => c.RevisionDelay, d => d.Value);
