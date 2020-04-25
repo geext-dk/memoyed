@@ -1,18 +1,21 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Memoyed.Application.Dto;
 using Memoyed.Domain.Cards.Cards;
 using Memoyed.Domain.Cards.RevisionSessions;
+using Memoyed.DomainFramework;
 
 namespace Memoyed.Application.Services
 {
     public class RevisionSessionsCommandsHandler
     {
         private readonly UnitOfWork _unitOfWork;
-
-        public RevisionSessionsCommandsHandler(UnitOfWork unitOfWork)
+        private readonly IDomainEventPublisher _eventPublisher;
+        
+        public RevisionSessionsCommandsHandler(UnitOfWork unitOfWork, IDomainEventPublisher eventPublisher)
         {
             _unitOfWork = unitOfWork;
+            _eventPublisher = eventPublisher;
         }
 
         public async Task SetCardAnswer(Commands.SetCardAnswerCommand command)
@@ -41,6 +44,9 @@ namespace Memoyed.Application.Services
                 .Get(new RevisionSessionId(command.RevisionSessionId));
 
             session.CompleteSession();
+
+            await _eventPublisher.Publish(new RevisionSessionEvents.RevisionSessionCompleted(session.Id,
+                session.CardBoxSetId));
 
             await _unitOfWork.Commit();
         }
