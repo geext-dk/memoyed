@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace Memoyed.WebApi
 {
@@ -30,7 +29,7 @@ namespace Memoyed.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCardsApplicationServices(dbOptions =>
-                dbOptions.UseSqlite(Configuration.GetConnectionString("Default")));
+                dbOptions.UseNpgsql(Configuration.GetConnectionString("Default")));
             services.AddCors();
             services.AddControllers();
             
