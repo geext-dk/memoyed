@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoyed.Domain.Cards.RevisionSessions;
 
 namespace Memoyed.Application.Dto
 {
@@ -43,11 +44,12 @@ namespace Memoyed.Application.Dto
         {
             public Guid CardBoxSetId { get; set; }
         }
-
+        
         public class SetCardAnswerCommand
         {
             public Guid RevisionSessionId { get; set; }
             public Guid CardId { get; set; }
+            public SessionCardAnswerType AnswerType { get; set; }
             public string Answer { get; set; }
         }
 

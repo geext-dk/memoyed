@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Memoyed.Application.Dto;
 using Memoyed.Domain.Cards.Cards;
 using Memoyed.Domain.Cards.RevisionSessions;
+using Memoyed.Domain.Cards.RevisionSessions.SessionCards;
+using Memoyed.Domain.Cards.Services;
 using Memoyed.DomainFramework;
 
 namespace Memoyed.Application.Services
@@ -11,11 +13,14 @@ namespace Memoyed.Application.Services
     {
         private readonly IDomainEventPublisher _eventPublisher;
         private readonly UnitOfWork _unitOfWork;
+        private readonly ICardAnswerCheckService _cardAnswerCheckService;
 
-        public RevisionSessionsCommandsHandler(UnitOfWork unitOfWork, IDomainEventPublisher eventPublisher)
+        public RevisionSessionsCommandsHandler(UnitOfWork unitOfWork, IDomainEventPublisher eventPublisher,
+            ICardAnswerCheckService cardAnswerCheckService)
         {
             _unitOfWork = unitOfWork;
             _eventPublisher = eventPublisher;
+            _cardAnswerCheckService = cardAnswerCheckService;
         }
 
         public async Task SetCardAnswer(Commands.SetCardAnswerCommand command)
@@ -24,12 +29,7 @@ namespace Memoyed.Application.Services
                 .Get(new RevisionSessionId(command.RevisionSessionId));
 
             var cardId = new CardId(command.CardId);
-            var card = session.SessionCards.First(sc => sc.CardId == cardId);
-
-            if (command.Answer == card.TargetLanguageWord.Value)
-                session.CardAnsweredCorrectly(cardId);
-            else
-                session.CardAnsweredWrong(cardId);
+            session.CardAnswered(cardId, command.AnswerType, command.Answer, _cardAnswerCheckService);
 
             await _unitOfWork.Commit();
         }

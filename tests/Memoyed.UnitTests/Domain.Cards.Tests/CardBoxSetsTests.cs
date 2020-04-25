@@ -5,6 +5,7 @@ using Memoyed.Domain.Cards.CardBoxes;
 using Memoyed.Domain.Cards.CardBoxSets;
 using Memoyed.Domain.Cards.Cards;
 using Memoyed.Domain.Cards.RevisionSessions;
+using Memoyed.Domain.Cards.Services;
 using Memoyed.Domain.Cards.Shared;
 using Xunit;
 
@@ -244,6 +245,22 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             Assert.Empty(cardBoxSet.CompletedRevisionSessionIds);
         }
 
+        private class TestTrueCardAnswerCheckService : ICardAnswerCheckService
+        {
+            public bool CheckAnswer(string word, string answer)
+            {
+                return true;
+            }
+        }
+
+        private class TestFalseCardAnswerCheckService : ICardAnswerCheckService
+        {
+            public bool CheckAnswer(string word, string answer)
+            {
+                return false;
+            }
+        }
+
         [Fact]
         public void ProcessCardsFromRevisionSession_HasAnsweredCorrectlyCard_PromotesCardToNextLevel()
         {
@@ -268,7 +285,8 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             var now = new UtcTime(new DateTime(2020, 2, 20));
             var revision = cardBoxSet.StartRevisionSession(now);
 
-            revision.CardAnsweredCorrectly(card.Id);
+            revision.CardAnswered(card.Id, SessionCardAnswerType.TargetLanguage, "",
+                new TestTrueCardAnswerCheckService());
             revision.CompleteSession();
 
             // Act
@@ -303,12 +321,14 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             cardBoxSet.AddNewCard(card, new UtcTime(new DateTime(2020, 2, 16)));
 
             var firstRevision = cardBoxSet.StartRevisionSession(new UtcTime(new DateTime(2020, 2, 20)));
-            firstRevision.CardAnsweredCorrectly(card.Id);
+            firstRevision.CardAnswered(card.Id, SessionCardAnswerType.TargetLanguage, "",
+                new TestTrueCardAnswerCheckService());
             firstRevision.CompleteSession();
             cardBoxSet.ProcessCardsFromRevisionSession(firstRevision, new UtcTime(new DateTime(2020, 2, 20)));
 
             var secondRevision = cardBoxSet.StartRevisionSession(new UtcTime(new DateTime(2020, 2, 26)));
-            secondRevision.CardAnsweredWrong(card.Id);
+            secondRevision.CardAnswered(card.Id, SessionCardAnswerType.TargetLanguage, "",
+                new TestFalseCardAnswerCheckService());
             secondRevision.CompleteSession();
 
             // Act
@@ -342,7 +362,8 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             cardBoxSet.AddNewCard(card, new UtcTime(new DateTime(2020, 2, 16)));
 
             var revisionSession = cardBoxSet.StartRevisionSession(new UtcTime(new DateTime(2020, 2, 20)));
-            revisionSession.CardAnsweredCorrectly(card.Id);
+            revisionSession.CardAnswered(card.Id, SessionCardAnswerType.TargetLanguage, "",
+                new TestTrueCardAnswerCheckService());
 
             // Act & Assert
             Assert.Throws<DomainException.RevisionSessionNotCompletedException>(
@@ -351,7 +372,7 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         }
 
         [Fact]
-        public void RemoveCard_PassContainedCard_CardSuccsessfullyRemoved()
+        public void RemoveCard_PassContainedCard_CardSuccessfullyRemoved()
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(

@@ -1,6 +1,6 @@
 namespace Memoyed.Domain.Cards.RevisionSessions
 {
-    public enum AnswerType
+    public enum SessionCardAnswerType
     {
         NativeLanguage = 0,
         TargetLanguage = 1

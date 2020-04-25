@@ -4,6 +4,7 @@ using Memoyed.Application.DataModel;
 using Memoyed.Application.DataModel.Repositories;
 using Memoyed.Application.Services;
 using Memoyed.Domain.Cards.Repositories;
+using Memoyed.Domain.Cards.Services;
 using Memoyed.DomainFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ namespace Memoyed.Application
             serviceCollection.AddTransient<ICardBoxSetsRepository, CardBoxSetsRepository>();
             serviceCollection.AddTransient<IRevisionSessionsRepository, RevisionSessionsRepository>();
             serviceCollection.AddTransient<IDomainEventPublisher, DomainEventManager>();
+            serviceCollection.AddSingleton<ICardAnswerCheckService, SimpleCardAnswerCheckService>();
 
             serviceCollection.AddTransient<CardBoxSetsCommandsHandler>();
             serviceCollection.AddTransient<RevisionSessionsCommandsHandler>();

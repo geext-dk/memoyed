@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Memoyed.Domain.Cards.CardBoxSets;
 using Memoyed.Domain.Cards.Cards;
 using Memoyed.Domain.Cards.RevisionSessions.SessionCards;
+using Memoyed.Domain.Cards.Services;
 using Memoyed.Domain.Cards.Shared;
 using Memoyed.DomainFramework;
 
@@ -31,14 +33,20 @@ namespace Memoyed.Domain.Cards.RevisionSessions
         public ReadOnlyCollection<SessionCard> SessionCards => _sessionCards.AsReadOnly();
         public RevisionSessionStatus Status { get; private set; }
 
-        public void CardAnsweredCorrectly(CardId cardId)
+        public void CardAnswered(CardId cardId, SessionCardAnswerType answerType, string answer,
+            ICardAnswerCheckService answerCheckService)
         {
-            CardAnswered(cardId, SessionCardStatus.AnsweredCorrectly);
-        }
+            var card = SessionCards.FirstOrDefault(sc => sc.CardId == cardId);
+            if (card == null)
+            {
+                throw new InvalidOperationException("Couldn't find a card with the id in the revision session");
+            }
 
-        public void CardAnsweredWrong(CardId cardId)
-        {
-            CardAnswered(cardId, SessionCardStatus.AnsweredWrong);
+            CardAnswered(cardId, answerCheckService.CheckAnswer(
+                answerType == SessionCardAnswerType.NativeLanguage ? card.NativeLanguageWord : card.TargetLanguageWord,
+                answer)
+                ? SessionCardStatus.AnsweredCorrectly
+                : SessionCardStatus.AnsweredWrong);
         }
 
         private void CardAnswered(CardId cardId, SessionCardStatus status)
