@@ -15,14 +15,12 @@ namespace Memoyed.WebApi.GraphQL
     public class CardsMutation : ObjectGraphType
     {
         private static readonly Guid TestUserGuid = Guid.Parse("deadbeef-dead-beef-dead-beef00000075");
-        private readonly CardBoxSetsCommandsHandler _commandsHandler;
 
         private readonly IServiceProvider _serviceProvider;
 
-        public CardsMutation(IServiceProvider serviceProvider, CardBoxSetsCommandsHandler commandsHandler)
+        public CardsMutation(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _commandsHandler = commandsHandler;
 
             Name = "CardsMutation";
 
@@ -34,6 +32,9 @@ namespace Memoyed.WebApi.GraphQL
                 }),
                 async c =>
                 {
+                    var scope = _serviceProvider.CreateScope();
+                    var commandsHandler = scope.ServiceProvider.GetRequiredService<CardBoxSetsCommandsHandler>();
+                    
                     var command = c.GetArgument<Commands.CreateCardBoxSetCommand>("cardBoxSet");
 
                     await commandsHandler.Handle(command, TestUserGuid);
@@ -49,6 +50,9 @@ namespace Memoyed.WebApi.GraphQL
                 }),
                 async c =>
                 {
+                    var scope = _serviceProvider.CreateScope();
+                    var commandsHandler = scope.ServiceProvider.GetRequiredService<CardBoxSetsCommandsHandler>();
+
                     var command = c.GetArgument<Commands.CreateCardBoxCommand>("cardBox");
 
                     await commandsHandler.Handle(command, TestUserGuid);
@@ -64,6 +68,9 @@ namespace Memoyed.WebApi.GraphQL
                 }),
                 async c =>
                 {
+                    var scope = _serviceProvider.CreateScope();
+                    var commandsHandler = scope.ServiceProvider.GetRequiredService<CardBoxSetsCommandsHandler>();
+
                     var command = c.GetArgument<Commands.CreateCardCommand>("card");
 
                     await commandsHandler.Handle(command, TestUserGuid);
@@ -79,6 +86,9 @@ namespace Memoyed.WebApi.GraphQL
                 }),
                 async c =>
                 {
+                    var scope = _serviceProvider.CreateScope();
+                    var commandsHandler = scope.ServiceProvider.GetRequiredService<CardBoxSetsCommandsHandler>();
+
                     var command = c.GetArgument<Commands.RemoveCardCommand>("card");
 
                     await commandsHandler.Handle(command, TestUserGuid);
@@ -94,6 +104,9 @@ namespace Memoyed.WebApi.GraphQL
                 }),
                 async c =>
                 {
+                    var scope = _serviceProvider.CreateScope();
+                    var commandsHandler = scope.ServiceProvider.GetRequiredService<CardBoxSetsCommandsHandler>();
+
                     var command = c.GetArgument<Commands.RenameCardBoxSetCommand>("nameInput");
 
                     await commandsHandler.Handle(command, TestUserGuid);
@@ -110,6 +123,9 @@ namespace Memoyed.WebApi.GraphQL
                 }),
                 async c =>
                 {
+                    var scope = _serviceProvider.CreateScope();
+                    var commandsHandler = scope.ServiceProvider.GetRequiredService<CardBoxSetsCommandsHandler>();
+
                     var command = c.GetArgument<Commands.StartRevisionSessionCommand>("startRevisionSessionInput");
 
                     await commandsHandler.Handle(command, TestUserGuid);
@@ -127,6 +143,9 @@ namespace Memoyed.WebApi.GraphQL
                 }),
                 async c =>
                 {
+                    var scope = _serviceProvider.CreateScope();
+                    var commandsHandler = scope.ServiceProvider.GetRequiredService<RevisionSessionsCommandsHandler>();
+
                     var command = c.GetArgument<Commands.SetCardAnswerCommand>("setCardAnswerInput");
 
                     await commandsHandler.Handle(command, TestUserGuid);
@@ -143,6 +162,9 @@ namespace Memoyed.WebApi.GraphQL
                 }),
                 async c =>
                 {
+                    var scope = _serviceProvider.CreateScope();
+                    var commandsHandler = scope.ServiceProvider.GetRequiredService<RevisionSessionsCommandsHandler>();
+
                     var command =
                         c.GetArgument<Commands.CompleteRevisionSessionCommand>("completeRevisionSessionInput");
 

@@ -32,27 +32,27 @@ namespace Memoyed.WebApi
             services.AddCors();
             services.AddControllers();
 
-            services.AddScoped<CardType>();
-            services.AddScoped<CardBoxType>();
-            services.AddScoped<CardBoxSetType>();
-            services.AddScoped<SessionCardStatusType>();
-            services.AddScoped<RevisionSessionStatusType>();
-            services.AddScoped<RevisionSessionType>();
-            services.AddScoped<SessionCardType>();
-            services.AddScoped<SessionCardAnswerTypeType>();
-            services.AddScoped<CardsQuery>();
+            services.AddSingleton<CardType>();
+            services.AddSingleton<CardBoxType>();
+            services.AddSingleton<CardBoxSetType>();
+            services.AddSingleton<SessionCardStatusType>();
+            services.AddSingleton<RevisionSessionStatusType>();
+            services.AddSingleton<RevisionSessionType>();
+            services.AddSingleton<SessionCardType>();
+            services.AddSingleton<SessionCardAnswerTypeType>();
+            services.AddSingleton<CardsQuery>();
 
-            services.AddScoped<CardBoxSetInput>();
-            services.AddScoped<CardBoxInput>();
-            services.AddScoped<CardInput>();
-            services.AddScoped<RemoveCardInput>();
-            services.AddScoped<RenameCardBoxSetInput>();
-            services.AddScoped<StartRevisionSessionInput>();
-            services.AddScoped<SetCardAnswerInput>();
-            services.AddScoped<CompleteRevisionSessionInput>();
-            services.AddScoped<CardsMutation>();
+            services.AddSingleton<CardBoxSetInput>();
+            services.AddSingleton<CardBoxInput>();
+            services.AddSingleton<CardInput>();
+            services.AddSingleton<RemoveCardInput>();
+            services.AddSingleton<RenameCardBoxSetInput>();
+            services.AddSingleton<StartRevisionSessionInput>();
+            services.AddSingleton<SetCardAnswerInput>();
+            services.AddSingleton<CompleteRevisionSessionInput>();
+            services.AddSingleton<CardsMutation>();
 
-            services.AddScoped<ISchema, CardsSchema>();
+            services.AddSingleton<ISchema, CardsSchema>();
 
             services.AddGraphQL(options =>
                 {

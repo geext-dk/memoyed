@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Memoyed.Application.Dto;
 using Memoyed.Domain.Cards.Cards;
@@ -23,26 +24,56 @@ namespace Memoyed.Application.Services
             _cardAnswerCheckService = cardAnswerCheckService;
         }
 
-        public async Task SetCardAnswer(Commands.SetCardAnswerCommand command)
+        public async Task Handle(object command, Guid userId)
         {
-            var session = await _unitOfWork.RevisionSessionsRepository
-                .Get(new RevisionSessionId(command.RevisionSessionId));
+            switch (command)
+            {
+                case Commands.SetCardAnswerCommand setCardAnswerCommand:
+                {
+                    await HandleUpdate(setCardAnswerCommand.RevisionSessionId,
+                        session => session.CardAnswered(
+                            new CardId(setCardAnswerCommand.CardId), setCardAnswerCommand.AnswerType,
+                            setCardAnswerCommand.Answer,
+                            _cardAnswerCheckService));
+                    break;
+                }
+                case Commands.CompleteRevisionSessionCommand completeRevisionSessionCommand:
+                {
+                    await HandleUpdateAsync(completeRevisionSessionCommand.RevisionSessionId,
+                        async session =>
+                        {
+                            session.CompleteSession();
+                            await _eventPublisher.Publish(new RevisionSessionEvents.RevisionSessionCompleted(
+                                session.Id, session.CardBoxSetId));
+                        });
 
-            var cardId = new CardId(command.CardId);
-            session.CardAnswered(cardId, command.AnswerType, command.Answer, _cardAnswerCheckService);
+                    break;
+                }
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private async Task HandleUpdate(Guid revisionSessionId, Action<RevisionSession> update)
+        {
+            var revisionSession = await _unitOfWork.RevisionSessionsRepository.Get(new RevisionSessionId(revisionSessionId));
+
+            if (revisionSession == null)
+                throw new InvalidOperationException("Couldn't find a revision session with the given identity");
+
+            update(revisionSession);
 
             await _unitOfWork.Commit();
         }
 
-        public async Task CompleteSession(Commands.CompleteRevisionSessionCommand command)
+        private async Task HandleUpdateAsync(Guid revisionSessionId, Func<RevisionSession, Task> updateAsync)
         {
-            var session = await _unitOfWork.RevisionSessionsRepository
-                .Get(new RevisionSessionId(command.RevisionSessionId));
+            var revisionSession = await _unitOfWork.RevisionSessionsRepository.Get(new RevisionSessionId(revisionSessionId));
 
-            session.CompleteSession();
+            if (revisionSession == null)
+                throw new InvalidOperationException("Couldn't find a revision session with the given identity");
 
-            await _eventPublisher.Publish(new RevisionSessionEvents.RevisionSessionCompleted(session.Id,
-                session.CardBoxSetId));
+            await updateAsync(revisionSession);
 
             await _unitOfWork.Commit();
         }
