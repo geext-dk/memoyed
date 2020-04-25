@@ -6,7 +6,7 @@ namespace Memoyed.Domain.Cards.CardBoxes
     {
         public CardBoxLevel(int value)
         {
-            if (value < 0)
+            if (value < 1)
             {
                 throw new DomainException.InvalidCardBoxLevelException();
             }
