@@ -3,14 +3,16 @@ using System;
 using Memoyed.Application.DataModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Memoyed.Application.Migrations
 {
     [DbContext(typeof(CardsContext))]
-    partial class CardsContextModelSnapshot : ModelSnapshot
+    [Migration("20200425112825_CardBoxCurrentRevisionSession")]
+    partial class CardBoxCurrentRevisionSession
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
