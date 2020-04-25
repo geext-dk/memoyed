@@ -29,6 +29,7 @@ namespace Memoyed.WebApi
             services.AddCardsApplicationServices(dbOptions =>
                 dbOptions.UseNpgsql(Configuration.GetConnectionString("Default"))
                     .UseSnakeCaseNamingConvention());
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
             services.AddCors();
             services.AddControllers();
 
