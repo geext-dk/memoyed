@@ -14,12 +14,12 @@ namespace Memoyed.Domain.Cards.RevisionSessions
             {
                 RevisionSessionId = sessionId;
                 CardBoxSetId = setId.Value;
-                DateTime = dateTime ?? new UtcTime(DateTime.UtcNow);
+                DateTime = dateTime ?? new UtcTime(DateTimeOffset.UtcNow);
             }
 
             public Guid RevisionSessionId { get; }
             public Guid CardBoxSetId { get; }
-            public DateTime DateTime { get; }
+            public DateTimeOffset DateTime { get; }
         }
     }
 }
