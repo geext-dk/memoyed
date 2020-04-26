@@ -12,7 +12,7 @@ namespace Memoyed.Domain.Cards.RevisionSessions
 {
     public class RevisionSession : AggregateRoot
     {
-        private readonly List<SessionCard> _sessionCards;
+        private readonly List<SessionCard> _sessionCards = new List<SessionCard>();
 
         internal RevisionSession(RevisionSessionId id, CardBoxSetId cardBoxSetId, List<SessionCard> sessionCards)
         {
@@ -29,7 +29,7 @@ namespace Memoyed.Domain.Cards.RevisionSessions
 
         public RevisionSessionId Id { get; }
         public CardBoxSetId CardBoxSetId { get; }
-        public ReadOnlyCollection<SessionCard> SessionCards => _sessionCards.AsReadOnly();
+        public IReadOnlyCollection<SessionCard> SessionCards => _sessionCards.AsReadOnly();
         public RevisionSessionStatus Status { get; private set; }
 
         public void CardAnswered(CardId cardId, SessionCardAnswerType answerType, string answer,
