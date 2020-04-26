@@ -28,6 +28,7 @@ namespace Memoyed.Application.Dto
             public Guid SetId { get; set; }
             public Guid? CardBoxId { get; set; }
             public int? Level { get; set; }
+            public DateTimeOffset? RevisionAllowedDate { get; set; }
             public string TargetLanguageWord { get; set; }
             public string NativeLanguageWord { get; set; }
             public string Comment { get; set; }

@@ -54,7 +54,9 @@ namespace Memoyed.WebApi.GraphQL.Types
                             "GetSetCards", async ids =>
                             {
                                 const string sql = @"SELECT c.id, c.native_language_word, c.target_language_word,
-                                                         c.comment, c.card_box_id, b.set_id, b.level
+                                                         c.comment, c.card_box_id, b.set_id, b.level,
+                                                         (c.card_box_changed_date + b.revision_delay * INTERVAL '1 day')
+                                                            AS RevisionAllowedDate
                                                      FROM cards AS c
                                                      INNER JOIN card_boxes AS b ON b.id = c.card_box_id
                                                      WHERE b.set_id = ANY(@SetIds)";

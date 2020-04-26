@@ -17,6 +17,8 @@ namespace Memoyed.WebApi.GraphQL.Types
             Field(c => c.TargetLanguageWord).Description("The word of the card written in the target language");
             Field(c => c.Level, true).Description("Level of the card box the card belongs to");
             Field(c => c.Comment, true).Description("User's comment");
+            Field(c => c.RevisionAllowedDate, true)
+                .Description("The date after which the card will appear in next revision");
         }
     }
 }
