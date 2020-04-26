@@ -6,7 +6,6 @@ using Memoyed.Domain.Cards.CardBoxSets;
 using Memoyed.Domain.Cards.Cards;
 using Memoyed.Domain.Cards.RevisionSessions;
 using Memoyed.Domain.Cards.Services;
-using Memoyed.Domain.Cards.Shared;
 using Xunit;
 
 namespace Memoyed.UnitTests.Domain.Cards.Tests
@@ -174,7 +173,7 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         public void AddNewCard_SetWithBoxesNotContainedCard_SuccessfullyAddssCardToLowestLevelBox()
         {
             // Arrange
-            var now = new UtcTime(new DateTime(2020, 2, 20));
+            var now = new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero);
 
             var cardBoxSet = new CardBoxSet(
                 new CardBoxSetId(Guid.NewGuid()),
@@ -280,9 +279,9 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             cardBoxSet.AddCardBox(secondCardBox);
 
             var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
-            cardBoxSet.AddNewCard(card, new UtcTime(new DateTime(2020, 2, 16)));
+            cardBoxSet.AddNewCard(card, new DateTimeOffset(2020, 2, 16, 0, 0, 0, TimeSpan.Zero));
 
-            var now = new UtcTime(new DateTime(2020, 2, 20));
+            var now = new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero);
             var revision = cardBoxSet.StartRevisionSession(now);
 
             revision.CardAnswered(card.Id, SessionCardAnswerType.TargetLanguage, "",
@@ -318,21 +317,22 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             cardBoxSet.AddCardBox(secondCardBox);
 
             var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
-            cardBoxSet.AddNewCard(card, new UtcTime(new DateTime(2020, 2, 16)));
+            cardBoxSet.AddNewCard(card, new DateTimeOffset(2020, 2, 16, 0, 0, 0, TimeSpan.Zero));
 
-            var firstRevision = cardBoxSet.StartRevisionSession(new UtcTime(new DateTime(2020, 2, 20)));
+            var firstRevision = cardBoxSet.StartRevisionSession(new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero));
             firstRevision.CardAnswered(card.Id, SessionCardAnswerType.TargetLanguage, "",
                 new TestTrueCardAnswerCheckService());
             firstRevision.CompleteSession();
-            cardBoxSet.ProcessCardsFromRevisionSession(firstRevision, new UtcTime(new DateTime(2020, 2, 20)));
+            cardBoxSet.ProcessCardsFromRevisionSession(firstRevision, new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero));
 
-            var secondRevision = cardBoxSet.StartRevisionSession(new UtcTime(new DateTime(2020, 2, 26)));
+            var secondRevision = cardBoxSet.StartRevisionSession(new DateTimeOffset(2020, 2, 26, 0, 0, 0, TimeSpan.Zero));
             secondRevision.CardAnswered(card.Id, SessionCardAnswerType.TargetLanguage, "",
                 new TestFalseCardAnswerCheckService());
             secondRevision.CompleteSession();
 
             // Act
-            cardBoxSet.ProcessCardsFromRevisionSession(secondRevision, new UtcTime(new DateTime(2020, 2, 26)));
+            cardBoxSet.ProcessCardsFromRevisionSession(secondRevision,
+                new DateTimeOffset(2020, 2, 26, 0, 0, 0, TimeSpan.Zero));
 
             // Assert
             Assert.Single(firstCardBox.Cards);
@@ -359,16 +359,16 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             cardBoxSet.AddCardBox(secondCardBox);
 
             var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
-            cardBoxSet.AddNewCard(card, new UtcTime(new DateTime(2020, 2, 16)));
+            cardBoxSet.AddNewCard(card, new DateTimeOffset(2020, 2, 16, 0, 0, 0, TimeSpan.Zero));
 
-            var revisionSession = cardBoxSet.StartRevisionSession(new UtcTime(new DateTime(2020, 2, 20)));
+            var revisionSession = cardBoxSet.StartRevisionSession(new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero));
             revisionSession.CardAnswered(card.Id, SessionCardAnswerType.TargetLanguage, "",
                 new TestTrueCardAnswerCheckService());
 
             // Act & Assert
             Assert.Throws<DomainException.RevisionSessionNotCompletedException>(
                 () => cardBoxSet.ProcessCardsFromRevisionSession(revisionSession,
-                    new UtcTime(new DateTime(2020, 2, 20))));
+                    new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero)));
         }
 
         [Fact]
@@ -491,13 +491,13 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             cardBoxSet.AddCardBox(newCardBox);
 
             var notReady = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
-            cardBoxSet.AddNewCard(notReady, new UtcTime(new DateTime(2020, 2, 20)));
+            cardBoxSet.AddNewCard(notReady, new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero));
 
             var ready = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
-            cardBoxSet.AddNewCard(ready, new UtcTime(new DateTime(2020, 2, 16)));
+            cardBoxSet.AddNewCard(ready, new DateTimeOffset(2020, 2, 16, 0, 0, 0, TimeSpan.Zero));
 
             // Act
-            var revision = cardBoxSet.StartRevisionSession(new UtcTime(new DateTime(2020, 2, 20)));
+            var revision = cardBoxSet.StartRevisionSession(new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero));
 
             // Assert
             Assert.Equal(RevisionSessionStatus.Started, revision.Status);
@@ -522,10 +522,10 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
 
             var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
 
-            cardBoxSet.AddNewCard(card, new UtcTime(new DateTime(2020, 2, 16)));
+            cardBoxSet.AddNewCard(card, new DateTimeOffset(2020, 2, 16, 0, 0, 0, TimeSpan.Zero));
 
             // Act
-            var revision = cardBoxSet.StartRevisionSession(new UtcTime(new DateTime(2020, 2, 20)));
+            var revision = cardBoxSet.StartRevisionSession(new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero));
 
             // Assert
             Assert.Equal(RevisionSessionStatus.Started, revision.Status);
@@ -549,7 +549,7 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
 
             // Act & Assert
             Assert.Throws<DomainException.NoCardsForRevisionException>(
-                () => cardBoxSet.StartRevisionSession(new UtcTime(new DateTime(2020, 2, 20))));
+                () => cardBoxSet.StartRevisionSession(new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero)));
         }
     }
 }

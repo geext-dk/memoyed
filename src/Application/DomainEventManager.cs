@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Memoyed.Domain.Cards.CardBoxSets;
 using Memoyed.Domain.Cards.Repositories;
 using Memoyed.Domain.Cards.RevisionSessions;
-using Memoyed.Domain.Cards.Shared;
 using Memoyed.DomainFramework;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -77,8 +76,7 @@ namespace Memoyed.Application
                     var revisionSession = await revisionSessionRepository.Get(
                         new RevisionSessionId(revisionSessionCompleted.RevisionSessionId));
 
-                    cardBoxSet.ProcessCardsFromRevisionSession(revisionSession,
-                        new UtcTime(revisionSessionCompleted.DateTime));
+                    cardBoxSet.ProcessCardsFromRevisionSession(revisionSession, revisionSessionCompleted.DateTime);
 
                     break;
                 }

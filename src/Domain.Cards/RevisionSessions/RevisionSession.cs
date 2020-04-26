@@ -6,7 +6,6 @@ using Memoyed.Domain.Cards.CardBoxSets;
 using Memoyed.Domain.Cards.Cards;
 using Memoyed.Domain.Cards.RevisionSessions.SessionCards;
 using Memoyed.Domain.Cards.Services;
-using Memoyed.Domain.Cards.Shared;
 using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Cards.RevisionSessions
@@ -60,7 +59,7 @@ namespace Memoyed.Domain.Cards.RevisionSessions
             sessionCard.Status = status;
         }
 
-        public void CompleteSession(UtcTime? now = null)
+        public void CompleteSession(DateTimeOffset? now = null)
         {
             if (Status == RevisionSessionStatus.Completed) throw new DomainException.SessionAlreadyCompletedException();
 

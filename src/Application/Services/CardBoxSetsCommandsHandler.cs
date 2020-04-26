@@ -4,7 +4,6 @@ using Memoyed.Application.Dto;
 using Memoyed.Domain.Cards.CardBoxes;
 using Memoyed.Domain.Cards.CardBoxSets;
 using Memoyed.Domain.Cards.Cards;
-using Memoyed.Domain.Cards.Shared;
 
 namespace Memoyed.Application.Services
 {
@@ -49,7 +48,7 @@ namespace Memoyed.Application.Services
                         if (addNewCardCommand.Comment != null)
                             card.ChangeComment(new CardComment(addNewCardCommand.Comment));
 
-                        s.AddNewCard(card, new UtcTime(DateTime.UtcNow));
+                        s.AddNewCard(card, DateTimeOffset.UtcNow);
                     });
                     break;
                 }

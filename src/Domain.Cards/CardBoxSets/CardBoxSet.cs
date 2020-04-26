@@ -5,7 +5,6 @@ using Memoyed.Domain.Cards.CardBoxes;
 using Memoyed.Domain.Cards.Cards;
 using Memoyed.Domain.Cards.RevisionSessions;
 using Memoyed.Domain.Cards.RevisionSessions.SessionCards;
-using Memoyed.Domain.Cards.Shared;
 using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Cards.CardBoxSets
@@ -72,12 +71,12 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             Name = newName;
         }
 
-        public RevisionSession StartRevisionSession(UtcTime? now = null)
+        public RevisionSession StartRevisionSession(DateTimeOffset? now = null)
         {
             if (CurrentRevisionSessionId != null)
                 throw new InvalidOperationException("An uncompleted revision session exists");
 
-            now ??= new UtcTime(DateTime.UtcNow);
+            now ??= DateTimeOffset.UtcNow;
 
             var cardsReadyForSession = _cardBoxes
                 .SelectMany(b => b.Cards.Select(c => new
@@ -101,7 +100,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
         }
 
         public void ProcessCardsFromRevisionSession(RevisionSession revisionSession,
-            UtcTime? dateTime = null)
+            DateTimeOffset? dateTime = null)
         {
             if (Id != revisionSession.CardBoxSetId)
                 throw new InvalidOperationException("The revision session was created from other card box set");
@@ -192,16 +191,16 @@ namespace Memoyed.Domain.Cards.CardBoxSets
         ///     Throws if a card with the same id
         ///     already exists in the set
         /// </exception>
-        public void AddNewCard(Card card, UtcTime? now = null)
+        public void AddNewCard(Card card, DateTimeOffset? now = null)
         {
-            now ??= new UtcTime(DateTime.UtcNow);
+            now ??= DateTimeOffset.UtcNow;
             EnsureAtLeastOneBoxExists();
 
             var box = GetBoxContainingCard(card.Id);
             if (box != null) throw new DomainException.CardAlreadyInSetException();
 
             box = GetMinimalLevelBox();
-            card.ChangeCardBoxId(box!.Id, now);
+            card.ChangeCardBoxId(box!.Id, now.Value);
             box.AddCard(card);
         }
 
@@ -213,7 +212,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             box.RemoveCard(id);
         }
 
-        private void PromoteCard(CardId cardId, UtcTime? now = null)
+        private void PromoteCard(CardId cardId, DateTimeOffset? now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null) throw new DomainException.CardNotInSetException();
@@ -223,11 +222,11 @@ namespace Memoyed.Domain.Cards.CardBoxSets
 
             var card = box.Cards.Single(c => c.Id == cardId);
             box.RemoveCard(card.Id);
-            card.ChangeCardBoxId(nextLevelBox.Id, now ?? new UtcTime(DateTime.UtcNow));
+            card.ChangeCardBoxId(nextLevelBox.Id, now ?? DateTimeOffset.UtcNow);
             nextLevelBox.AddCard(card);
         }
 
-        private void DemoteCard(CardId cardId, UtcTime? now = null)
+        private void DemoteCard(CardId cardId, DateTimeOffset? now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null) throw new DomainException.CardNotInSetException();
@@ -237,7 +236,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
 
             var card = box.Cards.Single(c => c.Id == cardId);
             box.RemoveCard(card.Id);
-            card.ChangeCardBoxId(prevLevelBox.Id, now ?? new UtcTime(DateTime.UtcNow));
+            card.ChangeCardBoxId(prevLevelBox.Id, now ?? DateTimeOffset.UtcNow);
             prevLevelBox.AddCard(card);
         }
 

@@ -17,7 +17,6 @@ namespace Memoyed.Application.DataModel.Mappings
             builder.OwnsSingle(c => c.NativeLanguageWord, word => word.Value);
             builder.OwnsSingle(c => c.Comment, comment => comment.Value);
             builder.OwnsSingle(c => c.CardBoxId, id => id.Value);
-            builder.OwnsSingle(c => c.CardBoxChangedDate, date => date.Value);
         }
     }
 }

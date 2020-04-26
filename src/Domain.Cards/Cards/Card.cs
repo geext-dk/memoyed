@@ -1,5 +1,5 @@
+using System;
 using Memoyed.Domain.Cards.CardBoxes;
-using Memoyed.Domain.Cards.Shared;
 using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Cards.Cards
@@ -46,7 +46,7 @@ namespace Memoyed.Domain.Cards.Cards
         /// <summary>
         ///     The time the card was last time moved to another card box in UTC
         /// </summary>
-        public UtcTime? CardBoxChangedDate { get; private set; }
+        public DateTimeOffset? CardBoxChangedDate { get; private set; }
 
         /// <summary>
         ///     Changes the native language word
@@ -75,7 +75,7 @@ namespace Memoyed.Domain.Cards.Cards
             Comment = comment;
         }
 
-        internal void ChangeCardBoxId(CardBoxId cardBoxId, UtcTime now)
+        internal void ChangeCardBoxId(CardBoxId cardBoxId, DateTimeOffset now)
         {
             CardBoxChangedDate = now;
             CardBoxId = cardBoxId;
