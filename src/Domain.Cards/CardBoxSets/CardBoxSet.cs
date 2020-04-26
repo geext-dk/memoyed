@@ -88,12 +88,14 @@ namespace Memoyed.Domain.Cards.CardBoxSets
                 .Select(bc => bc.card)
                 .ToList();
 
-            var sessionId = new RevisionSessionId(Guid.NewGuid());
+            // instances of owned types cannot be shared between multiple owners
+            // See: https://docs.microsoft.com/en-us/ef/core/modeling/owned-entities
+            var sessionId = Guid.NewGuid();
             var sessionCards = cardsReadyForSession
-                .Select(c => new SessionCard(sessionId, c))
+                .Select(c => new SessionCard(new RevisionSessionId(sessionId), c))
                 .ToList();
 
-            var session = new RevisionSession(sessionId, Id, sessionCards);
+            var session = new RevisionSession(new RevisionSessionId(sessionId), Id, sessionCards);
             CurrentRevisionSessionId = session.Id;
 
             return session;
