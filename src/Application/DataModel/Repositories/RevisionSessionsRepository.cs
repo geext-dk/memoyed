@@ -18,7 +18,7 @@ namespace Memoyed.Application.DataModel.Repositories
         {
             return await _db.RevisionSessions
                 .Include(s => s.SessionCards)
-                .FirstOrDefaultAsync(s => s.Id == id);
+                .FirstOrDefaultAsync(s => s.Id.Value == id.Value);
         }
 
         public void AddNew(RevisionSession revisionSession)
