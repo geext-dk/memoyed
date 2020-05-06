@@ -17,13 +17,13 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var cardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(cardBox);
 
@@ -37,13 +37,13 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), new CardBoxSetId(Guid.NewGuid()),
+            var cardBox = new CardBox(Guid.NewGuid(), Guid.NewGuid(),
                 new CardBoxLevel(1), new CardBoxRevisionDelay(3));
 
             // Act & Assert
@@ -56,17 +56,17 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var firstCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var firstCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(firstCardBox);
 
-            var secondCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(2),
+            var secondCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(2),
                 new CardBoxRevisionDelay(1));
 
             // Act & Assert
@@ -79,17 +79,17 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var firstCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var firstCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(firstCardBox);
 
-            var secondCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var secondCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(5));
 
             // Act & Assert
@@ -102,13 +102,13 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var cardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
 
             // Act
@@ -124,17 +124,17 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var firstCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var firstCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(firstCardBox);
 
-            var secondCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(2),
+            var secondCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(2),
                 new CardBoxRevisionDelay(5));
 
             // Act
@@ -150,17 +150,17 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var cardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(cardBox);
 
-            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"),
+            var card = new Card(Guid.NewGuid(), new CardWord("Привет"),
                 new CardWord("Hei"));
             cardBoxSet.AddNewCard(card);
 
@@ -176,21 +176,21 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
             var now = new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero);
 
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var firstCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var firstCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(firstCardBox);
 
-            var secondCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(2),
+            var secondCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(2),
                 new CardBoxRevisionDelay(5));
             cardBoxSet.AddCardBox(secondCardBox);
 
-            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Hei"));
+            var card = new Card(Guid.NewGuid(), new CardWord("Привет"), new CardWord("Hei"));
 
             // Act
             cardBoxSet.AddNewCard(card, now);
@@ -207,13 +207,13 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"),
+            var card = new Card(Guid.NewGuid(), new CardWord("Привет"),
                 new CardWord("Hei"));
 
             // Act & Assert
@@ -225,7 +225,7 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         public void Constructor_CreateCardBoxSet_SuccessfullyAssignsArguments()
         {
             // Arrange
-            var id = new CardBoxSetId(Guid.NewGuid());
+            var id = Guid.NewGuid();
             var ownerId = new CardBoxSetOwnerId(Guid.NewGuid());
             var name = new CardBoxSetName("Test Name");
             var nativeLanguage = new CardBoxSetLanguage("Russian", _ => true);
@@ -265,20 +265,20 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
-            var firstCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var firstCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(firstCardBox);
 
-            var secondCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(2),
+            var secondCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(2),
                 new CardBoxRevisionDelay(5));
             cardBoxSet.AddCardBox(secondCardBox);
 
-            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
+            var card = new Card(Guid.NewGuid(), new CardWord("Привет"), new CardWord("Moi"));
             cardBoxSet.AddNewCard(card, new DateTimeOffset(2020, 2, 16, 0, 0, 0, TimeSpan.Zero));
 
             var now = new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero);
@@ -303,20 +303,20 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
-            var firstCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var firstCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(firstCardBox);
 
-            var secondCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(2),
+            var secondCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(2),
                 new CardBoxRevisionDelay(5));
             cardBoxSet.AddCardBox(secondCardBox);
 
-            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
+            var card = new Card(Guid.NewGuid(), new CardWord("Привет"), new CardWord("Moi"));
             cardBoxSet.AddNewCard(card, new DateTimeOffset(2020, 2, 16, 0, 0, 0, TimeSpan.Zero));
 
             var firstRevision = cardBoxSet.StartRevisionSession(new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero));
@@ -345,20 +345,20 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
-            var firstCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var firstCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(firstCardBox);
 
-            var secondCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(2),
+            var secondCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(2),
                 new CardBoxRevisionDelay(5));
             cardBoxSet.AddCardBox(secondCardBox);
 
-            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
+            var card = new Card(Guid.NewGuid(), new CardWord("Привет"), new CardWord("Moi"));
             cardBoxSet.AddNewCard(card, new DateTimeOffset(2020, 2, 16, 0, 0, 0, TimeSpan.Zero));
 
             var revisionSession = cardBoxSet.StartRevisionSession(new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero));
@@ -376,17 +376,17 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var cardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(cardBox);
 
-            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"),
+            var card = new Card(Guid.NewGuid(), new CardWord("Привет"),
                 new CardWord("Hei"));
             cardBoxSet.AddNewCard(card);
 
@@ -402,17 +402,17 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var cardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(cardBox);
 
-            var cardId = new CardId(Guid.NewGuid());
+            var cardId = Guid.NewGuid();
 
             // Act & Assert
             Assert.Throws<DomainException.CardNotInSetException>(
@@ -424,13 +424,13 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var cardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(cardBox);
 
@@ -446,13 +446,13 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var cardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var cardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
 
             // Act & Assert
@@ -463,7 +463,7 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         public void Rename_PassValidName_CardBoxSetChangesName()
         {
             // Arrange
-            var cardBoxSet = new CardBoxSet(new CardBoxSetId(Guid.NewGuid()), new CardBoxSetOwnerId(Guid.NewGuid()),
+            var cardBoxSet = new CardBoxSet(Guid.NewGuid(), new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"), new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
             var newName = new CardBoxSetName("New Name");
@@ -480,20 +480,20 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var newCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var newCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(newCardBox);
 
-            var notReady = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
+            var notReady = new Card(Guid.NewGuid(), new CardWord("Привет"), new CardWord("Moi"));
             cardBoxSet.AddNewCard(notReady, new DateTimeOffset(2020, 2, 20, 0, 0, 0, TimeSpan.Zero));
 
-            var ready = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
+            var ready = new Card(Guid.NewGuid(), new CardWord("Привет"), new CardWord("Moi"));
             cardBoxSet.AddNewCard(ready, new DateTimeOffset(2020, 2, 16, 0, 0, 0, TimeSpan.Zero));
 
             // Act
@@ -510,17 +510,17 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),
                 new CardBoxSetLanguage("Finnish", _ => true));
 
-            var newCardBox = new CardBox(new CardBoxId(Guid.NewGuid()), cardBoxSet.Id, new CardBoxLevel(1),
+            var newCardBox = new CardBox(Guid.NewGuid(), cardBoxSet.Id, new CardBoxLevel(1),
                 new CardBoxRevisionDelay(3));
             cardBoxSet.AddCardBox(newCardBox);
 
-            var card = new Card(new CardId(Guid.NewGuid()), new CardWord("Привет"), new CardWord("Moi"));
+            var card = new Card(Guid.NewGuid(), new CardWord("Привет"), new CardWord("Moi"));
 
             cardBoxSet.AddNewCard(card, new DateTimeOffset(2020, 2, 16, 0, 0, 0, TimeSpan.Zero));
 
@@ -541,7 +541,7 @@ namespace Memoyed.UnitTests.Domain.Cards.Tests
         {
             // Arrange
             var cardBoxSet = new CardBoxSet(
-                new CardBoxSetId(Guid.NewGuid()),
+                Guid.NewGuid(),
                 new CardBoxSetOwnerId(Guid.NewGuid()),
                 new CardBoxSetName("Test Name"),
                 new CardBoxSetLanguage("Russian", _ => true),

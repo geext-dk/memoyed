@@ -32,7 +32,7 @@ namespace Memoyed.Application.Services
                 {
                     await HandleUpdate(setCardAnswerCommand.RevisionSessionId,
                         session => session.CardAnswered(
-                            new CardId(setCardAnswerCommand.CardId), setCardAnswerCommand.AnswerType,
+                            setCardAnswerCommand.CardId, setCardAnswerCommand.AnswerType,
                             setCardAnswerCommand.Answer,
                             _cardAnswerCheckService));
                     break;
@@ -56,7 +56,7 @@ namespace Memoyed.Application.Services
 
         private async Task HandleUpdate(Guid revisionSessionId, Action<RevisionSession> update)
         {
-            var revisionSession = await _unitOfWork.RevisionSessionsRepository.Get(new RevisionSessionId(revisionSessionId));
+            var revisionSession = await _unitOfWork.RevisionSessionsRepository.Get(revisionSessionId);
 
             if (revisionSession == null)
                 throw new InvalidOperationException("Couldn't find a revision session with the given identity");
@@ -68,7 +68,7 @@ namespace Memoyed.Application.Services
 
         private async Task HandleUpdateAsync(Guid revisionSessionId, Func<RevisionSession, Task> updateAsync)
         {
-            var revisionSession = await _unitOfWork.RevisionSessionsRepository.Get(new RevisionSessionId(revisionSessionId));
+            var revisionSession = await _unitOfWork.RevisionSessionsRepository.Get(revisionSessionId);
 
             if (revisionSession == null)
                 throw new InvalidOperationException("Couldn't find a revision session with the given identity");

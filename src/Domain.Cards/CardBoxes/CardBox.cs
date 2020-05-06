@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Memoyed.Domain.Cards.CardBoxSets;
@@ -17,7 +18,7 @@ namespace Memoyed.Domain.Cards.CardBoxes
         /// <param name="setId">Id of the card box set the card box belongs to</param>
         /// <param name="level">Level of the card box</param>
         /// <param name="revisionDelay">Days until revision of cards in the card box</param>
-        public CardBox(CardBoxId id, CardBoxSetId setId, CardBoxLevel level, CardBoxRevisionDelay revisionDelay)
+        public CardBox(Guid id, Guid setId, CardBoxLevel level, CardBoxRevisionDelay revisionDelay)
         {
             Id = id;
             SetId = setId;
@@ -37,12 +38,12 @@ namespace Memoyed.Domain.Cards.CardBoxes
         /// <summary>
         ///     Id of the card box
         /// </summary>
-        public CardBoxId Id { get; }
+        public Guid Id { get; }
 
         /// <summary>
         ///     Id of the card box set which owns the card box
         /// </summary>
-        public CardBoxSetId SetId { get; }
+        public Guid SetId { get; }
 
         /// <summary>
         ///     Level of the card box
@@ -62,7 +63,7 @@ namespace Memoyed.Domain.Cards.CardBoxes
             _cards.Add(card);
         }
 
-        internal void RemoveCard(CardId cardId)
+        internal void RemoveCard(Guid cardId)
         {
             _cards.RemoveAll(c => c.Id == cardId);
         }

@@ -14,7 +14,7 @@ namespace Memoyed.Domain.Cards.RevisionSessions
     {
         private readonly List<SessionCard> _sessionCards = new List<SessionCard>();
 
-        internal RevisionSession(RevisionSessionId id, CardBoxSetId cardBoxSetId, List<SessionCard> sessionCards)
+        internal RevisionSession(Guid id, Guid cardBoxSetId, List<SessionCard> sessionCards)
         {
             if (sessionCards.Count == 0) throw new DomainException.NoCardsForRevisionException();
 
@@ -27,12 +27,12 @@ namespace Memoyed.Domain.Cards.RevisionSessions
         {
         }
 
-        public RevisionSessionId Id { get; }
-        public CardBoxSetId CardBoxSetId { get; }
+        public Guid Id { get; }
+        public Guid CardBoxSetId { get; }
         public IReadOnlyCollection<SessionCard> SessionCards => _sessionCards.AsReadOnly();
         public RevisionSessionStatus Status { get; private set; }
 
-        public void CardAnswered(CardId cardId, SessionCardAnswerType answerType, string answer,
+        public void CardAnswered(Guid cardId, SessionCardAnswerType answerType, string answer,
             ICardAnswerCheckService answerCheckService)
         {
             var card = SessionCards.FirstOrDefault(sc => sc.CardId == cardId);
@@ -48,7 +48,7 @@ namespace Memoyed.Domain.Cards.RevisionSessions
                 : SessionCardStatus.AnsweredWrong);
         }
 
-        private void CardAnswered(CardId cardId, SessionCardStatus status)
+        private void CardAnswered(Guid cardId, SessionCardStatus status)
         {
             var sessionCard = _sessionCards.FirstOrDefault(sc => sc.CardId == cardId);
             if (sessionCard == null) throw new DomainException.SessionCardNotFoundException();

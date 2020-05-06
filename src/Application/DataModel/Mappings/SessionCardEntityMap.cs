@@ -1,4 +1,5 @@
 ﻿using Memoyed.Application.Extensions;
+using Memoyed.Domain.Cards.RevisionSessions;
 using Memoyed.Domain.Cards.RevisionSessions.SessionCards;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -9,11 +10,14 @@ namespace Memoyed.Application.DataModel.Mappings
     {
         public void Configure(EntityTypeBuilder<SessionCard> builder)
         {
-            builder.Property<int>("DbId");
-            builder.HasKey("DbId");
+            builder.HasKey(c => new {c.SessionId, c.CardId});
+            builder.Property(c => c.SessionId).ValueGeneratedNever();
+            builder.Property(c => c.CardId).ValueGeneratedNever();
+            
+            builder.HasOne<RevisionSession>()
+                .WithMany(s => s.SessionCards)
+                .HasForeignKey(c => c.SessionId);
 
-            builder.OwnsSingle(c => c.SessionId, id => id.Value);
-            builder.OwnsSingle(c => c.CardId, id => id.Value);
             builder.OwnsSingle(c => c.NativeLanguageWord, w => w.Value);
             builder.OwnsSingle(c => c.TargetLanguageWord, w => w.Value);
         }

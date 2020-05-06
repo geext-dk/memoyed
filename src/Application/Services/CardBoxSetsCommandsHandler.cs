@@ -29,7 +29,7 @@ namespace Memoyed.Application.Services
                 {
                     await HandleUpdate(createCardBoxCommand.CardBoxSetId, s =>
                     {
-                        var box = new CardBox(new CardBoxId(Guid.NewGuid()), s.Id,
+                        var box = new CardBox(Guid.NewGuid(), s.Id,
                             new CardBoxLevel(createCardBoxCommand.Level),
                             new CardBoxRevisionDelay(createCardBoxCommand.RevisionDelay));
 
@@ -41,7 +41,7 @@ namespace Memoyed.Application.Services
                 {
                     await HandleUpdate(addNewCardCommand.CardBoxSetId, s =>
                     {
-                        var card = new Card(new CardId(Guid.NewGuid()),
+                        var card = new Card(Guid.NewGuid(),
                             new CardWord(addNewCardCommand.NativeLanguageWord),
                             new CardWord(addNewCardCommand.TargetLanguageWord));
 
@@ -55,7 +55,7 @@ namespace Memoyed.Application.Services
                 case Commands.RemoveCardCommand removeCardCommand:
                 {
                     await HandleUpdate(removeCardCommand.CardBoxSetId,
-                        s => { s.RemoveCard(new CardId(removeCardCommand.CardId)); });
+                        s => { s.RemoveCard(removeCardCommand.CardId); });
                     break;
                 }
                 case Commands.RenameCardBoxSetCommand renameCardBoxSetCommand:
@@ -80,7 +80,7 @@ namespace Memoyed.Application.Services
 
         private async Task HandleUpdate(Guid cardBoxSetId, Action<CardBoxSet> update)
         {
-            var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(new CardBoxSetId(cardBoxSetId));
+            var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(cardBoxSetId);
 
             if (cardBoxSet == null)
                 throw new InvalidOperationException("Couldn't find a card box set with the given identity");
@@ -92,7 +92,7 @@ namespace Memoyed.Application.Services
 
         private async Task HandleCreate(Commands.CreateCardBoxSetCommand command, Guid ownerId)
         {
-            var cardBoxSet = new CardBoxSet(new CardBoxSetId(Guid.NewGuid()), new CardBoxSetOwnerId(ownerId),
+            var cardBoxSet = new CardBoxSet(Guid.NewGuid(), new CardBoxSetOwnerId(ownerId),
                 new CardBoxSetName(command.Name),
                 new CardBoxSetLanguage(command.NativeLanguage, DomainChecksImpl.ValidateLanguage),
                 new CardBoxSetLanguage(command.TargetLanguage, DomainChecksImpl.ValidateLanguage));

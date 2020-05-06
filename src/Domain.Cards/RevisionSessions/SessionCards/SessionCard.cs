@@ -1,3 +1,4 @@
+using System;
 using Memoyed.Domain.Cards.Cards;
 using Memoyed.DomainFramework;
 
@@ -5,7 +6,7 @@ namespace Memoyed.Domain.Cards.RevisionSessions.SessionCards
 {
     public class SessionCard : Entity
     {
-        public SessionCard(RevisionSessionId sessionId, Card card)
+        public SessionCard(Guid sessionId, Card card)
         {
             SessionId = sessionId;
             CardId = card.Id;
@@ -18,8 +19,8 @@ namespace Memoyed.Domain.Cards.RevisionSessions.SessionCards
         {
         }
 
-        public RevisionSessionId SessionId { get; }
-        public CardId CardId { get; }
+        public Guid SessionId { get; }
+        public Guid CardId { get; }
         public SessionCardStatus Status { get; internal set; }
         public CardWord NativeLanguageWord { get; }
         public CardWord TargetLanguageWord { get; }

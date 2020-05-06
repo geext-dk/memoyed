@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Memoyed.Domain.Cards.CardBoxSets;
 using Memoyed.Domain.Cards.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,13 @@ namespace Memoyed.Application.DataModel.Repositories
             _cardsContext = cardsContext;
         }
 
-        public async Task<CardBoxSet> Get(CardBoxSetId id)
+        public async Task<CardBoxSet> Get(Guid id)
         {
             return await _cardsContext.CardBoxSets
                 .Include(s => s.CardBoxes)
                 .ThenInclude(b => b.Cards)
                 .Include(s => s.CompletedRevisionSessionIds)
-                .FirstOrDefaultAsync(c => c.Id.Value == id.Value);
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public void AddNew(CardBoxSet set)

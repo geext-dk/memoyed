@@ -1,4 +1,5 @@
 ﻿using Memoyed.Application.Extensions;
+using Memoyed.Domain.Cards.CardBoxes;
 using Memoyed.Domain.Cards.Cards;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -9,14 +10,16 @@ namespace Memoyed.Application.DataModel.Mappings
     {
         public void Configure(EntityTypeBuilder<Card> builder)
         {
-            builder.Property<int>("DbId");
-            builder.HasKey("DbId");
-
-            builder.OwnsSingle(c => c.Id, id => id.Value);
+            builder.HasKey(c => c.Id);
+            builder.Property(c => c.Id).ValueGeneratedNever();
+            builder.HasOne<CardBox>()
+                .WithMany(c => c.Cards)
+                .HasForeignKey(c => c.CardBoxId)
+                .IsRequired(false);
+            
             builder.OwnsSingle(c => c.TargetLanguageWord, word => word.Value);
             builder.OwnsSingle(c => c.NativeLanguageWord, word => word.Value);
             builder.OwnsSingle(c => c.Comment, comment => comment.Value);
-            builder.OwnsSingle(c => c.CardBoxId, id => id.Value);
         }
     }
 }

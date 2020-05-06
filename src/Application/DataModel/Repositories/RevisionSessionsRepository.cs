@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Memoyed.Domain.Cards.Repositories;
 using Memoyed.Domain.Cards.RevisionSessions;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,11 @@ namespace Memoyed.Application.DataModel.Repositories
             _db = db;
         }
 
-        public async Task<RevisionSession> Get(RevisionSessionId id)
+        public async Task<RevisionSession> Get(Guid id)
         {
             return await _db.RevisionSessions
                 .Include(s => s.SessionCards)
-                .FirstOrDefaultAsync(s => s.Id.Value == id.Value);
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public void AddNew(RevisionSession revisionSession)

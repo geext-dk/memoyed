@@ -72,9 +72,8 @@ namespace Memoyed.Application
                     var cardBoxSetRepository = scope.ServiceProvider.GetService<ICardBoxSetsRepository>();
                     var revisionSessionRepository = scope.ServiceProvider.GetService<IRevisionSessionsRepository>();
                     var cardBoxSet = await cardBoxSetRepository.Get(
-                        new CardBoxSetId(revisionSessionCompleted.CardBoxSetId));
-                    var revisionSession = await revisionSessionRepository.Get(
-                        new RevisionSessionId(revisionSessionCompleted.RevisionSessionId));
+                        revisionSessionCompleted.CardBoxSetId);
+                    var revisionSession = await revisionSessionRepository.Get(revisionSessionCompleted.RevisionSessionId);
 
                     cardBoxSet.ProcessCardsFromRevisionSession(revisionSession, revisionSessionCompleted.DateTime);
 

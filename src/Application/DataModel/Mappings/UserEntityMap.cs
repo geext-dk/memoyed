@@ -9,10 +9,8 @@ namespace Memoyed.Application.DataModel.Mappings
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.Property<int>("DbId");
-            builder.HasKey("DbId");
-
-            builder.OwnsSingle(u => u.Id, id => id.Value);
+            builder.HasKey(u => u.Id);
+            builder.Property(c => c.Id).ValueGeneratedNever();
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using Memoyed.DomainFramework;
+﻿using System;
+using Memoyed.DomainFramework;
 
 namespace Memoyed.Domain.Users.Users
 {
     public class User : AggregateRoot
     {
-        public UserId Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

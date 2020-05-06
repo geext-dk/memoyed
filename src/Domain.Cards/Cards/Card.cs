@@ -6,7 +6,7 @@ namespace Memoyed.Domain.Cards.Cards
 {
     public class Card : Entity
     {
-        public Card(CardId id, CardWord nativeLanguageWord, CardWord targetLanguageWord)
+        public Card(Guid id, CardWord nativeLanguageWord, CardWord targetLanguageWord)
         {
             Id = id;
             NativeLanguageWord = nativeLanguageWord;
@@ -21,12 +21,12 @@ namespace Memoyed.Domain.Cards.Cards
         /// <summary>
         ///     Id of the card
         /// </summary>
-        public CardId Id { get; }
+        public Guid Id { get; }
 
         /// <summary>
         ///     Id of the box that contains the card
         /// </summary>
-        public CardBoxId? CardBoxId { get; private set; }
+        public Guid? CardBoxId { get; private set; }
 
         /// <summary>
         ///     Word of the card written on the language native to the user
@@ -75,7 +75,7 @@ namespace Memoyed.Domain.Cards.Cards
             Comment = comment;
         }
 
-        internal void ChangeCardBoxId(CardBoxId cardBoxId, DateTimeOffset now)
+        internal void ChangeCardBoxId(Guid cardBoxId, DateTimeOffset now)
         {
             CardBoxChangedDate = now;
             CardBoxId = cardBoxId;

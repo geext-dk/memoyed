@@ -7,12 +7,12 @@ namespace Memoyed.Domain.Cards.RevisionSessions
     {
         public class RevisionSessionCompleted
         {
-            public RevisionSessionCompleted(RevisionSessionId sessionId,
-                CardBoxSetId setId,
+            public RevisionSessionCompleted(Guid sessionId,
+                Guid setId,
                 DateTimeOffset? dateTime = null)
             {
                 RevisionSessionId = sessionId;
-                CardBoxSetId = setId.Value;
+                CardBoxSetId = setId;
                 DateTime = dateTime ?? DateTimeOffset.UtcNow;
             }
 

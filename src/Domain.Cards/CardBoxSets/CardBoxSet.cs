@@ -12,7 +12,9 @@ namespace Memoyed.Domain.Cards.CardBoxSets
     public class CardBoxSet : AggregateRoot
     {
         private readonly List<CardBox> _cardBoxes = new List<CardBox>();
-        private readonly List<RevisionSessionId> _completedSessionIds = new List<RevisionSessionId>();
+
+        private readonly List<CompletedRevisionSessionId> _completedRevisionSessionIds =
+            new List<CompletedRevisionSessionId>();
 
         /// <summary>
         ///     Card Box Set constructor, intended for creating new instances
@@ -22,7 +24,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
         /// <param name="name"></param>
         /// <param name="nativeLanguage">Language which user knows</param>
         /// <param name="targetLanguage">Language which user is learning</param>
-        public CardBoxSet(CardBoxSetId id, CardBoxSetOwnerId ownerId, CardBoxSetName name,
+        public CardBoxSet(Guid id, CardBoxSetOwnerId ownerId, CardBoxSetName name,
             CardBoxSetLanguage nativeLanguage,
             CardBoxSetLanguage targetLanguage)
         {
@@ -41,9 +43,9 @@ namespace Memoyed.Domain.Cards.CardBoxSets
         /// <summary>
         ///     Id of the card box set
         /// </summary>
-        public CardBoxSetId Id { get; }
+        public Guid Id { get; }
 
-        public RevisionSessionId? CurrentRevisionSessionId { get; private set; }
+        public Guid? CurrentRevisionSessionId { get; private set; }
 
         public CardBoxSetName Name { get; private set; }
 
@@ -64,7 +66,8 @@ namespace Memoyed.Domain.Cards.CardBoxSets
         /// </summary>
         public IReadOnlyCollection<CardBox> CardBoxes => _cardBoxes.AsReadOnly();
 
-        public IReadOnlyCollection<RevisionSessionId> CompletedRevisionSessionIds => _completedSessionIds.AsReadOnly();
+        public IReadOnlyCollection<CompletedRevisionSessionId> CompletedRevisionSessionIds =>
+            _completedRevisionSessionIds.AsReadOnly();
 
         public void Rename(CardBoxSetName newName)
         {
@@ -92,10 +95,10 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             // See: https://docs.microsoft.com/en-us/ef/core/modeling/owned-entities
             var sessionId = Guid.NewGuid();
             var sessionCards = cardsReadyForSession
-                .Select(c => new SessionCard(new RevisionSessionId(sessionId), c))
+                .Select(c => new SessionCard(sessionId, c))
                 .ToList();
 
-            var session = new RevisionSession(new RevisionSessionId(sessionId), Id, sessionCards);
+            var session = new RevisionSession(sessionId, Id, sessionCards);
             CurrentRevisionSessionId = session.Id;
 
             return session;
@@ -111,7 +114,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
                 throw new InvalidOperationException(
                     "The revision session doesn't match with the current revision session of the set");
 
-            if (_completedSessionIds.Contains(revisionSession.Id)) return;
+            if (_completedRevisionSessionIds.Any(id => id.Value == revisionSession.Id)) return;
 
             if (revisionSession.Status != RevisionSessionStatus.Completed ||
                 revisionSession.SessionCards.Any(c => c.Status == SessionCardStatus.NotAnswered))
@@ -129,7 +132,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
                 foreach (var cardId in answeredWrongCardIds)
                     DemoteCard(cardId, dateTime);
 
-            _completedSessionIds.Add(revisionSession.Id);
+            _completedRevisionSessionIds.Add(new CompletedRevisionSessionId(revisionSession.Id));
             CurrentRevisionSessionId = null;
         }
 
@@ -176,7 +179,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
         ///     Removes the card box from the set. If it doesn't contained in the set, nothing happens.
         /// </summary>
         /// <param name="cardBoxId">An id of the cardBox to remove</param>
-        public void RemoveCardBox(CardBoxId cardBoxId)
+        public void RemoveCardBox(Guid cardBoxId)
         {
             var existing = CardBoxes.FirstOrDefault(b => b.Id == cardBoxId);
             if (existing == null) throw new DomainException.CardBoxNotFoundInSetException();
@@ -206,7 +209,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             box.AddCard(card);
         }
 
-        public void RemoveCard(CardId id)
+        public void RemoveCard(Guid id)
         {
             var box = GetBoxContainingCard(id);
             if (box == null) throw new DomainException.CardNotInSetException();
@@ -214,7 +217,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             box.RemoveCard(id);
         }
 
-        private void PromoteCard(CardId cardId, DateTimeOffset? now = null)
+        private void PromoteCard(Guid cardId, DateTimeOffset? now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null) throw new DomainException.CardNotInSetException();
@@ -228,7 +231,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             nextLevelBox.AddCard(card);
         }
 
-        private void DemoteCard(CardId cardId, DateTimeOffset? now = null)
+        private void DemoteCard(Guid cardId, DateTimeOffset? now = null)
         {
             var box = GetBoxContainingCard(cardId);
             if (box == null) throw new DomainException.CardNotInSetException();
@@ -242,7 +245,7 @@ namespace Memoyed.Domain.Cards.CardBoxSets
             prevLevelBox.AddCard(card);
         }
 
-        private CardBox? GetBoxContainingCard(CardId cardId)
+        private CardBox? GetBoxContainingCard(Guid cardId)
         {
             return CardBoxes.FirstOrDefault(b => b.Cards.Any(c => c.Id == cardId));
         }
