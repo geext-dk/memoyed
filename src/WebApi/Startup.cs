@@ -60,6 +60,7 @@ namespace Memoyed.WebApi
                     options.ExposeExceptions = true;
                     options.EnableMetrics = true;
                 })
+                .AddWebSockets()
                 .AddSystemTextJson()
                 .AddDataLoader();
         }
@@ -67,9 +68,17 @@ namespace Memoyed.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            app.UseWebSockets();
+            app.UseGraphQLWebSockets<ISchema>();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseHttpsRedirection();
+            }
 
-            app.UseHttpsRedirection();
             app.UseCors(opt =>
             {
                 opt.AllowAnyOrigin()
