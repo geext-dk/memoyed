@@ -1,16 +1,27 @@
-using GraphQL.Types;
+using System;
+using Memoyed.Application.Dto;
 
 namespace Memoyed.WebApi.GraphQL.InputTypes
 {
-    public class RemoveCardInput : InputObjectGraphType
+    /// <summary>
+    /// Input type for removing cards
+    /// </summary>
+    public class RemoveCardInput : Commands.RemoveCardCommand
     {
-        public RemoveCardInput()
+        public RemoveCardInput(Guid cardBoxSetId, Guid cardId)
         {
-            Name = "RemoveCardInput";
-            Description = "Input type for removing cards";
-
-            Field<NonNullGraphType<GuidGraphType>>("cardBoxSetId", "Id of a card box set");
-            Field<NonNullGraphType<GuidGraphType>>("cardId", "Id of the card to delete");
+            CardBoxSetId = cardBoxSetId;
+            CardId = cardId;
         }
+
+        /// <summary>
+        /// Id of a card box set
+        /// </summary>
+        public Guid CardBoxSetId { get; }
+        
+        /// <summary>
+        /// Id of the card to delete
+        /// </summary>
+        public Guid CardId { get; }
     }
 }

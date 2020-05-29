@@ -1,10 +1,8 @@
-using GraphQL.Server;
-using GraphQL.Server.Ui.GraphiQL;
-using GraphQL.Types;
+using HotChocolate;
+using HotChocolate.AspNetCore;
 using Memoyed.Application;
 using Memoyed.WebApi.GraphQL;
-using Memoyed.WebApi.GraphQL.InputTypes;
-using Memoyed.WebApi.GraphQL.Types;
+using Memoyed.WebApi.GraphQL.ReturnTypes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -33,71 +31,42 @@ namespace Memoyed.WebApi
             services.AddCors();
             services.AddControllers();
 
-            services.AddSingleton<CardType>();
-            services.AddSingleton<CardBoxType>();
-            services.AddSingleton<CardBoxSetType>();
-            services.AddSingleton<SessionCardStatusType>();
-            services.AddSingleton<RevisionSessionStatusType>();
-            services.AddSingleton<RevisionSessionType>();
-            services.AddSingleton<SessionCardType>();
-            services.AddSingleton<SessionCardAnswerTypeType>();
-            services.AddSingleton<CardsQuery>();
-
-            services.AddSingleton<CardBoxSetInput>();
-            services.AddSingleton<CardBoxInput>();
-            services.AddSingleton<CardInput>();
-            services.AddSingleton<RemoveCardInput>();
-            services.AddSingleton<RenameCardBoxSetInput>();
-            services.AddSingleton<StartRevisionSessionInput>();
-            services.AddSingleton<SetCardAnswerInput>();
-            services.AddSingleton<CompleteRevisionSessionInput>();
-            services.AddSingleton<CardsMutation>();
-
-            services.AddSingleton<ISchema, CardsSchema>();
-
-            services.AddGraphQL(options =>
-                {
-                    options.ExposeExceptions = true;
-                    options.EnableMetrics = true;
-                })
-                .AddWebSockets()
-                .AddSystemTextJson()
-                .AddDataLoader();
+            services.AddGraphQL(sp => SchemaBuilder.New()
+                .AddServices(sp)
+                .AddQueryType<CardsQuery>()
+                .AddMutationType<CardsMutation>()
+                .Create());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseWebSockets();
-            app.UseGraphQLWebSockets<ISchema>();
+            // app.UseWebSockets();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseHttpsRedirection();
+                // app.UseHttpsRedirection();
             }
+            //
+            // app.UseCors(opt =>
+            // {
+            //     opt.AllowAnyOrigin()
+            //         .AllowAnyHeader()
+            //         .AllowAnyMethod();
+            // });
 
-            app.UseCors(opt =>
-            {
-                opt.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
+            app.UseGraphQL();
+            app.UsePlayground();
 
-            app.UseRouting();
+            // app.UseRouting();
 
-            app.UseAuthorization();
+            // app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            // app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            app.UseGraphQL<ISchema>();
-
-            app.UseGraphiQLServer(new GraphiQLOptions
-            {
-                GraphQLEndPoint = "/graphql"
-            });
         }
     }
 }

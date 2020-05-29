@@ -1,16 +1,21 @@
-using GraphQL.Types;
+using System;
+using Memoyed.Application.Dto;
 
 namespace Memoyed.WebApi.GraphQL.InputTypes
 {
-    public class CompleteRevisionSessionInput : InputObjectGraphType
+    /// <summary>
+    /// An input object for completing revision sessions
+    /// </summary>
+    public class CompleteRevisionSessionInput : Commands.CompleteRevisionSessionCommand
     {
-        public CompleteRevisionSessionInput()
+        public CompleteRevisionSessionInput(Guid revisionSessionId)
         {
-            Name = "CompleteRevisionSessionInput";
-            Description = "An input object for completing revision sessions";
-
-            Field<NonNullGraphType<GuidGraphType>>("RevisionSessionId",
-                "Id of the revision session to complete");
+            RevisionSessionId = revisionSessionId;
         }
+
+        /// <summary>
+        /// Id of the revision session to complete
+        /// </summary>
+        public Guid RevisionSessionId { get; }
     }
 }

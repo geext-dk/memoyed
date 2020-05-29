@@ -5,57 +5,56 @@ namespace Memoyed.Application.Dto
 {
     public static class Commands
     {
-        public class CreateCardBoxSetCommand
+        public interface CreateCardBoxSetCommand
         {
-            public string Name { get; set; }
-            public string TargetLanguage { get; set; }
-            public string NativeLanguage { get; set; }
+            string Name { get; }
+            string TargetLanguage { get; }
+            string NativeLanguage { get; }
         }
 
-        public class CreateCardBoxCommand
+        public interface CreateCardBoxCommand
         {
-            public Guid CardBoxSetId { get; set; }
-
-            public int Level { get; set; }
-            public int RevisionDelay { get; set; }
+            Guid CardBoxSetId { get; }
+            int Level { get; }
+            int RevisionDelay { get; }
         }
 
-        public class CreateCardCommand
+        public interface CreateCardCommand
         {
-            public Guid CardBoxSetId { get; set; }
-            public string NativeLanguageWord { get; set; }
-            public string TargetLanguageWord { get; set; }
-            public string? Comment { get; set; }
+            Guid CardBoxSetId { get; }
+            string NativeLanguageWord { get; }
+            string TargetLanguageWord { get; }
+            string? Comment { get; }
         }
 
-        public class RemoveCardCommand
+        public interface RemoveCardCommand
         {
-            public Guid CardBoxSetId { get; set; }
-            public Guid CardId { get; set; }
+            Guid CardBoxSetId { get; }
+            Guid CardId { get; }
         }
 
-        public class RenameCardBoxSetCommand
+        public interface RenameCardBoxSetCommand
         {
-            public Guid CardBoxSetId { get; set; }
-            public string CardBoxSetName { get; set; }
+            Guid CardBoxSetId { get; }
+            string CardBoxSetName { get; }
         }
 
-        public class StartRevisionSessionCommand
+        public interface StartRevisionSessionCommand
         {
-            public Guid CardBoxSetId { get; set; }
+            Guid CardBoxSetId { get; }
         }
         
-        public class SetCardAnswerCommand
+        public interface SetCardAnswerCommand
         {
-            public Guid RevisionSessionId { get; set; }
-            public Guid CardId { get; set; }
-            public SessionCardAnswerType AnswerType { get; set; }
-            public string Answer { get; set; }
+            Guid RevisionSessionId { get; }
+            Guid CardId { get; }
+            SessionCardAnswerType AnswerType { get; }
+            string Answer { get; }
         }
 
-        public class CompleteRevisionSessionCommand
+        public interface CompleteRevisionSessionCommand
         {
-            public Guid RevisionSessionId { get; set; }
+            Guid RevisionSessionId { get; }
         }
     }
 }

@@ -1,21 +1,40 @@
-using GraphQL.Types;
-using Memoyed.WebApi.GraphQL.Types;
+using System;
+using Memoyed.Application.Dto;
+using Memoyed.Domain.Cards.RevisionSessions;
 
 namespace Memoyed.WebApi.GraphQL.InputTypes
 {
-    public class SetCardAnswerInput : InputObjectGraphType
+    /// <summary>
+    /// An input for answering session cards
+    /// </summary>
+    public class SetCardAnswerInput : Commands.SetCardAnswerCommand
     {
-        public SetCardAnswerInput()
+        public SetCardAnswerInput(Guid revisionSessionId, Guid cardId, string answer, SessionCardAnswerType answerType)
         {
-            Name = "SetCardAnswerInput";
-            Description = "An input for answering session cards";
-
-            Field<NonNullGraphType<GuidGraphType>>("RevisionSessionId",
-                "Id of the revision session to which the card belongs");
-            Field<NonNullGraphType<GuidGraphType>>("CardId",
-                "Id of the card to answer");
-            Field<NonNullGraphType<StringGraphType>>("Answer", "An answer the user gave");
-            Field<NonNullGraphType<SessionCardAnswerTypeType>>("AnswerType", "A type of the answer");
+            RevisionSessionId = revisionSessionId;
+            CardId = cardId;
+            Answer = answer;
+            AnswerType = answerType;
         }
+
+        /// <summary>
+        /// Id of the revision session to which the card belongs
+        /// </summary>
+        public Guid RevisionSessionId { get; }
+        
+        /// <summary>
+        /// Id of the card to answer
+        /// </summary>
+        public Guid CardId { get; }
+        
+        /// <summary>
+        /// An answer the user gave
+        /// </summary>
+        public string Answer { get; }
+        
+        /// <summary>
+        /// A type of the answer
+        /// </summary>
+        public SessionCardAnswerType AnswerType { get; }
     }
 }

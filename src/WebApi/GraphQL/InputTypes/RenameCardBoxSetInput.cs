@@ -1,16 +1,29 @@
-using GraphQL.Types;
+using System;
+using Memoyed.Application.Dto;
 
 namespace Memoyed.WebApi.GraphQL.InputTypes
 {
-    public class RenameCardBoxSetInput : InputObjectGraphType
+    /// <summary>
+    /// An input type for renaming card box sets
+    /// </summary>
+    public class RenameCardBoxSetInput : Commands.RenameCardBoxSetCommand
     {
-        public RenameCardBoxSetInput()
+        public RenameCardBoxSetInput(Guid cardBoxSetId, string name)
         {
-            Name = "RenameCardBoxSetInput";
-            Description = "An input type for renaming card box sets";
-
-            Field<NonNullGraphType<GuidGraphType>>("cardBoxSetId", "Id of the card box set to rename");
-            Field<NonNullGraphType<StringGraphType>>("name", "New name for the card box set");
+            CardBoxSetId = cardBoxSetId;
+            Name = name;
         }
+
+        /// <summary>
+        /// Id of the card box set to rename
+        /// </summary>
+        public Guid CardBoxSetId { get; }
+        
+        /// <summary>
+        /// New name for the card box set
+        /// </summary>
+        public string Name { get; }
+
+        string Commands.RenameCardBoxSetCommand.CardBoxSetName => Name;
     }
 }
