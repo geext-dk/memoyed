@@ -5,7 +5,7 @@ using Memoyed.DomainFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Memoyed.Application.Extensions
+namespace Memoyed.Application.EntityFramework.Extensions
 {
     public static class EntityTypeBuilderExtensions
     {

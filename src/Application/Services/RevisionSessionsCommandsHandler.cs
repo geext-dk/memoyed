@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Memoyed.Application.Dto;
 using Memoyed.Domain.Cards.Cards;
+using Memoyed.Domain.Cards.Repositories;
 using Memoyed.Domain.Cards.RevisionSessions;
 using Memoyed.Domain.Cards.RevisionSessions.SessionCards;
 using Memoyed.Domain.Cards.Services;
@@ -13,15 +14,17 @@ namespace Memoyed.Application.Services
     public class RevisionSessionsCommandsHandler
     {
         private readonly IDomainEventPublisher _eventPublisher;
-        private readonly UnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ICardAnswerCheckService _cardAnswerCheckService;
+        private readonly IRevisionSessionsRepository _revisionSessionsRepository;
 
-        public RevisionSessionsCommandsHandler(UnitOfWork unitOfWork, IDomainEventPublisher eventPublisher,
-            ICardAnswerCheckService cardAnswerCheckService)
+        public RevisionSessionsCommandsHandler(IUnitOfWork unitOfWork, IDomainEventPublisher eventPublisher,
+            ICardAnswerCheckService cardAnswerCheckService, IRevisionSessionsRepository revisionSessionsRepository)
         {
             _unitOfWork = unitOfWork;
             _eventPublisher = eventPublisher;
             _cardAnswerCheckService = cardAnswerCheckService;
+            _revisionSessionsRepository = revisionSessionsRepository;
         }
 
         public async Task Handle(object command, Guid userId)
@@ -56,7 +59,7 @@ namespace Memoyed.Application.Services
 
         private async Task HandleUpdate(Guid revisionSessionId, Action<RevisionSession> update)
         {
-            var revisionSession = await _unitOfWork.RevisionSessionsRepository.Get(revisionSessionId);
+            var revisionSession = await _revisionSessionsRepository.Get(revisionSessionId);
 
             if (revisionSession == null)
                 throw new InvalidOperationException("Couldn't find a revision session with the given identity");
@@ -68,7 +71,7 @@ namespace Memoyed.Application.Services
 
         private async Task HandleUpdateAsync(Guid revisionSessionId, Func<RevisionSession, Task> updateAsync)
         {
-            var revisionSession = await _unitOfWork.RevisionSessionsRepository.Get(revisionSessionId);
+            var revisionSession = await _revisionSessionsRepository.Get(revisionSessionId);
 
             if (revisionSession == null)
                 throw new InvalidOperationException("Couldn't find a revision session with the given identity");

@@ -1,10 +1,10 @@
-﻿using Memoyed.Application.Extensions;
+﻿using Memoyed.Application.EntityFramework.Extensions;
 using Memoyed.Domain.Cards.RevisionSessions;
 using Memoyed.Domain.Cards.RevisionSessions.SessionCards;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Memoyed.Application.DataModel.Mappings
+namespace Memoyed.Application.EntityFramework.Mappings
 {
     public class SessionCardEntityMap : IEntityTypeConfiguration<SessionCard>
     {

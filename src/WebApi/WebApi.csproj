@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <AssemblyName>Memoyed.WebApi</AssemblyName>
         <RootNamespace>Memoyed.WebApi</RootNamespace>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
     
     <PropertyGroup>
@@ -13,6 +14,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.0.35" />
       <PackageReference Include="EFCore.NamingConventions" Version="1.1.0" />
       <PackageReference Include="HotChocolate.AspNetCore" Version="10.4.3" />
       <PackageReference Include="HotChocolate.AspNetCore.Playground" Version="10.4.3" />
@@ -22,6 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Application.EntityFramework\Application.EntityFramework.csproj" />
       <ProjectReference Include="..\Application\Application.csproj" />
     </ItemGroup>
 

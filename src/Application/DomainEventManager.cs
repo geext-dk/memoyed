@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using Memoyed.Domain.Cards.CardBoxSets;
 using Memoyed.Domain.Cards.Repositories;
 using Memoyed.Domain.Cards.RevisionSessions;
 using Memoyed.DomainFramework;
@@ -64,7 +63,7 @@ namespace Memoyed.Application
         private async Task HandleDomainEvent(object domainEvent)
         {
             using var scope = _serviceProvider.CreateScope();
-            var unitOfWork = scope.ServiceProvider.GetService<UnitOfWork>();
+            var unitOfWork = scope.ServiceProvider.GetService<IUnitOfWork>();
             switch (domainEvent)
             {
                 case RevisionSessionEvents.RevisionSessionCompleted revisionSessionCompleted:

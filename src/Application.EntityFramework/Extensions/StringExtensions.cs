@@ -1,6 +1,6 @@
-using System.Linq;
+﻿using System.Linq;
 
-namespace Memoyed.Application.Extensions
+namespace Memoyed.Application.EntityFramework.Extensions
 {
     public static class StringExtensions
     {

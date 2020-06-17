@@ -4,7 +4,7 @@ using Memoyed.Domain.Cards.CardBoxSets;
 using Memoyed.Domain.Cards.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Memoyed.Application.DataModel.Repositories
+namespace Memoyed.Application.EntityFramework.Repositories
 {
     public class CardBoxSetsRepository : ICardBoxSetsRepository
     {

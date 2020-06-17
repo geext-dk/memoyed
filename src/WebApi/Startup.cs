@@ -1,6 +1,7 @@
 using HotChocolate;
 using HotChocolate.AspNetCore;
 using Memoyed.Application;
+using Memoyed.Application.EntityFramework;
 using Memoyed.WebApi.GraphQL;
 using Memoyed.WebApi.GraphQL.ReturnTypes;
 using Microsoft.AspNetCore.Builder;
@@ -24,7 +25,8 @@ namespace Memoyed.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCardsApplicationServices(dbOptions =>
+            services.AddCardsApplicationServices();
+            services.AddCardsDataServices(dbOptions =>
                 dbOptions.UseNpgsql(Configuration.GetConnectionString("Default"))
                     .UseSnakeCaseNamingConvention());
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;

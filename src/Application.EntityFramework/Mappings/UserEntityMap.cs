@@ -1,9 +1,8 @@
-﻿using Memoyed.Application.Extensions;
-using Memoyed.Domain.Users.Users;
+﻿using Memoyed.Domain.Users.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Memoyed.Application.DataModel.Mappings
+namespace Memoyed.Application.EntityFramework.Mappings
 {
     public class UserEntityMap : IEntityTypeConfiguration<User>
     {

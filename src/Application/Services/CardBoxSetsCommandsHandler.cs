@@ -4,16 +4,23 @@ using Memoyed.Application.Dto;
 using Memoyed.Domain.Cards.CardBoxes;
 using Memoyed.Domain.Cards.CardBoxSets;
 using Memoyed.Domain.Cards.Cards;
+using Memoyed.Domain.Cards.Repositories;
+using Memoyed.DomainFramework;
 
 namespace Memoyed.Application.Services
 {
     public class CardBoxSetsCommandsHandler
     {
-        private readonly UnitOfWork _unitOfWork;
-
-        public CardBoxSetsCommandsHandler(UnitOfWork unitOfWork)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ICardBoxSetsRepository _cardBoxSetsRepository;
+        private readonly IRevisionSessionsRepository _revisionSessionsRepository;
+        
+        public CardBoxSetsCommandsHandler(IUnitOfWork unitOfWork, ICardBoxSetsRepository cardBoxSetsRepository,
+            IRevisionSessionsRepository revisionSessionsRepository)
         {
             _unitOfWork = unitOfWork;
+            _cardBoxSetsRepository = cardBoxSetsRepository;
+            _revisionSessionsRepository = revisionSessionsRepository;
         }
 
         public async Task Handle(object command, Guid ownerId)
@@ -69,7 +76,7 @@ namespace Memoyed.Application.Services
                     await HandleUpdate(startRevisionSessionCommand.CardBoxSetId, s =>
                     {
                         var revisionSession = s.StartRevisionSession();
-                        _unitOfWork.RevisionSessionsRepository.AddNew(revisionSession);
+                        _revisionSessionsRepository.AddNew(revisionSession);
                     });
                     break;
                 }
@@ -80,7 +87,7 @@ namespace Memoyed.Application.Services
 
         private async Task HandleUpdate(Guid cardBoxSetId, Action<CardBoxSet> update)
         {
-            var cardBoxSet = await _unitOfWork.CardBoxSetsRepository.Get(cardBoxSetId);
+            var cardBoxSet = await _cardBoxSetsRepository.Get(cardBoxSetId);
 
             if (cardBoxSet == null)
                 throw new InvalidOperationException("Couldn't find a card box set with the given identity");
@@ -97,7 +104,7 @@ namespace Memoyed.Application.Services
                 new CardBoxSetLanguage(command.NativeLanguage, DomainChecksImpl.ValidateLanguage),
                 new CardBoxSetLanguage(command.TargetLanguage, DomainChecksImpl.ValidateLanguage));
 
-            _unitOfWork.CardBoxSetsRepository.AddNew(cardBoxSet);
+            _cardBoxSetsRepository.AddNew(cardBoxSet);
 
             await _unitOfWork.Commit();
         }
